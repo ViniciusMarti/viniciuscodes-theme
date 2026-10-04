@@ -1,0 +1,124 @@
+/*
+ * A folha da página de feeds, e só dela.
+ *
+ * AS LINHAS DA LISTA NÃO ESTÃO AQUI. O que lista os feeds é a mesma lista que
+ * lista os textos em todo o site — `.section-title` acima, `.post-list` com
+ * `.post-item` abaixo —, pelo mesmo motivo que a folha dos materiais não repete
+ * o cartão: esta página não inventou uma forma nova de listar, e um segundo
+ * desenho de lista daria duas gramáticas para a mesma leitura.
+ *
+ * O que sobra para esta folha é o que não existe em nenhum outro lugar: o
+ * endereço escrito, para ser lido e copiado à mão, e o botão que copia.
+ */
+
+/*
+ * O respiro ENTRE os grupos.
+ *
+ * `.post-item` fecha cada linha com uma borda de baixo, e o rótulo do grupo
+ * seguinte não tem margem de cima. Sem isto, a última linha de um grupo encosta
+ * no rótulo do próximo e os dois viram um bloco só — a divisão que a página
+ * inteira existe para mostrar desaparece justamente na emenda.
+ */
+.feed-grupo + .feed-grupo {
+  margin-top: 3rem;
+}
+
+/*
+ * A frase que explica o grupo. Ela fica entre o rótulo e a lista, então não pode
+ * ter margem de baixo grande: quem dá o respiro abaixo dela é o `padding` da
+ * primeira linha, que já existe.
+ */
+.feed-grupo__nota {
+  margin: 0 0 0.25rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/*
+ * A LISTA NÃO DESENHA A SUA LINHA DE CIMA.
+ *
+ * O global já resolve isto para `.section-title + .post-list`, e o comentário
+ * lá explica por quê: o rótulo e a lista desenham borda os dois, e a adjacência
+ * evita as duas paralelas. Aqui a adjacência deixa de valer, porque a frase
+ * explicativa se mete entre eles — então a mesma decisão precisa ser dita de
+ * novo, sem depender de quem está ao lado de quem.
+ */
+.feed-grupo .post-list {
+  border-top: 0;
+}
+
+/*
+ * O endereço, escrito.
+ *
+ * `overflow-wrap: anywhere` porque o endereço de um tema é longo
+ * (`/tema/criacao-conteudo-indieweb/feed/`) e sem isto ele estoura a coluna de
+ * 620px no celular em vez de quebrar. `user-select: all` porque o gesto de quem
+ * vai copiar à mão no celular é o toque duplo, e ele seleciona o endereço
+ * inteiro de uma vez em vez de uma palavra do meio.
+ */
+.feed-endereco {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0.7rem 0 0;
+}
+
+.feed-endereco code {
+  padding: 0.3rem 0.55rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+/*
+ * O botão de copiar, no mesmo desenho dos outros botões do site: contorno,
+ * raio pequeno e a inversão para verde no hover, com o texto na cor que o fundo
+ * verde pede em cada tema — `--on-accent` é branco no claro e quase preto no
+ * escuro, onde o verde é claro.
+ */
+.feed-copiar {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.feed-copiar:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: var(--on-accent);
+}
+
+/* A confirmação. Verde no contorno e no texto, sem trocar o fundo: é um aviso,
+   não um segundo botão — e some sozinha depois de dois segundos. */
+.feed-copiar--feito {
+  background: var(--green-wash);
+  border-color: var(--green);
+  color: var(--green-deep);
+}
+
+/*
+ * SEM JAVASCRIPT O BOTÃO NÃO FAZ NADA, então ele não aparece.
+ *
+ * Quem esconde é o próprio atributo `hidden`, escrito no HTML; quem revela é o
+ * script, depois de ligar o clique. O `display: none` explícito existe porque o
+ * `hidden` do navegador perde para o `display: inline-flex` logo acima — sem
+ * esta linha, o atributo seria decorativo e o botão morto apareceria assim mesmo.
+ */
+.feed-copiar[hidden] {
+  display: none;
+}
