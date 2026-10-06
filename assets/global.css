@@ -1,0 +1,4109 @@
+/* ============================================================
+   viniciuscodes — design system
+   Warm paper palette. Green is the blog's, clay is the pages'.
+   Editorial rhythm.
+   ============================================================ */
+
+:root {
+  --paper: #faf9f5;
+  --paper-alt: #f2efe9;
+  /* Off-white instead of #fff: a pure-white surface is the brightest thing
+     on screen and causes glare for light-sensitive readers. */
+  --paper-card: #fcfbf7;
+  --line: #e4e2dc;
+  --line-strong: #d5d2c9;
+
+  /* Boundaries of form controls carry meaning, so they must reach the 3:1
+     non-text ratio. This one measures 3.86:1 on --paper and 3.92:1 on
+     --paper-card, clearing the floor with margin instead of sitting on it.
+     Decorative dividers keep using --line. */
+  --field-border: #837e6d;
+
+  --ink: #1f2328;
+  /* 8.50:1 on --paper, 8.65:1 on --paper-card, 7.81:1 on --paper-alt
+     (was #575d65 at 6.31/6.42/5.79 — AA but not AAA). */
+  --ink-soft: #444a51;
+  /* 7.64:1 on --paper, 7.77:1 on --paper-card, 7.01:1 on --paper-alt
+     (was #666d75 at 4.97/5.06/4.56, the weakest text in the light theme).
+     The value already existed in the contrast block; it was promoted.
+
+     #4d535a WAS PROPOSED FOR THIS AND REJECTED BY MEASUREMENT. It is a LIGHTER
+     grey, and lightening this token always lowers its contrast: it drops
+     --paper-alt to 6.78:1, below the 7:1 AAA floor that this value is holding
+     by 0.01. Since the tightest surface is the one at 7.01, margin — if it is
+     wanted — only comes from going DARKER: #464d54 measures 7.47:1 and
+     #424950 measures 7.95:1. */
+  --ink-mute: #4a5158;
+
+  /*
+    The same hue, four points of lightness lower. #3b5e43 measured 6.95:1 on
+    --paper and 6.38:1 on --paper-alt, and this is the colour of link text —
+    the most-read interactive element on the site. Now 7.68:1 and 7.05:1:
+    AAA on all three surfaces, with the hue intact (hsl 134 became hsl 138,
+    which is imperceptible as colour).
+  */
+  --green: #365740;
+  --green-deep: #2c4732;
+  --green-wash: #eef2ed;
+  /* --green as channels, so the prose underline can be a fraction of it:
+     rgba(var(--green-rgb), 0.45). THIS MUST FOLLOW --green — it draws the
+     link underline, and a stale value here shows the old green. */
+  --green-rgb: 54, 87, 64;
+
+  /*
+    The second accent, and the only one besides the green.
+
+    Green stays the blog's: it marks the active row and colours the theme
+    glyphs. Clay belongs to the pages.
+
+    It exists because the sidebar lists pages and themes as the same shape —
+    icon, then label — and one colour across both would merge a theme you walk
+    into with a fixed room of the site. Colour was already doing that work for
+    the themes alone; extending the sidebar to the pages without extending
+    the palette would have spent the distinction instead of adding to it.
+
+    5.57:1 on --paper and 5.11:1 on --paper-alt, so the glyphs clear the 3:1
+    non-text ratio with room to spare in both the light and the washed surface.
+  */
+  /* 5.83:1 on --paper (was #8a5a2b at 5.11). Clay is a glyph, not body text,
+     so AA was already enough; the darker step buys margin for free. */
+  --clay: #7f5227;
+
+  /* Text placed on a saturated accent background. */
+  --on-accent: #ffffff;
+
+  /* Text placed on the ink surface. `--ink` is the only background the
+     site fills with, and it INVERTS between the themes: dark in light
+     mode, light in dark mode. White text only works on one of the two,
+     and this token is what makes the pair follow the theme. */
+  --on-ink: #ffffff;
+
+  /* Code surfaces are intentionally darker than the page in both themes. */
+  --code-bg: #1f2328;
+  --code-ink: #f4f2ec;
+
+  /*
+    Shims for WordPress block presets referenced by the imported content.
+    The markup contains 16 `var(--wp--preset--*)` usages. Without these
+    definitions those declarations resolve to nothing, so borders and
+    spacing silently collapse. Mapping them onto our own tokens keeps the
+    content readable without inventing new design values.
+  */
+  --wp--preset--color--secondary: var(--line-strong);
+  --wp--preset--spacing--20: 0.75rem;
+  --wp--preset--spacing--30: 1.5rem;
+  --wp--preset--spacing--40: 2rem;
+  --wp--preset--spacing--50: 3rem;
+
+  --sidebar-w: 268px;
+  --header-h: 68px;
+
+  /*
+    ONE content width for the whole site.
+
+    It used to be two systems at once: 720px here, and an 880px override
+    applied through a `wide` prop that PostLayout and PageLayout passed and the
+    list pages did not. So a post, the home and a theme page each had a
+    different column, and the width also depended on which layout happened to
+    render the page.
+
+    The `wide` variant is gone; every page uses this value.
+
+    620px. And the METHOD matters here, because the comment that stood in this
+    place told the story wrong.
+
+    This file used to treat 68ch as "68 characters per line". It is not: `ch` is
+    the width of the digit zero (9.475px at this font), while real lowercase
+    text averages 8.218px — so counting by `ch` UNDERESTIMATES how many
+    characters fit. The honest method is to count the characters that actually
+    land on the first RENDERED line, found by binary search on the range rects.
+    Measured on a real paragraph of the site:
+
+      650px -> 70 caracteres   |   620px -> 70   |   600px -> 70
+      560px -> 64              |   520px -> 60
+
+    The three widest values tie because the line breaks at a WORD boundary, and
+    the same word no longer fits from 600px down. Two consequences worth
+    stating: 650px was ALREADY inside the 45-75 range the colophon promises (the
+    old "~68" was close by accident, not by method), and 620px is 30px narrower
+    with no change in the character count yet.
+
+    The column is still narrower than the old 720/880 pair, and that is the
+    point: the text is the thing being read. Changing it again is this one
+    value. To land in 65-67 characters, the number is ~580px.
+  */
+  --content-max: 620px;
+
+  /*
+    One family for the whole site, and it is the reader's own.
+
+    Headings are distinguished by weight and size, never by a second typeface:
+    switching families mid-page makes the eye re-learn letterforms, which is the
+    visual noise this removes.
+
+    The system stack costs zero requests and never swaps, so there is no second
+    paint and no layout shift coming from fonts. The four `.woff2` and
+    `fonts.css` stay on disk, inert: nothing names them any more.
+  */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  color-scheme: light;
+}
+
+/* Dark palette. Driven by `data-theme` on <html>, set by the toggle script
+   and restored from localStorage before paint to avoid a flash. */
+[data-theme='dark'] {
+  --paper: #16181a;
+  --paper-alt: #1c1f21;
+  --paper-card: #202325;
+  --line: #2e3335;
+  --line-strong: #3c4144;
+
+  --field-border: #6b7272;
+
+  --ink: #e8e6e0;
+  /* 9.64:1 on --paper-card. This is what --ink-mute used to be: the two
+     levels swapped so both clear AAA instead of one sitting at 5.25:1. */
+  --ink-soft: #c6cbcb;
+  /* 7.02:1 on --paper-card and 7.91:1 on --paper (was #8f9696 at 5.25/5.91). */
+  --ink-mute: #a8aeae;
+
+  --green: #8fb996;
+  --green-deep: #a8cdae;
+  --green-wash: #232a25;
+  /* Clears 8.09:1 against --paper. */
+  --green-rgb: 143, 185, 150;
+
+  /* The page accent, lifted for a dark ground: 8.28:1 on --paper. */
+  --clay: #d9a86c;
+
+  --on-accent: #16181a;
+
+  /* See `--on-ink` in the light theme. */
+  --on-ink: #16181a;
+  --code-bg: #101214;
+  --code-ink: #e8e6e0;
+
+  color-scheme: dark;
+}
+
+/*
+  Form controls do not inherit the page font.
+
+  `button`, `input`, `select` and `textarea` come from the browser with the
+  platform UI font, not with the document's — measured here as Arial on all
+  three and monospace on `textarea` while the body was using the site face.
+  One rule fixes the whole site, including anything a plugin renders.
+
+  `code` and `pre` are deliberately out of this list: the monospace stack is
+  theirs and inheriting the sans stack would undo it.
+*/
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  /*
+    Um fio de espacejamento positivo: 0.01em, que no corpo de 16px dá 0.16px
+    por caractere. Ele abre um pouco as letras redondas (a, o, e), o que ajuda
+    a distingui-las na leitura, e é pequeno de propósito — valores maiores
+    afastam as palavras entre si e atrasam a leitura em vez de ajudá-la.
+  */
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /*
+    Imported content contains unbreakable tokens — an e-mail address, a long
+    URL — that would otherwise push past a narrow column. `break-word` only
+    splits a token when it cannot fit, so normal words are untouched.
+  */
+  overflow-wrap: break-word;
+  /* The body itself is the page frame: header / layout / footer.
+     No extra wrapper element is needed. */
+  display: flex;
+  flex-direction: column;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/*
+  Links inside a note.
+
+  The rule above carries the affordance in colour alone. That green clears
+  6.95:1 against --paper in the light theme and 8.09:1 in the dark one, so
+  it is not a contrast failure - it is a WCAG 1.4.1 one. Against the body
+  text it sits only 2.16:1 (light) and 1.76:1 (dark) away, which means a
+  reader cannot tell a link from the words around it without relying on
+  colour. On a site whose navigation is the hypertext itself, that is the
+  most important signal in the paragraph.
+
+  So the underline is always on, and it is the only thing that must be true
+  at rest. Everything else stays quiet: the line is drawn in the link colour
+  at 45%, and on hover it goes solid while the text darkens one step. No
+  background appears, no weight changes, nothing shifts - the paragraph just
+  stops hiding which words are doors.
+
+  1.5px at 3px offset keeps the line off the baseline, so it reads as an
+  underline rather than a run of strikethrough through the descenders.
+*/
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--green-rgb), 0.45);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover,
+.prose a:focus-visible {
+  color: var(--green-deep);
+  text-decoration-color: currentColor;
+}
+
+/*
+  Explicit focus ring for every interactive element.
+
+  Only `.skip-link` declared one before; links, buttons, nav items and cards
+  fell back to the browser default, which varies per platform and can
+  disappear against a warm background. Losing the focus
+  indicator is especially costly when attention is already hard to hold.
+
+  `:focus-visible` rather than `:focus`, so clicking with a mouse does not
+  leave a ring behind. `:where()` keeps specificity at 0, so component
+  styles can still override it.
+*/
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* Sits on a green background, so the ring needs its own colour. */
+.skip-link:focus-visible {
+  outline-color: var(--ink);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
+}
+
+/* ---------- shell ---------- */
+
+/*
+  Mobile-first: stacked column with full-width children.
+  `align-items: stretch` matters — in column mode this axis is horizontal,
+  and `flex-start` would let a single wide element (a long <pre> line, a
+  1600px image) stretch the column and create a horizontal scrollbar.
+*/
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1;
+  width: 100%;
+}
+
+/*
+  `fixed`, not `absolute`: a skip link is activated after the user has
+  already scrolled, so an absolutely positioned one would be scrolled out
+  of view exactly when it is needed.
+*/
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--green);
+  color: var(--on-accent);
+  transform: translateY(-120%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------- header ---------- */
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: var(--header-h);
+  padding: 0 1.25rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+/*
+  ABAIXO DE 380PX O CABEÇALHO NÃO CABE, E QUEM CEDE É O ESPAÇO.
+
+  Medido em 280px: a marca ocupa 160px, as ferramentas (lupa + tema) 102px, e o
+  `padding` de 1.25rem em cada lado mais o `gap` de 1rem não deixam os dois na
+  mesma fileira — o documento ia a 284px numa janela de 280, com barra de rolagem
+  horizontal aparecendo embaixo.
+
+  A MARCA CONTINUA SEM ENCOLHER, que é o que o comentário dela defende: nome
+  cortado não continua sendo nome. O que sai é o respiro — padding, gap e o
+  avatar de 24px no lugar de 28.
+
+  O campo de busca, que antes absorvia a sobra com o `min-width: 0` dele, virou
+  uma lupa de 44px no celular e já não tem o que absorver.
+
+  OS SELETORES SÃO MAIS ESPECÍFICOS DE PROPÓSITO (`.masthead .masthead__brand`,
+  e não só `.masthead__brand`). As regras de base da marca e das ferramentas
+  estão MAIS ABAIXO no arquivo, e com a mesma especificidade quem vem depois
+  ganha: escritas do jeito comum, elas venciam este bloco e o transbordo ficava —
+  medido, a marca continuava com 160px mesmo com o bloco no lugar. Com o
+  `.masthead` na frente, este bloco vale onde estiver. Foi o mesmo degrau do
+  cartão sem capa, que precisou da regra repetida dentro do `@media`.
+*/
+@media (max-width: 380px) {
+  .masthead {
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .masthead .masthead__brand {
+    gap: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .masthead .masthead__brand img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .masthead .masthead__tools {
+    gap: 0.5rem;
+  }
+}
+
+/*
+  Todo alvo de link interno desconta a altura do cabeçalho.
+
+  O masthead é `position: sticky` e ocupa os primeiros 68px da janela em
+  qualquer largura. Sem isto, um link `#ancora` alinha o topo do alvo ao topo
+  da janela e o cabeçalho fica POR CIMA dele. Na home, "explore os themes
+  abaixo" cumpria o que prometia - rolava até a seção - e ainda assim o leitor
+  não via o título "themes": ele caía inteiro atrás da barra, junto com a
+  primeira fileira de cartões. O link funcionava; o pouso é que era ruim.
+
+  `[id]` e não os dois alvos que existem hoje (`#conteudo`, do atalho de
+  pular, e `#themes`, da home) porque qualquer nota pode ganhar um id no
+  meio do texto, e um alvo novo não deveria depender de alguém lembrar desta
+  regra.
+
+  O valor sai de `--header-h`, medido em 68px a 1200px e a 360px: o cabeçalho
+  não quebra linha e não cresce além do mínimo. O rem adicional é respiro,
+  para o título não encostar na borda.
+*/
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 0.75rem);
+}
+
+.masthead__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  /*
+    A marca NÃO encolhe, e isto passou a importar quando o campo de busca entrou
+    na fileira.
+
+    O texto é `nowrap`: encolhido, ele não quebra — ele passa a ser cortado pela
+    borda da caixa. Medido a 390px com o campo ao lado: a caixa da marca caía de
+    172px para 145px e o nome saía da tela como "@viniciuscode", sem o "s" final.
+    O nome do site cortado é pior que um campo de busca estreito.
+
+    Quem absorve a sobra é o `.site-search`, e é para isso que ele tem
+    `min-width: 0`: um campo pode ficar mais estreito e continuar sendo um campo;
+    um nome cortado não continua sendo um nome.
+  */
+  flex-shrink: 0;
+  /* Keeps the brand a real touch target on phones. */
+  min-height: 44px;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 1.15rem;
+  white-space: nowrap;
+}
+
+.masthead__brand:hover {
+  text-decoration: none;
+}
+
+/*
+  A foto, redonda.
+
+  `object-fit: cover` e não `contain`: a origem é quadrada (640x640) e o
+  recorte circular corta os cantos, então o que importa é preencher o círculo
+  sem distorcer. Com `contain` sobraria faixa vazia dentro do círculo.
+
+  O anel de 1px é o mesmo `var(--line)` que toda imagem do site já usa. Sem
+  ele a foto clara sobre o papel claro perde a borda e o círculo some.
+*/
+.masthead__brand img {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.masthead__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/*
+  O campo de busca do cabeçalho.
+
+  ELE NÃO SE CHAMA `.search`, e o motivo é medido, não estético: o `body_class()`
+  do WordPress escreve `class="search search-results ..."` no `<body>` das
+  páginas de resultado — a página para onde este formulário leva. Com o nome
+  `.search`, a regra abaixo pegava o corpo INTEIRO: medido em `/?s=autismo`, o
+  `<body>` virava `display: flex`, ganhava `max-width: 260px`, a borda de campo e
+  o fundo, e a largura da página caía de 1280px para 260px. Um nome que o próprio
+  WordPress usa em outro lugar não serve de nome.
+
+  Fora o nome, as medidas não foram inventadas aqui: são as do campo do site
+  anterior, onde ele existiu até o porte para WordPress deixá-lo para trás.
+  Estavam escritas lá com a razão de cada escolha, e a razão continua valendo.
+
+  LARGURA FLUIDA, e não os 220px fixos de antes: a largura fixa não cabia numa
+  tela de 375px, e esconder o campo no celular tirava a busca inteira do site,
+  porque não havia outra porta para ela. Entre 120px e 260px ele se resolve
+  sozinho pelo `flex`.
+
+  A BORDA usa `--field-border`, o token de 3:1, e não o `--line` decorativo: a
+  borda de um campo É o que diz que ali se escreve, então ela cai na regra de
+  3:1 para elemento de interface. Medido: 3,92:1 sobre `--paper-card`.
+
+  44px DE ALTURA para casar com o botão de tema ao lado, que é 44x44: os dois
+  ficam na mesma fileira do cabeçalho, e um campo mais alto que o botão faria a
+  fileira parecer desalinhada.
+*/
+/*
+  Busca no Menu Lateral: campo integrado, espaçoso e com foco verde suave.
+*/
+.sidebar__search {
+  margin-bottom: 1.5rem;
+}
+
+.site-search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  background: var(--paper-card);
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.site-search-form:focus-within {
+  border-color: var(--green);
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.site-search-form__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--ink-mute);
+}
+
+.site-search-form input[type='search'] {
+  width: 100%;
+  align-self: stretch;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  padding: 0;
+}
+
+.site-search-form input[type='search']:focus {
+  outline: none;
+}
+
+.site-search-form input[type='search']::placeholder {
+  color: var(--ink-mute);
+  opacity: 1;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 44px square: the minimum comfortable touch target. */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--green);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--green-wash);
+}
+
+/* Both icons render in the markup; CSS decides which one is visible, so the
+   correct glyph is already present on first paint without any client work. */
+.theme-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle__icon--dark {
+  display: none;
+}
+
+[data-theme='dark'] .theme-toggle__icon--light {
+  display: none;
+}
+
+[data-theme='dark'] .theme-toggle__icon--dark {
+  display: inline-flex;
+}
+
+/*
+  O botão que recolhe a barra lateral.
+
+  Gêmeo visual do botão de tema: mesma caixa de 44px, mesmo lugar no cabeçalho,
+  mesma cor. Os dois são controles de CONFORTO DE LEITURA, e agrupá-los nos
+  mesmos gestos visuais diz que são a mesma família de coisa — mexer em como a
+  página se apresenta, não navegar para outro lugar.
+
+  `:not([hidden])` não é enfeite: a regra de autor vence a do navegador, então
+  um `display` aqui mostraria o botão MESMO com o atributo `hidden` no HTML, que
+  é justamente o estado em que ele nasce. Exigir a ausência do atributo é o que
+  mantém a regra do site de nunca exibir um controle que ainda não funciona.
+
+  Escondido por padrão e revelado só a partir de 860px, onde existe coluna de
+  verdade para recolher. Abaixo disso a barra lateral é um disclosure nativo.
+*/
+.sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.sidebar-toggle:hover {
+  background: var(--paper-alt);
+  color: var(--green);
+}
+
+.visually-hidden,
+.screen-reader-text {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Lightbox accessibility overlay text must never render visually */
+.wp-lightbox-overlay .screen-reader-text {
+  display: none !important;
+}
+
+/* ---------- sidebar backdrop & off-canvas drawer ---------- */
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+[data-menu-open='true'] .sidebar-backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: min(85vw, 320px);
+  height: 100vh;
+  height: 100dvh;
+  padding: 1.5rem;
+  background: var(--paper-alt);
+  border-left: 1px solid var(--line);
+  box-shadow: -4px 0 28px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s ease;
+  overflow-y: auto;
+}
+
+[data-menu-open='true'] .sidebar {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+/*
+  COM O DRAWER ABERTO, A PAGINA ATRAS NAO ROLA.
+
+  Sem isto o celular tinha o mesmo defeito do desktop, e por um motivo ainda
+  mais confuso: a gaveta rolava e a pagina que ela cobre tambem, porque o
+  backdrop nao impede o toque de chegar ao documento. Aqui nao ha o que
+  "unificar" — enquanto o menu esta aberto, a unica coisa rolavel e ele.
+
+  O corte em 859.98px e o complemento exato do bloco do desktop. Ele tem de
+  continuar identico a `consultaDesktop` do `site.js`, como aquele bloco avisa:
+  o atributo so existe abaixo do breakpoint, e e isto que impede uma pagina
+  travada por um `data-menu-open` preso.
+*/
+@media (max-width: 859.98px) {
+  [data-menu-open='true'] {
+    overflow: hidden;
+  }
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sidebar__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.sidebar__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--ink-mute);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sidebar__close:hover {
+  background: var(--paper-card);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.sidebar__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.sidebar__label {
+  margin: 0 0 0.6rem;
+  /* 12px floor: anything smaller is hard to read on a phone. */
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.navlink {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  /* Full-height row on touch devices; relaxed again on pointer layouts. */
+  min-height: 44px;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.navlink:hover {
+  color: var(--green);
+  text-decoration: none;
+}
+
+.navlink::before {
+  content: '';
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.navlink[aria-current='page'] {
+  color: var(--ink);
+}
+
+.navlink[aria-current='page']::before {
+  background: var(--green);
+}
+
+.navlink--term {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/*
+  Every theme carries its own emoji, and the emoji needs a stable box to keep
+  the names aligned: emoji glyph widths vary between systems.
+*/
+.navlink__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2em;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* ---------- nav more (the disclosure that replaced /mais/) ---------- */
+
+/* ---------- content ---------- */
+
+/* Mobile-first padding; widened at each breakpoint. */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 1.25rem 3.5rem;
+}
+
+.content__inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+/* ---------- typography ---------- */
+
+.page-title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.page-lede {
+  margin: 0 0 2.5rem;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.section-title {
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-wrap: balance;
+}
+
+.article {
+  max-width: min(100%, 680px);
+  margin-inline: auto;
+}
+
+.article__header {
+  margin-bottom: 2rem;
+}
+
+.article__theme {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.article__theme-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.article__theme-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+}
+
+.article__reading-time {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+  opacity: 0.75;
+}
+
+.article__end-themes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  padding-top: 1rem;
+}
+
+.article__end-theme-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  text-transform: lowercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--paper-alt);
+  transition: all 0.15s ease;
+}
+
+.article__end-theme-link:hover {
+  background: var(--green-wash);
+  color: var(--green-deep);
+  text-decoration: none;
+}
+
+/*
+  Metadata links stay muted: they are references, not calls to action, and
+  colouring them like navigation would pull the eye off the title.
+
+  This comment used to say that a list row and a note header printed the same
+  thing - "the date, then the theme it belongs to" - and that this was why both
+  drew the separator the same way. THE DATE LEFT BOTH: what is left is the
+  theme, and the separator still earns its place on a row with more than one.
+*/
+.post-item__meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-item__meta a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+.post-item__meta > * + *::before {
+  content: '·';
+  margin-right: 0.5rem;
+}
+
+.post-item__meta__part {
+  /* So a long label shrinks instead of pushing the line past the column. */
+  min-width: 0;
+}
+
+/*
+  The glyph beside a theme or a maturity stage, in the post header and in
+  the listings.
+
+  Green, like every other icon on the site: the sidebar and the cards carry the
+  brand colour in their glyphs, so a grey one here would have read as a
+  disabled control instead of as identity.
+*/
+.meta-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--green);
+  line-height: 1;
+}
+
+.article__title {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 4.4vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  /*
+    Sem espacejamento aqui, e aqui ele não faz falta: tamanho e peso já
+    separam o título do corpo do texto, e espacejamento NEGATIVO num peso 700
+    faz o título ler comprimido — a mesma fonte que o resto, com outra textura,
+    sem ganho nenhum em troca.
+  */
+}
+
+/* ---------- prose (wordpress content) ---------- */
+
+.prose {
+  font-size: 1.06rem;
+  line-height: 1.7;
+  color: var(--ink);
+  /* Allows the column to shrink below its content's intrinsic width so a
+     wide child scrolls instead of widening the page. */
+  min-width: 0;
+  /*
+    No max-width here. The column width belongs to `.content__inner` /
+    `--content-max`, which is now the same on every page, and this element
+    fills it. Two elements claiming to own the measure is how they disagreed.
+
+    This USED to be `max-width: 68ch`, and the comment here claimed `ch` kept
+    the column "predictable regardless of font size". It did the opposite, and
+    it was measurable: the same post rendered 761px wide and another 633px,
+    same font-size, same font loaded (`document.fonts.status === 'loaded'`),
+    with `ch` measuring 11.359px in both. 633px matches what the FALLBACK font
+    produces at that size, so `ch` had resolved against the fallback on one
+    page and the web font on the other — a race against the font load, which
+    is why the width looked different per text.
+
+    That race is why the measure lives in `--content-max` as a PIXEL value, and
+    why this element only fills it. The current number and its measured
+    characters per line are documented next to that token, not here: one owner
+    for the measure, one place to read it.
+  */
+}
+
+/*
+  The vertical rhythm between blocks.
+
+  1.7em, and the number IS the line-height: at 1.08rem (17.28px) this is
+  29.4px, exactly the line spacing the body uses. Measured BEFORE the change,
+  the gap between two consecutive paragraphs was 24.2px — five pixels SHORTER
+  than the distance between two lines of the same paragraph. That is why
+  paragraphs read as one continuous block: the break was smaller than the
+  space inside a sentence.
+
+  THIS RULE IS NOT WHAT GOVERNS PARAGRAPHS, and the first attempt here assumed
+  it was. `.prose p { margin: 0 0 1.4em }` outranks it — (0,1,1) against
+  (0,1,0) — and comes later in the file, and that shorthand also zeroes the TOP
+  margin. Measured after setting this rule to 1.7em: 160 gaps between
+  consecutive paragraphs, every single one still at 24.2px. Nothing moved.
+
+  The rhythm of the prose is set by the bottom margin in the rule just below;
+  what this rule covers is every other block child that rule does not list.
+
+  This lands at PARITY, not above it: 29.4px of gap against 29.4px of line
+  spacing. Parity is the threshold where a break starts to be visible; if it
+  should clear the entrelinha with margin to spare, the next step is 1.8em
+  (31.1px).
+*/
+.prose > * + * {
+  margin-top: 1.7em;
+}
+
+/*
+  AQUI HAVIA O RITMO INTERNO DO GRUPO `.blogroll`.
+
+  O apoio de layout do WordPress embrulha os filhos de um grupo num div próprio,
+  e por isso os parágrafos e a grade da `/blogroll/` eram netos de `.prose` e não
+  alcançavam a regra acima: medidos, os três estavam com `margin-top: 0` e a
+  abertura, a contagem e a grade ficavam colados uns nos outros.
+
+  A página deixou de ser um grupo: o conteúdo dela é uma lista só, e quem governa
+  a lista é `.post-list` — o mesmo desenho da `/posts/`. Não há mais neto nenhum
+  para alcançar.
+*/
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.prose h2 {
+  font-size: 1.6rem;
+}
+
+.prose h3 {
+  font-size: 1.3rem;
+}
+
+.prose h4 {
+  font-size: 1.1rem;
+}
+
+/*
+  O ritmo vertical DE VERDADE do texto vem daqui.
+
+  Medido antes desta mudança: 160 vãos entre parágrafos consecutivos, TODOS em
+  24,2px, com a entrelinha em 29,4px. A fronteira do parágrafo era cinco pixels
+  MENOR que a distância entre duas linhas do mesmo parágrafo — e é por isso que
+  o texto se lia como um bloco contínuo: a pausa entre ideias era mais estreita
+  que a pausa dentro de uma frase.
+
+  Com 1.7em o vão vai a 29,4px, que é exatamente a entrelinha.
+
+  E por que a mudança é AQUI e não em `.prose > * + *`, que é a regra que o
+  brief apontava: aquele seletor tem especificidade (0,1,0) e esta regra tem
+  (0,1,1) — e ainda vem depois no arquivo —, então o atalho `margin` daqui
+  sobrescreve a margem de cima de lá e a zera. Enquanto ele estiver assim,
+  mexer na regra de cima não muda um pixel, e foi o que aconteceu na primeira
+  tentativa: 1.7em lá, 24,2px de vão aqui.
+
+  ATENÇÃO ao atalho: `margin: 0 0 1.7em` significa cima 0, lados 0, baixo
+  1.7em. O zero de cima não é descuido — é o que impede esta regra e a de cima
+  de somarem espaços diferentes para o mesmo bloco.
+*/
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose figure,
+.prose table {
+  margin: 0 0 1.7em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li + li {
+  margin-top: 0.5em;
+}
+
+.prose blockquote,
+blockquote,
+.wp-block-quote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.4em 0 0.4em 1.4em;
+  border-left: 3px solid var(--green, #22c55e);
+  color: var(--ink-soft);
+  font-style: italic;
+  font-size: 1.15rem;
+}
+
+.prose blockquote p,
+blockquote p,
+.wp-block-quote p {
+  margin-bottom: 0.8em;
+}
+
+.prose blockquote p:last-child,
+blockquote p:last-child,
+.wp-block-quote p:last-child {
+  margin-bottom: 0;
+}
+
+.wp-block-quote cite {
+  display: block;
+  font-size: 0.85rem;
+  font-style: normal;
+  color: var(--ink-mute);
+  margin-top: 0.5rem;
+}
+
+/*
+  Absorbs the styling that the imported WordPress markup carried inline
+  (`max-width:100%;height:auto;border-radius:8px;margin:24px 0;border:1px
+  solid #e2e8f0` on 12 images). Owning it here removes the hardcoded colour
+  and lets the rule respond to the theme.
+*/
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin: 1.5rem auto;
+}
+
+/*
+  Inside a figure, the image is PART of a block, so it must not carry the
+  outer block margin.
+
+  This is what made every caption read as loose prose. The image has
+  `margin: 1.5rem auto` as a standalone block, and that margin applied just
+  as well when the image sat inside a <figure> — so the rendered gap between
+  the photo and its caption was 1.5rem plus the caption's own margin, about
+  34px. A caption 34px below its image with the same weight of space on
+  either side is a paragraph by every visual cue the reader has.
+
+  The figure owns the outer spacing; the image hugs the caption.
+*/
+.prose figure > img {
+  margin: 0;
+}
+
+.prose figure {
+  margin: 1.5rem 0;
+  margin-inline: 0;
+}
+
+.prose .wp-block-image {
+  margin: 1.5rem 0;
+}
+
+/*
+  Gallery block. The WordPress stylesheet is dropped here, so the gallery
+  arrives as markup with no layout: the figures stacked one per line at a
+  third of the content width, which reads as a column of cropped thumbnails
+  rather than a gallery.
+
+  A grid, and `columns: auto` on purpose — something upstream was putting the
+  gallery in text columns, and that is what squeezed every figure down to a
+  third of the available width.
+
+  `columns-N` sets the track count. `is-cropped` is the editor's "crop images
+  to a square": the cell becomes square and the image fills it, which is what
+  makes a row of one-size tiles.
+
+  THE TRACK COUNT IS `auto-fit`, NOT A FIXED 3, and that is the whole point.
+  The editor writes `columns-default` when the block has no column count
+  chosen, and no `columns-N` rule matches that name — so a fixed base sent
+  every such gallery to three tracks. A two-image gallery then filled two
+  tracks and left THE THIRD ONE EMPTY: 24% of the row blank, measured in
+  `/fuga-ocio-e-cafe-curitiba/`. `auto-fit` collapses the tracks nobody uses,
+  so the count follows the number of images: 2 becomes two across, 3 becomes
+  three, and a single leftover image no longer drags an empty column behind it.
+
+  THE `min()` ON THE MINIMUM IS NOT DECORATION. `1fr` alone is
+  `minmax(auto, 1fr)`, and that `auto` refuses to shrink below the content's
+  minimum — with a wide image the three tracks grew past the 620px column and
+  the row overflowed the text block. An explicit minimum lets the track shrink
+  and the image follow it.
+
+  THE 10rem IS A CHOICE, AND IT SHOWS ON A PHONE. Below roughly 385px of
+  viewport, two cells of 160px no longer fit side by side, so a pair stacks:
+  each photo takes the full width of the text instead of two thumbnails of
+  148px. On the desktop column the same pair sits side by side at 306px each.
+  Lowering this to 9rem would keep every pair side by side on a phone — that is
+  the one number to change if the stacked pair ever reads wrong.
+*/
+.prose .wp-block-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+  columns: auto;
+  column-count: auto;
+}
+
+.prose .wp-block-gallery.columns-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.prose .wp-block-gallery.columns-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.prose .wp-block-gallery.columns-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.prose .wp-block-gallery.columns-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.prose .wp-block-gallery.columns-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+/* The cell fills its track and carries no spacing of its own: the gap is the
+   grid's, and the outer margin is the gallery's. */
+.prose .wp-block-gallery figure,
+.prose .wp-block-gallery .wp-block-image {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.prose .wp-block-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: var(--radius);
+}
+
+.prose .wp-block-gallery.is-cropped figure,
+.prose .wp-block-gallery.is-cropped .wp-block-image {
+  aspect-ratio: 1;
+}
+
+.prose .wp-block-gallery.is-cropped img {
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Inline styles on these blocks set explicit pixel widths; without a cap
+   they can exceed the column and force a horizontal scrollbar. */
+.prose figure,
+.prose .wp-block-image,
+.prose .wp-block-columns,
+.prose .wp-block-group {
+  max-width: 100%;
+}
+
+/*
+  WordPress button blocks (CTAs inside posts: "ver na Amazon", "Ler
+  Resenha Completa"). The block only carried a class, and the class did
+  nothing once the WordPress stylesheet was dropped, so these rendered as
+  bare 21px text links. They are buttons, not prose links, and need a real
+  touch target.
+*/
+.wp-block-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.prose .wp-block-button__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.7rem 1.35rem;
+  background: var(--green);
+  border-radius: 999px;
+  color: var(--on-accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.prose .wp-block-button__link .meta-icon {
+  color: currentColor;
+}
+
+.prose .wp-block-button__link:hover {
+  background: var(--green-deep);
+  text-decoration: none;
+}
+
+/*
+  The markup already states the role of each button, and the styles ignored it:
+
+    is-style-outline  "ver na Amazon"          secondary, a detour
+    is-style-fill     "ler resenha completa"   the point of the card
+
+  Both came out as the same filled pill, so the affiliate link shouted as loud
+  as the link to the review. Outline for the detour, fill for the destination.
+
+  The border uses --green rather than a faded version of it. A button edge is
+  not decoration: it is what tells the reader the thing is clickable, so it
+  falls under the 3:1 non-text rule the tokens already document.
+*/
+.prose .is-style-outline .wp-block-button__link {
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green-deep);
+}
+
+.prose .is-style-outline .wp-block-button__link:hover {
+  background: var(--green-wash);
+  color: var(--green-deep);
+}
+
+/* ---------- WordPress layout blocks ---------- */
+
+/*
+  The block markup survived the migration but the stylesheet that gave it
+  structure did not. Without these rules the inline `grid-template-columns`
+  and `flex-basis` were inert: media+text blocks never became a grid and
+  columns never sat side by side. The declarations are now owned here, so
+  they can also collapse properly on small screens.
+*/
+
+.prose .wp-block-media-text {
+  display: grid;
+  grid-template-columns: minmax(0, 18%) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.prose .wp-block-media-text__media,
+.prose .wp-block-media-text__content {
+  margin: 0;
+  min-width: 0;
+}
+
+.prose .wp-block-media-text__media img {
+  width: 100%;
+  margin: 0;
+}
+
+.prose .wp-block-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.prose .wp-block-column {
+  /* `minmax(0, …)` style guard: a flex/grid child defaults to its
+     min-content width, which is what makes wide content overflow. */
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .prose .wp-block-media-text,
+  .prose .wp-block-media-text.has-media-on-the-right {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .prose .wp-block-columns {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* ---------- book list (/livros/) ---------- */
+
+/*
+  Scoped to the page. Only /livros/ uses media-text blocks, but they are a
+  shared WordPress pattern and a post that gained one would be reshaped by
+  book-specific rules if these were global.
+
+  The page is twenty covers in a single column. As imported it read as one
+  uninterrupted ribbon: no boundary between entries, and the byline sat above
+  the title in the accent colour, so the eye landed on "Joe Reis e Matt
+  Housley" before the book.
+*/
+[data-page='livros'] .prose .wp-block-media-text {
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 1.75rem;
+  align-items: start;
+  padding-top: 2rem;
+  /* A hairline is what separates one book from the next; whitespace alone
+     was not enough at twenty entries. */
+  border-top: 1px solid var(--line);
+}
+
+/* The first entry under each heading opens the section, so it needs no rule. */
+[data-page='livros'] .prose h2 + .wp-block-media-text {
+  border-top: 0;
+  padding-top: 0;
+}
+
+[data-page='livros'] .prose .wp-block-media-text__content {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+  Visual order is title, byline, description, meta, actions — the order a
+  reader scans a book in. The DOM keeps the author's original sequence; only
+  the presentation changes.
+*/
+[data-page='livros'] .prose .wp-block-media-text__content > h3 {
+  order: 1;
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+[data-page='livros'] .prose .wp-block-media-text__content > p {
+  order: 3;
+}
+
+[data-page='livros'] .prose .wp-block-media-text__content > p.has-small-font-size {
+  order: 4;
+  margin-top: 0.5rem;
+  color: var(--ink-mute);
+}
+
+/*
+  The byline. It carries `has-small-font-size` too, so the rule above would
+  otherwise claim it — hence the accent-colour class is the anchor, and the
+  rule is last so the cascade tie breaks in its favour.
+*/
+[data-page='livros'] .prose .wp-block-media-text__content > p.has-primary-color {
+  order: 2;
+  margin: 0.4rem 0 0;
+  color: var(--ink-mute);
+  font-size: 0.9rem;
+}
+
+/* The title is already a link; underlining all twenty turns the column into
+   a wall of rules. */
+[data-page='livros'] .prose .wp-block-media-text__content > h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+[data-page='livros'] .prose .wp-block-media-text__content > h3 a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+/*
+  Forty pills competing with twenty titles was the problem, and the first fix
+  went too far: the buttons became 0.82rem grey text with no edge, which reads
+  as a caption rather than as something you can press. The affiliate link is
+  easy to miss and the review link looks like a footnote.
+
+  Kept small, but they are buttons again: a tight outline pill, roughly half
+  the height of the base one, so the run of them stays quiet while each one
+  still shows it is pressable.
+*/
+[data-page='livros'] .prose .wp-block-buttons {
+  order: 5;
+  margin-top: 0.9rem;
+  gap: 0.4rem 0.75rem;
+}
+
+[data-page='livros'] .prose .wp-block-button__link {
+  min-height: 34px;
+  padding: 0.28rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--field-border);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+[data-page='livros'] .prose .wp-block-button__link:hover {
+  background: var(--green-wash);
+  border-color: var(--green);
+  color: var(--green-deep);
+  text-decoration: none;
+}
+
+/*
+  The Amazon link is the detour; the review is the reason the card exists.
+  Filling only the second one gives the pair an order to read in, and keeps
+  the affiliate link from leading the eye.
+*/
+[data-page='livros'] .prose .is-style-fill .wp-block-button__link {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--on-accent);
+}
+
+[data-page='livros'] .prose .is-style-fill .wp-block-button__link:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: var(--on-accent);
+}
+
+/* Section headings ("lendo no momento", "lidos") open a run of books. */
+[data-page='livros'] .prose > h2 {
+  margin: 3.5rem 0 0.5rem;
+  font-size: 1.45rem;
+}
+
+[data-page='livros'] .prose > h2:first-child {
+  margin-top: 0;
+}
+
+/* ---------- book review card (end of a review) ---------- */
+
+/*
+  The card that closes a review. It follows the /livros/ entry: the same
+  160px cover column, the title first, the byline quiet, the same small pill
+  for the action. Two views of the same object should not look like two
+  designs.
+
+  What it does NOT copy is being invisible. As the imported markup this was a
+  paragraph, a sentence, a heading, an image and two bare links in a row, and
+  the reader scrolled straight past it. A surface with an edge says "this is
+  the book", which is the whole point of the block.
+
+  The surface is --paper-card, not --green-wash. The wash is the hover and
+  focus tint used everywhere else in the site; spending it as a resting
+  background would make the card read as something already being pointed at.
+*/
+.book-review {
+  margin: 3rem 0 0;
+  padding: 1.5rem;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.book-review__kicker {
+  margin: 0 0 1rem;
+  color: var(--ink-mute);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Cover beside text, the shape the catalogue already uses. */
+.book-review__body {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/*
+  Sem capa, uma coluna só. A avaliação de um lugar não tem o que pôr na
+  primeira coluna: a foto do lugar já está no texto, logo acima, com a legenda
+  dela. Mantendo o desenho do livro, o texto começaria depois de 160px de vazio.
+*/
+.book-review__body--sem-capa {
+  grid-template-columns: minmax(0, 1fr);
+}
+/*
+  The cover is a link to the same place as the title. `line-height: 0` drops
+  the inline-image descender gap that would otherwise show as a few pixels of
+  surface under the artwork; `outline-offset` keeps the focus ring off the
+  cover itself, where it reads as a border around the picture.
+*/
+.book-review__cover {
+  display: block;
+  line-height: 0;
+  border-radius: var(--radius-sm);
+  outline-offset: 4px;
+}
+
+.book-review__cover img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.book-review__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.book-review__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.book-review__title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.book-review__title a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+.book-review__author {
+  margin: 0;
+  color: var(--ink-mute);
+  font-size: 0.9rem;
+}
+
+/*
+  Stars and the written rating share one line, so the card never reads as
+  showing the rating twice. `align-items: baseline` keeps the text sitting on
+  the same line as the glyphs instead of centred against their box.
+*/
+.book-review__rating {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.15rem 0 0;
+}
+
+.book-review__stars {
+  color: var(--green);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+}
+
+.book-review__rating-text,
+.book-review__format {
+  margin: 0;
+  color: var(--ink-mute);
+  font-size: 0.85rem;
+}
+
+.book-review__action {
+  margin: 1rem 0 0;
+}
+
+/*
+  Same pill as /livros/, but filled instead of outlined. There the outline is
+  what keeps a run of twenty entries quiet; here this is the single action of
+  a card and the reason the card exists, so it can carry the accent.
+*/
+.book-review__button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.4rem 1rem;
+  background: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 999px;
+  color: var(--on-accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/*
+  NO CELULAR O BOTÃO OCUPA A LARGURA DO CARTÃO.
+
+  Medido em 280px antes disto: o rótulo "ver endereço no Google Maps ↗" não cabia
+  nos 186px do cartão, quebrava em três linhas e a caixa ia a 61px de altura —
+  com o `border-radius: 999px`, virava um comprimido gordo em vez de um botão.
+
+  Deitado na largura inteira, o texto se acomoda em duas linhas e o desenho
+  continua sendo um botão. O corpo cai um pouco (0.82rem) para caber melhor, e o
+  `min-height: 44px` mantém o alvo do dedo onde ele tem de estar.
+*/
+@media (max-width: 430px) {
+  .book-review__button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.82rem;
+    text-align: center;
+    /*
+      Canto comum, e não os 999px do comprimido: em 280px o rótulo não cabe numa
+      linha, e um `border-radius: 999px` numa caixa de duas ou três linhas faz um
+      comprimido gordo em vez de um botão. Canto de 10px com o texto centrado lê
+      como botão em qualquer altura.
+    */
+    border-radius: var(--radius-sm);
+  }
+}
+
+.book-review__button:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: var(--on-accent);
+  text-decoration: none;
+}
+
+.book-review__disclaimer {
+  margin: 0.75rem 0 0;
+  color: var(--ink-mute);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* Read by a screen reader, invisible on screen. Used for "(abre em nova
+   aba)": the ↗ alone does not announce the behaviour. */
+.book-review__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Narrower cover, so the text is not squeezed into a column of two words. */
+@media (max-width: 560px) {
+  .book-review {
+    padding: 1.15rem;
+  }
+
+  .book-review__body {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  /*
+    A avaliação de lugar não tem coluna de capa em largura NENHUMA. Esta regra
+    precisa estar AQUI DENTRO, e não só lá em cima onde o módulo é declarado:
+    como as três têm a mesma especificidade, quem vem depois ganha, e as de
+    dentro do `@media` vêm depois. Sem esta cópia, o cartão sem capa ficava com
+    96px de vazio à esquerda em telas de até 560px — medido, e não deduzido.
+  */
+  .book-review__body--sem-capa {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Below this the cover and the details can no longer share a line without
+   the title wrapping every other word, so the cover goes on top. */
+@media (max-width: 430px) {
+  .book-review__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.15rem;
+  }
+
+  .book-review__cover {
+    width: 120px;
+  }
+}
+
+/*
+  A caption, and it has to look like one.
+
+  Italic is not decoration here: the author writes captions in italics in the
+  Markdown (`*texto*`), the rehype plugin that builds the <figure> turns that
+  <em> into a <figcaption> and drops the emphasis, and the style never put it
+  back. So the italic is the author's own marking, restored.
+
+  Small, muted, italic and centred are four cues that all say "this belongs to
+  the image above". The spacing is what makes the last one land: the caption
+  sits close to its photo (see `.prose figure > img` above) and the FIGURE
+  carries the block margin, so the whitespace groups image and caption as one
+  thing and separates that group from the next paragraph.
+*/
+.prose figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ink-mute);
+  text-align: center;
+}
+
+.prose code {
+  padding: 0.15em 0.4em;
+  background: var(--green-wash);
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.prose pre {
+  overflow-x: auto;
+  padding: 1.1rem 1.25rem;
+  background: var(--code-bg);
+  border-radius: var(--radius);
+  color: var(--code-ink);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+/*
+  A wide table cannot be shrunk without destroying its layout, so it gets
+  its own scroll context instead of widening the whole article column.
+  WordPress wraps tables in a <figure>, but loose tables are covered too.
+*/
+.prose .wp-block-table,
+.prose figure:has(> table) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose .wp-block-table table {
+  min-width: 32rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  text-align: left;
+}
+
+.prose th {
+  background: var(--paper-alt);
+  font-weight: 600;
+}
+
+.prose hr {
+  margin: 2.5rem 0;
+}
+
+/*
+  A IMAGEM DE DESTAQUE
+  ===================
+
+  Quase nada aqui, e é o ponto: a figura entra como primeiro filho do `.prose`, e
+  as regras que o site já tem para imagem de texto fazem o resto — borda de
+  `--line`, raio de `--radius`, legenda em itálico centrada, o vão de 1.5rem da
+  figura. Só duas coisas ficam por conta desta regra.
+
+  1. O TETO DE ALTURA, que na prática é um teto de LARGURA — e isso foi aprendido
+     errando, com a medição no lugar da teoria.
+
+     Sem teto nenhum, uma capa em pé manda no texto: a única imagem de destaque do
+     site hoje (`a-cabeca-do-santo.jpg`, 683x1024, a capa de um livro) ocupa a
+     coluna inteira e sai com **929px de altura** — mais alta que a janela num
+     portátil, e o leitor abre a nota vendo só a capa, sem uma linha do texto.
+
+     A primeira versão punha `max-height: 70vh` no `<img>`, esperando que o
+     navegador reduzisse a largura na mesma razão. ELE NÃO REDUZ. Medido: a capa
+     saiu em **620x504**, com proporção 1,230 onde deveria haver 0,667 — a imagem
+     esmagada, mais larga do que alta. O motivo é a ordem: o `max-width: 100%` do
+     `.prose img` resolve primeiro (683 > 620, então a largura vira 620) e o teto
+     de altura entra depois, valendo SÓ para a altura. A regra do CSS 2.1 que
+     recalcularia a largura só vale quando nenhum `max-width` já decidiu antes.
+     Um `aspect-ratio: auto` no `<img>` foi testado e não mudou nada.
+
+     Como o CSS não tem como ler a razão de aspecto de uma imagem, ela vem do PHP
+     numa variável (`--proporcao-capa`, largura dividida pela altura do arquivo),
+     e o teto passa a ser de largura: `70vh` vezes a razão é a largura máxima em
+     que a altura ainda cabe em 70% da tela. Sobra UMA restrição, de largura; a
+     altura sai da razão sozinha e não há caminho para deformar.
+
+     Para a capa do livro (0,667), numa janela de 720px: o teto de altura são
+     504px, o que dá **336px** de largura. Para uma foto deitada, a mesma conta
+     (70vh x 2,4) passa dos 620px da coluna, e o teto real vira a própria coluna —
+     imagem deitada nem sente este bloco. O `1` no `var()` é o que evita o pior
+     caso se a variável faltar: sem ela, o teto é um quadrado, não a imagem
+     inteira numa faixa.
+
+  2. O CENTRAMENTO. `.prose figure > img { margin: 0 }` tira as margens laterais
+     automáticas de dentro da figura, e é o certo para uma imagem que ocupa a
+     coluna inteira: não há sobra para centrar. Numa capa estreitada pelo teto há,
+     e à esquerda ela ficaria com o peso todo de um lado — e a legenda, que é
+     centrada, ficaria fora do eixo da própria imagem. `display: block` é o que faz
+     o `margin-inline: auto` significar alguma coisa; sem ele o `auto` resolve para
+     zero, que é como o `margin: 1.5rem auto` do `.prose img` fica sem efeito hoje.
+*/
+.prose .post-cover img {
+  display: block;
+  margin-inline: auto;
+  max-width: min(100%, calc(70vh * var(--proporcao-capa, 1)));
+}
+
+/*
+  O SUMÁRIO DO ARTIGO
+  ===================
+
+  TODAS as regras daqui usam DOIS níveis (`.prose .toc-container`) porque este
+  bloco nasce DENTRO do `.prose`: o índice é inserido no conteúdo pelo filtro
+  `vc_sumario_do_artigo()`, não impresso ao lado dele. E as regras que o `.prose`
+  já tem para lista e link valem (0,1,1) — mais que uma classe sozinha —, então
+  sem o segundo nível elas ganhariam a disputa: o `ol` manteria o `margin: 0 0
+  1.7em` e cada item do índice sairia sublinhado como link de corpo de texto.
+
+  A superfície é a MESMA do bloco de metadados (`--paper-alt` sobre `--line`), de
+  propósito: os dois são apartes do texto — um antes, um no meio — e dois apartes
+  com a mesma cara se leem como o mesmo recurso, não como dois enfeites.
+*/
+.prose .toc-container {
+  /*
+    Só a margem de baixo. O espaço de cima NÃO é declarado aqui de propósito:
+    `.prose > * + *` já dá 1.7em a todo bloco que segue outro, e escrever
+    `margin: 0 0 1.7em` neste seletor (mais específico) zeraria justamente a
+    margem de cima, colando o sumário no parágrafo anterior. Quando o texto
+    começa direto com um `<h2>`, o índice é o primeiro filho e não deve ter
+    margem de cima nenhuma — e a regra de ritmo já cuida disso sozinha.
+  */
+  margin-bottom: 1.7em;
+  padding: 1rem 1.1rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+/*
+  O rótulo é o mesmo de grupo da barra lateral e do cabeçalho de tema: caixa
+  alta, 0.72rem, 700, 0.12em de espacejamento, `--ink-mute`. 12px é o piso que o
+  site já assumiu para texto em caixa alta.
+*/
+.prose .toc-container__rotulo {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.prose .toc-container__lista {
+  /*
+    O recuo de 1.4em da lista do corpo existe para o marcador caber ao lado de um
+    parágrafo, que já começa recuado por natureza. Aqui a lista É o conteúdo
+    inteiro da caixa: 1.2em basta para o marcador e mantém o texto dos itens
+    alinhado com o rótulo acima.
+  */
+  padding-left: 1.2em;
+  margin-bottom: 0;
+}
+
+.prose .toc-container__lista li + li {
+  /* Menos que os 0.5em do corpo: os itens do índice são uma lista de portas de
+     entrada, não frases que precisam se separar umas das outras. */
+  margin-top: 0.4rem;
+}
+
+/*
+  A numeração fica, e é discreta pelo `::marker`.
+
+  Manter os marcadores nativos e só colori-los é a escolha sem truque: o atalho
+  comum (list-style: none) faz o Safari descartar a semântica de lista e o leitor
+  de tela deixar de anunciar "lista de 16 itens". Numa página que existe para
+  orientar quem tem dificuldade de orientação, perder a contagem anunciada seria
+  trocar acessibilidade por estética.
+*/
+.prose .toc-container__lista li::marker {
+  color: var(--ink-mute);
+}
+
+.prose .toc-container__lista a {
+  color: var(--ink-soft);
+  /*
+    O sublinhado continua — a regra do corpo do texto explica por que ele existe
+    ("para não esconder quais palavras são portas") —, mas com um quarto da
+    opacidade e um pixel de espessura. O corpo precisa do fio forte porque um
+    link é uma palavra entre outras; aqui o item inteiro é o link, dentro de uma
+    caixa rotulada como índice, e 16 linhas sublinhadas da mesma cor viravam
+    textura.
+  */
+  text-decoration-color: rgba(var(--green-rgb), 0.28);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.prose .toc-container__lista a:hover,
+.prose .toc-container__lista a:focus-visible {
+  color: var(--green-deep);
+  text-decoration-color: currentColor;
+}
+
+/* ---------- post list ---------- */
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+/*
+  Two rules, one gap.
+
+  Both `.term-header` and `.section-title` already draw a border-bottom, and
+  `.post-list` draws its own border-top. A list directly under one of those
+  headings therefore showed two parallel lines with a 2.25rem gap between
+  them — visible on every theme, tag, category and maturidade page, and
+  under "notas recentes" on the home.
+
+  The heading's rule is the one that anchors the page, so the list drops its
+  own when it follows a heading that already has one.
+*/
+.term-header + .post-list,
+.section-title + .post-list {
+  border-top: 0;
+}
+
+/*
+  A lista dentro do texto de uma página, que hoje é só a `/blogroll/`.
+
+  Aquele é o único lugar do site em que `.post-list` vive DENTRO de `.prose`, e
+  o `.prose` é dono do ritmo do texto: ele dá `padding-left: 1.4em` a toda `ul` e
+  `margin-top: 0.5em` a todo `li + li`. As duas ganham desta lista — (0,1,1)
+  contra (0,1,0) — e o resultado seria uma lista recuada e com pausas que
+  ninguém escolheu, no meio de uma página cujo assunto é a própria lista.
+
+  O que a lista desfaz aqui são as duas regras do TEXTO, e só elas: o desenho das
+  linhas continua sendo o de `.post-item`, o mesmo da `/posts/`. O `margin-bottom`
+  de 1.7em do `.prose ul` fica como está — é o respiro do fim da página, e é o
+  número que todo bloco de texto do site usa ali.
+*/
+.prose .post-list {
+  padding-left: 0;
+}
+
+.prose .post-list > .post-item {
+  margin-top: 0;
+}
+
+/*
+  E as duas margens de DENTRO da linha, que são do TEXTO e não da lista.
+
+  `.prose p` (0,1,1) marca `margin: 0 0 1.7em` em todo parágrafo e `.prose h2`
+  marca `margin-top: 2.2em` em todo título de nível 2. As duas ganham do
+  `.post-item__meta` e do `.post-item__title`, que são (0,1,0) — e são essas duas
+  que desenham a linha. Medido na `/blogroll/` antes destas regras: o vão entre a
+  linha do feed e o nome do blog era de 56px, e cada linha da lista ocupava
+  179px de altura, com a página inteira em 2220px.
+
+  É o mesmo caso das duas de cima, uma camada mais fundo: o vão do texto aplicado
+  a uma linha que não é texto. Quem manda aqui é o `.post-item`, e os números são
+  os dele: `0.45rem` embaixo do rótulo e zero em volta do título.
+*/
+.prose .post-list .post-item__meta {
+  margin-bottom: 0.45rem;
+}
+
+.prose .post-list .post-item__title {
+  margin: 0;
+}
+
+.post-item {
+  padding: 1.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.post-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  /*
+    0.85rem, up from 0.75rem. This is the one line that dates every note, and
+    at 12px it read tight on a phone - the same floor the mobile pass already
+    raised elsewhere. The figures are tabular so the slashes of 26/09/2026
+    stack down the column instead of drifting with the digit widths.
+  */
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-mute);
+}
+
+/*
+  `text-wrap: balance` WAS HERE, and it was the wrong tool for a title that can
+  run to two or three lines. Balancing spreads the words evenly, so the first
+  line stops well before the column ends: measured on the home listing, two-line
+  titles were leaving 46% and 48% of the first line EMPTY - 285px and 301px of
+  blank space beside a title that had room to fill it. `pretty` keeps what the
+  `balance` was here for (no single word stranded on the last line) without
+  paying for it with a hole in the first.
+*/
+.post-item__title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.post-item__title a {
+  color: var(--ink);
+}
+
+.post-item__title a:hover {
+  color: var(--green);
+  text-decoration: none;
+}
+
+/*
+  No summary under the title, in any list. The opening paragraph of an article
+  repeated under its own title is the same sentence read twice, and the archive
+  of a theme is for choosing between texts, not for reading them.
+
+  The title used to carry a bottom margin to hold that paragraph away from
+  itself, with `:last-child` cancelling it where there was none. Both are gone
+  with the element.
+*/
+
+/* ---------- post list editorial (home) ---------- */
+
+.post-item--editorial {
+  padding-block: 1.25rem;
+}
+
+.post-item__theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.post-item__theme a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.post-item__theme a:hover {
+  color: var(--green);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 0.15em;
+}
+
+.post-item__theme .meta-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--green);
+}
+
+.post-item--editorial .post-item__title {
+  font-size: clamp(1.15rem, 2.5vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.post-item--editorial .post-item__title a {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.post-item--editorial .post-item__title a:hover {
+  color: var(--green-deep);
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--green-rgb), 0.35);
+  text-underline-offset: 0.18em;
+}
+
+/* ---------- cards / grids ---------- */
+
+/*
+  Two shapes, one grid.
+
+  `min(100%, 220px)` rather than a bare 220px: a bare minimum wider than the
+  container forces the track to overflow. This lets the track collapse to
+  the available width on very narrow screens.
+
+  Where the class sits on a plain <ul> the cards are its direct children and it
+  is the grid itself. Inside a group the layout support wraps the children in a
+  div of its own, so the wrapper has to be the grid instead. The group must then
+  stop being one: as a grid with a single child it would hand the wrapper one
+  track of its own, and the grid would collapse into a narrow column (measured:
+  one column of 206px, cards stacked).
+*/
+.grid,
+.grid > .wp-block-group__inner-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wp-block-group.grid {
+  display: block;
+}
+
+.card {
+  display: block;
+  padding: 1.1rem 1.2rem;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+
+.card:hover {
+  border-color: var(--green);
+  text-decoration: none;
+}
+
+.card__title {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card__meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+
+/*
+  A card that is not a link.
+
+  `.card:hover` exists to say "this responds to a click", so a static card has
+  to opt out of it. Without this the colophon would advertise nineteen things
+  that do nothing when you press them.
+*/
+.card--static:hover {
+  border-color: var(--line);
+}
+
+/*
+  The sentence inside a card. `.card__meta` holds a count or a date and sits at
+  0.78rem, which is too small to carry a whole sentence; this is the body size
+  for a card that is meant to be read rather than scanned.
+*/
+.card__text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ---------- footer ---------- */
+
+.colophon {
+  padding: 1.5rem 1.25rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper-alt);
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+}
+
+.colophon__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1080px;
+}
+
+.colophon__badges {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.colophon__badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.colophon__badge:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.colophon__badge img {
+  display: block;
+  height: auto;
+  border-radius: 4px;
+}
+
+.not-by-ai-picture {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.colophon a {
+  color: var(--ink-soft);
+}
+
+/* ---------- changelog timeline ---------- */
+
+.changelog-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  margin-top: 2rem;
+}
+
+.changelog-entry {
+  position: relative;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.changelog-entry:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.changelog-entry__date {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.changelog-entry__content {
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.changelog-entry__content p {
+  margin: 0 0 0.85rem;
+}
+
+.changelog-entry__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- term header ---------- */
+
+.term-header {
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.term-header__kind {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.term-header__name {
+  margin: 0;
+  font-size: clamp(1.8rem, 3.6vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.term-header__desc {
+  margin: 0.6rem 0 0;
+  color: var(--ink-soft);
+}
+
+/* ---------- empty ---------- */
+
+.empty {
+  padding: 2rem 1.25rem;
+  background: var(--paper-alt);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--ink-mute);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+/* ---------- utility: layout rhythm (replaces inline styles) ---------- */
+
+.kicker {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Left aligned, like every other block on the site. `text-align` is left to
+   the document default on purpose, and it has to be stated here rather than on
+   the intro: the kicker and the intro are siblings. */
+.hero {
+  margin-bottom: 3.5rem;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: clamp(2.1rem, 5vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+/*
+  The opener is one column: greeting, portrait, heading, paragraphs. It used
+  to be a row, with the portrait on one side and the text on the other, which
+  pushed the reading start to the right of the fold — the portrait was the
+  first thing seen and the heading only after it.
+
+  The column starts at the left edge, in line with the rest of the page. The
+  text block keeps the full width: as a flex child it would otherwise shrink
+  to its content, and the paragraphs would wrap at a width nobody chose.
+*/
+.hero__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+/* A circle. `object-fit` keeps the crop honest: the frame is square and the
+   photo fills it, so nothing is distorted. */
+.hero__photo {
+  flex: 0 0 auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hero__text {
+  width: 100%;
+  min-width: 0;
+}
+
+/* On a narrow screen the circle shrinks: at 180px it would take most of the
+   width of a phone, and the greeting and the heading are what the reader
+   came for. */
+@media (max-width: 640px) {
+  .hero__photo {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+/*
+  A medida desta coluna, agora em pixel e com o número medido.
+
+  Era `60ch`, e `ch` é a largura do algarismo ZERO, não a da letra média — aqui
+  isso computava para 543px. Contando os caracteres que de fato caem na primeira
+  linha RENDERIZADA, essas 543px davam 77 caracteres por linha, acima dos 75 que
+  se costuma recomendar. Com 480px a linha fica em 69 caracteres, dentro da
+  faixa.
+
+  Fixo em pixel e não em `ch` pelo mesmo motivo que `--content-max`: um valor em
+  `ch` se resolve contra a fonte do momento da medida, e este site já trocou de
+  fonte uma vez no meio do caminho.
+
+  O custo está medido e é honesto: a chamada passa de TRÊS para QUATRO linhas,
+  porque as mesmas palavras precisam de mais linhas numa coluna mais estreita.
+  É uma linha a mais em troca de duas dezenas de caracteres a menos por linha.
+*/
+.hero__lede {
+  max-width: 480px;
+  margin: 1rem 0 0;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+/* The closing line carries the entry points, so it reads as part of the
+   prose rather than as a row of controls. */
+.hero__lede--links {
+  margin-top: 1.5rem;
+}
+
+.hero__lede--links a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 0.2em;
+}
+
+.hero__lede--links a:hover {
+  color: var(--green-deep);
+  text-decoration-color: currentColor;
+}
+
+.section + .section {
+  margin-top: 4rem;
+}
+
+
+.section__desc {
+  margin: -0.6rem 0 1.5rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.section__foot {
+  margin-top: 1.5rem;
+}
+
+/*
+  No rule above this line: the article ends with whitespace, not a divider.
+  A hairline here added a third horizontal line to the page (after the header
+  and the sidebar edge) for no informational gain.
+*/
+.article__footer {
+  margin-top: 3.5rem;
+}
+
+/*
+  The term list was removed from PostLayout on 2026-09-28 along with the tags
+  it held. Nothing else used this block.
+*/
+
+.article__back {
+  margin: 2.5rem 0 0;
+  font-size: 0.88rem;
+}
+
+/*
+  A data, abrindo o fecho da nota.
+
+  0.85rem é o mesmo piso das outras linhas de metadados do site — a do cabeçalho da
+  nota e a das listas —, e a cor é `--ink-mute`, a mesma das duas. O que torna esta
+  linha discreta não é um estilo novo: é estar pequena, apagada e no fim.
+
+  NO TEXTO ela vem ANTES do compartilhar, logo depois do último parágrafo, e ali o
+  vão com o texto já é dado pelo `article__footer` (3.5rem). O `2rem` daqui é o
+  respiro entre a data e o que vem depois dela — por isso a regra abaixo zera a
+  margem só quando ela é a primeira do rodapé. No VÍDEO, que não tem bloco de
+  compartilhar, ela continua depois do link de voltar e usa os 2rem de sempre.
+*/
+.article__dates {
+  margin: 2rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.article__footer .article__dates:first-child {
+  margin-top: 0;
+}
+
+.article__date {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+  line-height: 1.4;
+}
+
+.article__footer .article__date:first-child {
+  margin-top: 0;
+}
+
+/* ---------- post connections (citadas e backlinks) ---------- */
+.post-connections {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.post-connections__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.post-connections__title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-mute);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.post-connections__title .meta-icon {
+  display: inline-flex;
+  color: var(--ink-mute);
+}
+
+.post-connections__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.post-connections__list li {
+  margin: 0;
+  padding: 0;
+}
+
+.post-connections__list a {
+  display: inline-block;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--ink);
+  text-decoration: none;
+  text-transform: lowercase;
+  border-bottom: 1px dotted var(--line-strong);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.post-connections__list a:hover {
+  color: var(--green-deep);
+  border-bottom-color: currentColor;
+}
+
+/* ---------- related notes (end of a post) ---------- */
+
+/*
+  Cada linha diz POR QUE está ali, e é isso que separa isto de um "você também
+  pode gostar" genérico. Uma recomendação que o leitor não consegue conferir
+  não é uma recomendação, é ruído: ele clica, não gosta, e passa a ignorar as
+  próximas. O motivo sai pequeno e em tom menor para não competir com o título,
+  que é o que se lê primeiro.
+
+  A barra à esquerda é o mesmo recurso da coluna de navegação - ela marca sem
+  precisar de caixa nem de fundo - e acende em verde no hover, que é o único
+  sinal de que a linha inteira é um link.
+*/
+.related {
+  margin-top: 2.5rem;
+}
+
+.related__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.related__link {
+  display: block;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--line);
+  text-decoration: none;
+}
+
+.related__link:hover {
+  border-left-color: var(--green);
+}
+
+/*
+  Era `text-wrap: balance` aqui também. Como no título da lista, ele partia a
+  linha antes do fim só para as duas ficarem parecidas: medido no "continue
+  lendo", um título deixava 31% da primeira linha vazio. `pretty` mantém o
+  motivo de o `balance` estar aqui — não deixar uma palavra órfã na última
+  linha — sem abrir o buraco na primeira.
+*/
+.related__title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.related__link:hover .related__title {
+  color: var(--green-deep);
+  text-decoration: underline;
+}
+
+.related__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+
+/*
+  O separador é desenhado por quem vem DEPOIS, e não é um <span> solto entre os
+  dois. Como item de flex ele ficaria órfão no fim da linha quando o motivo e a
+  data quebrassem - exatamente o que a linha de metadados do cabeçalho do artigo
+  já resolveu deste mesmo jeito.
+
+  A REGRA É `* + *`, e não `.related__motivo::before` como era antes. O motivo
+  passou a ser o primeiro item da linha (a data é que fecha, agora), então o
+  ponto mudou de dono junto: quem vier depois leva o ponto, seja o motivo seja
+  a data.
+*/
+.related__meta > * + *::before {
+  content: '·';
+  margin-right: 0.45rem;
+}
+
+/* ---------- share (end of a post) ---------- */
+
+/*
+  The label borrows the line under the article, so sharing reads as one more
+  piece of the article's metadata instead of a control panel bolted on.
+  It sits under the text with a wider margin, because it is a different kind
+  of thing: the metadata describes the text, this acts on it.
+*/
+.post-share {
+  margin-top: 2.25rem;
+}
+
+.post-share__label {
+  margin: 0 0 0.75rem;
+  color: var(--ink-mute);
+  font-size: 0.82rem;
+}
+
+.post-share__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/*
+  Sized for a thumb, not for a mouse. Most readers are on a phone, and these
+  are the smallest targets on the page - 40px tall with real space between
+  them, so nobody has to aim.
+
+  Outlined by default and filled only for the primary action, which is the
+  same order the /livros/ cards use: outline is what stays quiet when there
+  are several, fill is what marks the one you came for.
+*/
+.post-share__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  /*
+    44px, not 40. These are the only filled controls on the page, so showing
+    them only pays off if a thumb can actually hit them; 40px measured under
+    the comfortable minimum.
+  */
+  min-height: 44px;
+  padding: 0.4rem 0.95rem;
+  background: transparent;
+  border: 1px solid var(--field-border);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  /* The reset matters: `button` does not inherit the page font on its own. */
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.post-share__btn:hover {
+  background: var(--green-wash);
+  border-color: var(--green);
+  color: var(--green-deep);
+  text-decoration: none;
+}
+
+.post-share__btn--primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--on-accent);
+}
+
+.post-share__btn--primary:hover {
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  color: var(--on-accent);
+}
+
+.post-like__btn {
+  transition: all 0.2s ease;
+}
+
+.post-like__btn svg {
+  color: #e05252;
+  transition: transform 0.2s ease;
+}
+
+.post-like__btn:hover svg {
+  transform: scale(1.15);
+}
+
+.post-like__btn--liked {
+  background: #fdf2f2 !important;
+  border-color: #f8b4b4 !important;
+  color: #c81e1e !important;
+}
+
+.post-like__btn--liked svg {
+  fill: #e05252;
+  stroke: #e05252;
+}
+
+[data-theme='dark'] .post-like__btn--liked {
+  background: rgba(224, 82, 82, 0.15) !important;
+  border-color: rgba(224, 82, 82, 0.4) !important;
+  color: #fca5a5 !important;
+}
+
+.post-like__count {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/*
+  Green, because it is a confirmation and not a caption. `min-height` keeps
+  the line reserved, so the footer does not jump when the message appears.
+*/
+.post-share__status {
+  min-height: 1.2em;
+  margin: 0.7rem 0 0;
+  color: var(--green-deep);
+  font-size: 0.82rem;
+}
+
+/* Two per row is the most that fits comfortably on a phone. */
+@media (max-width: 430px) {
+  .post-share__actions {
+    gap: 0.5rem;
+  }
+
+  .post-share__btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.83rem;
+  }
+}
+
+/* ---------- comentários zen e minimalistas ---------- */
+
+.post-comments {
+  margin: 3.5rem 0 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.post-comments__header {
+  margin-bottom: 2rem;
+}
+
+.post-comments__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.post-comments__count {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+
+.post-comments__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.post-comment {
+  padding: 1.25rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.post-comment .children {
+  list-style: none;
+  padding-left: 1.5rem;
+  margin-top: 1.25rem;
+  border-left: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.post-comment__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+}
+
+/*
+   O avatar de quem comentou ou reagiu. Redondo e pequeno:
+   ele acompanha a linha do nome, não compete com o texto.
+*/
+.post-comment__avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.post-comment__avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.post-comment__author {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.post-comment__author a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+}
+
+.post-comment__dot {
+  color: var(--ink-mute);
+}
+
+.post-comment__date {
+  color: var(--ink-mute);
+  font-size: 0.8rem;
+}
+
+/*
+   O verbo da interação: "curtiu", "republicou", "mencionou".
+   Vem da federação, e sem ele o leitor vê só um nome e um vazio.
+   Mesma cor e mesmo corpo da data, porque é a mesma camada de informação.
+*/
+.post-comment__verbo {
+  color: var(--ink-mute);
+  font-size: 0.8rem;
+}
+
+.post-comment__moderation {
+  margin: 0.4rem 0 0.8rem;
+  font-size: 0.82rem;
+  color: var(--green);
+}
+
+.post-comment__content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.post-comment__content p {
+  margin: 0 0 0.6rem;
+}
+
+.post-comment__content p:last-child {
+  margin-bottom: 0;
+}
+
+.post-comment__reply {
+  margin-top: 0.75rem;
+}
+
+.post-comment__reply a {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+}
+
+.post-comment__reply a:hover {
+  text-decoration: underline;
+}
+
+.post-comments__empty,
+.post-comments__closed {
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+/* Formulário de comentário */
+.post-comments__form-wrapper {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.comment-respond {
+  margin: 0;
+}
+
+.comment-reply-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.comment-reply-title small {
+  margin-left: 0.75rem;
+}
+
+.comment-reply-title small a {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ink-mute);
+  text-decoration: underline;
+}
+
+.post-comments__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.post-comments__field label {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.post-comments__hint {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--ink-mute);
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.comment-notes,
+.logged-in-as {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.logged-in-as a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.comment-form p {
+  margin: 0;
+}
+
+.comment-form-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.comment-form-comment label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.post-comments__field input[type="text"],
+.post-comments__field input[type="email"],
+.post-comments__field input[type="url"],
+.post-comments__field textarea,
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form input[type="url"],
+.comment-form textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comment-form textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.post-comments__field input:focus,
+.post-comments__field textarea:focus,
+.comment-form input:focus,
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(var(--green-rgb), 0.15);
+}
+
+.comment-form-cookies-consent {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+}
+
+.comment-form-cookies-consent input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+.comment-form-cookies-consent label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-submit {
+  margin-top: 0.5rem;
+}
+
+.post-comments__submit,
+.comment-form input[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.6rem 1.6rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--on-ink);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+/*
+  The hover swaps the ink ground for the accent, and the text has to swap
+  with it: `--green-deep` is light in the dark theme, so the white that
+  worked on the resting state would disappear into it.
+*/
+.post-comments__submit:hover,
+.comment-form input[type="submit"]:hover {
+  color: var(--on-accent);
+  background: var(--green-deep);
+  border-color: var(--green-deep);
+  transform: translateY(-1px);
+}
+
+.icon {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/*
+  O marcador de link externo, injetado pelo PHP no início do link.
+
+  Tamanho em `em`, e não em pixel: o mesmo ícone cai num parágrafo de 17px e numa
+  legenda de 13px, e um valor fixo ficaria desproporcional em um dos dois. A cor
+  vem de `--ink-mute` para ele informar sem competir com o texto do link — o link
+  já tem a cor dele, e o marcador é um aviso ao lado, não um segundo destaque.
+
+  `vertical-align` negativo porque um quadrado alinhado pela linha de base parece
+  mais alto que as letras ao lado.
+
+  No hover o marcador assume a cor do link e deixa de ser um corpo estranho
+  dentro dele.
+*/
+.link-externo__icone {
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.25em;
+  vertical-align: -0.08em;
+  color: var(--ink-mute);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.prose a.link-externo,
+a.link-externo {
+  text-decoration: none;
+}
+
+.prose a.link-externo .link-externo__texto,
+a.link-externo .link-externo__texto {
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--green-rgb), 0.45);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.prose a.link-externo:hover .link-externo__texto,
+.prose a.link-externo:focus-visible .link-externo__texto,
+a.link-externo:hover .link-externo__texto,
+a.link-externo:focus-visible .link-externo__texto {
+  color: var(--green-deep);
+  text-decoration-color: currentColor;
+}
+
+.prose a:hover .link-externo__icone,
+.prose a:focus-visible .link-externo__icone,
+a.link-externo:hover .link-externo__icone,
+a.link-externo:focus-visible .link-externo__icone {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- taxonomy icons (theme, maturidade) ---------- */
+
+/*
+  A theme is identified by its own icon. The glyph is decorative — the name
+  is always rendered next to it — so it is marked aria-hidden in the markup
+  and only needs to stay optically aligned with the text.
+
+  These were emojis. The set is Lucide now, which is monochrome and inherits
+  the text colour, so identity would have gone grey and flat: a column of
+  thirteen identical-looking line icons. They carry the site's green instead.
+  That is the part of an emoji's job a line icon cannot do alone — colour was
+  doing real work in the sidebar, and dropping it would make the themes
+  harder to scan, not simpler.
+*/
+.navlink__icon,
+.card__icon,
+.term-header__icon {
+  color: var(--green);
+}
+
+/*
+  Pages carry clay where themes carry green.
+
+  Both groups are rows of icon + label in the same column, so the palette is
+  the cheapest place to say they are different kinds of destination: a theme
+  is a theme you walk into, a page is a room of the site. The specificity here
+  is deliberate — it has to beat the green rule above without relying on source
+  order, since both would otherwise score the same.
+
+  Note what is NOT clay: the rail on the active row. That bar means "you are
+  here", which is one idea across the whole column, so it stays green for a
+  theme and for a page alike. Icon says what kind of thing, rail says where
+  you are.
+*/
+.navlink--page .navlink__icon {
+  color: var(--clay);
+}
+
+/*
+  The card icon is sized by the font-size of its wrapper, not in pixels. That
+  is deliberate and it matters for the migrated HTML: those icons are emitted
+  at `1em`, so a rule that says 1.5rem still lands at 24px, exactly where the
+  emoji used to be. Sizing them in pixels would leave the markup in
+  pages.json and the CSS describing two different things.
+*/
+.card__icon {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.term-header__icon {
+  margin-right: 0.3em;
+}
+
+/* ---------- responsive (mobile-first) ---------- */
+
+/*
+  The base rules above describe the 375px layout. Every media query below is
+  `min-width`, so the cascade only adds complexity as space becomes
+  available:
+
+     600px   large phone / small tablet — breathing room, wider cards
+     860px   tablet+  — two-column shell, navigation permanently expanded
+    1200px   desktop — full sidebar width and article rhythm
+*/
+
+@media (min-width: 600px) {
+  .masthead {
+    gap: 1.5rem;
+    padding: 0 1.75rem;
+  }
+
+  .sidebar {
+    padding: 1.75rem;
+  }
+
+  .content {
+    padding: 2.75rem 2rem 4rem;
+  }
+
+  .colophon {
+    padding: 2rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .nav-drawer__hint {
+    display: inline;
+  }
+}
+
+/*
+  O MENU VOLTA A APARECER NO CELULAR (decisão revista).
+
+  Abaixo de 860px a barra lateral chegou a ser escondida inteira. A razão
+  estava escrita aqui e era boa: sem o aviso de autoria que a coluna tinha, o
+  que sobrava era uma caixa vazia de 41px empurrando o texto, e os links
+  continuavam alcançáveis pelo rodapé e pelo fim da home.
+
+  O que a razão não contava é que o `<details>` "navegar" que está na marcação
+  desde sempre é a MENU INTEIRA — 10 páginas e 13 temas — e até agora ele nunca
+  apareceu em tela nenhuma: escondido junto com o pai em tela estreita e com o
+  `<summary>` fora em tela larga. O rodapé leva quatro links.
+
+  As regras de base do `.sidebar`, lá em cima, JÁ descrevem o desenho de tela
+  estreita (largura inteira, `--paper-alt`, borda embaixo) — o `display: none`
+  era um remendo por cima delas. Tirando o remendo, o disclosure funciona como
+  o próprio CSS sempre previu.
+*/
+
+@media (min-width: 860px) {
+  /* Pointer input does not need the generous touch rows. */
+  .navlink {
+    min-height: 0;
+  }
+
+  .content {
+    padding: 3rem 2rem 4rem;
+  }
+
+  .prose {
+    font-size: 1.08rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .masthead {
+    padding: 0 2.5rem;
+  }
+
+  .content {
+    padding: 3.5rem 3rem 5rem;
+  }
+
+  .colophon {
+    padding: 2rem 2.5rem;
+  }
+}
+
+/*
+  Mobile headline scale.
+
+  Both headlines clamp from a floor meant for a laptop, and at 360-414px the
+  floor always wins: the hero landed at 2.1rem and the article title at 2rem.
+  Measured, that was a comfortable three lines and never filled the fold, but
+  it read a size larger than everything around it - it was the one element
+  still sized for a wider screen. Under 430px the floor drops below 2rem; the
+  380px block below takes the article title one step smaller on the narrowest
+  phones.
+*/
+@media (max-width: 430px) {
+  .hero__title {
+    font-size: 1.85rem;
+  }
+
+  .article__title {
+    font-size: 1.8rem;
+  }
+
+  /*
+    The metadata line and the footer were the last targets under the
+    comfortable size: the theme links measured 17-21px tall and the footer
+    links 18px. The rows look generously spaced on a laptop, but a thumb needs
+    height, not just gaps. `inline-flex` is what makes `min-height` mean
+    anything on an inline anchor.
+  */
+  footer nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* Very narrow phones: the article headline should not fill the screen. */
+@media (max-width: 380px) {
+  .article__title {
+    font-size: 1.7rem;
+  }
+
+  .masthead {
+    gap: 0.5rem;
+    padding: 0 0.9rem;
+  }
+
+  .masthead__brand {
+    font-size: 1.05rem;
+  }
+}
+
+/*
+  Touch targets.
+
+  A 44px minimum is the comfortable size for imprecise pointing, but the
+  desktop sidebar deliberately stays denser so 38 links fit without endless
+  scrolling. `pointer: coarse` scopes this to touch input, leaving the
+  mouse-driven layout untouched.
+*/
+@media (pointer: coarse) {
+  .navlink {
+    min-height: 44px;
+  }
+
+    /*
+      The book actions are compact pills, which is comfortable for a mouse and
+      tight for a thumb. The target grows here while the visual weight stays
+      as it is.
+    */
+    [data-page='livros'] .prose .wp-block-button__link {
+      min-height: 44px;
+    }
+}
+
+/*
+  NO SMOOTH SCROLLING, and it was removed on purpose.
+
+  There used to be a `@media (prefers-reduced-motion: no-preference) { html {
+  scroll-behavior: smooth } }` here. The block did the accessible thing — it
+  gave the animation only to readers who had NOT asked for less motion — but it
+  put the delay in front of every anchor jump for everyone else, and most people
+  never touch that system setting.
+
+  A page that slides when you press a link makes the reader wait for a movement
+  they did not ask for, to reach a place they already chose. `auto` is the
+  browser default and it is now the only behaviour: the jump is instant, for
+  every reader, without anyone having to configure an operating system to get it.
+
+  The `reduce` block below still states `scroll-behavior: auto !important`, and
+  that stays even though it is now redundant — it is the guard that keeps this
+  decision true if a smooth rule is ever added back.
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    /* Caps any looping animation instead of merely speeding it up. */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+  The palette already clears AA everywhere. Readers who ask for more
+  separation get a stronger step between text, surface and boundaries,
+  without introducing harsh black-on-white polarities.
+*/
+@media (prefers-contrast: more) {
+  :root {
+    --ink: #14171a;
+    --ink-soft: #3a4045;
+    --ink-mute: #4a5158;
+    /* 3.30:1 on the card. This mode exists to show structure, so the dividers
+       have to reach the 3:1 non-text floor here — 1.88:1 was quieter than the
+       base theme they are meant to improve on. */
+    --line: #8f8a7d;
+    --line-strong: #7a7568;
+    --field-border: #6b6657;
+    /*
+      NOT #ffffff. That was the only pure white in the system, at luminance
+      1.0 and 17.99:1 against --ink: the polarized contrast that causes
+      halation for photosensitive readers, handed to the person who asked for
+      more comfort. #fbfaf7 keeps this mode stronger than the base one
+      (17.24:1 against 15.00:1) with the surface at 0.964.
+    */
+    --paper-card: #fbfaf7;
+  }
+
+  [data-theme='dark'] {
+    --ink: #f4f2ec;
+    --ink-soft: #c6cbcb;
+    --ink-mute: #aab0b0;
+    /* 3.36:1 and 4.14:1 on the card. The base values (1.93 and 2.58) were
+       left untouched by this mode, which defeated its purpose. */
+    --line: #6e7576;
+    --line-strong: #7d8484;
+    --field-border: #8b9292;
+  }
+}
+
+/* ---------- back to top ---------- */
+
+/*
+  Floating control, shown only after the reader has moved past the first
+  screen.
+
+  It is `display: none` by default and the script opts it in with
+  `data-visible`, so a reader without JavaScript never sees a control that
+  could not work. `position: fixed` keeps it out of the document flow, so
+  it never affects the layout.
+*/
+.to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--paper-card);
+  border: 1px solid var(--field-border);
+  border-radius: 50%;
+  color: var(--green);
+  cursor: pointer;
+  /*
+    The border alone separates the button from the page. It previously also
+    carried a drop shadow, which made the one floating control on an
+    otherwise flat page look like it belonged to a different design.
+  */
+}
+
+.to-top[data-visible] {
+  display: inline-flex;
+}
+
+.to-top:hover {
+  background: var(--green-wash);
+  border-color: var(--green);
+}
+
+/* ---------- print ---------- */
+
+@media print {
+  .masthead,
+  .sidebar,
+  .colophon,
+  .theme-toggle,
+  .to-top {
+    display: none;
+  }
+}
+
+/* ---------- paginação ---------- */
+
+/*
+  A paginação de `/posts/` e dos arquivos de tema.
+
+  As classes são as MESMAS do pager do site (`paginacao__lista`,
+  `paginacao__botao`), para o desenho não mudar. Quem escreve a marcação é o
+  `vc_paginacao()`, em functions.php, em cima do `paginate_links()` do núcleo —
+  a conta é do WordPress; estas regras só vestem o resultado.
+
+  Fica no `global.css`, e não no `filtros.css`, porque os arquivos de tema também
+  paginam e não carregam a folha do filtro.
+*/
+.paginacao {
+  margin-top: 2rem;
+}
+
+.paginacao__lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.paginacao__botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.paginacao__botao:hover:not(.paginacao__botao--off) {
+  border-color: var(--green);
+  color: var(--ink);
+}
+
+.paginacao__botao[aria-current='page'] {
+  border-color: var(--green);
+  background: var(--green-wash);
+  color: var(--green-deep);
+  font-weight: 600;
+}
+
+/*
+  A seta da ponta. Não é link porque não há para onde ir, mas continua
+  desenhada: sem ela o pager mudaria de largura a cada troca de página.
+*/
+.paginacao__botao--off {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (pointer: coarse) {
+  .paginacao__botao {
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+   SIDEBAR FIXA NO DESKTOP (>= 860px)
+   ==========================================================================
+   Abaixo de 860px nada muda: `.sidebar` continua sendo o drawer sobreposto
+   original, aberto por `[data-menu-open="true"]`.
+
+   A partir de 860px (o breakpoint "two-column shell" do tema) o painel vira
+   coluna fixa a direita, usando `--sidebar-w` (268px), e o conteudo reserva
+   o espaco dela. O botao sanduiche recolhe/reexpande.
+
+   Estado no <html>:
+     (atributo ausente)       -> expandida (padrao; tambem o caso sem JS)
+     data-sidebar="collapsed" -> recolhida pelo usuario
+
+   O atributo e aplicado pelo script inline do `header.php`, antes da
+   primeira pintura, a partir de localStorage['vc_sidebar_state'].
+
+   IMPORTANTE: `860px` tem de ser identico a `consultaDesktop` em site.js.
+   ========================================================================== */
+
+@media (min-width: 860px) {
+
+	/* 1. O painel deixa de ser off-canvas e assume a largura prevista. */
+	.sidebar {
+		width: var(--sidebar-w, 268px);
+		transform: translateX(0);
+		visibility: visible;
+		box-shadow: none;
+		transition: transform 0.2s ease, visibility 0.2s ease;
+	}
+
+	/* 2. O conteudo reserva a coluna. O padding fica no <body> para valer
+	      tambem para o cabecalho sticky e o rodape. */
+	body {
+		padding-right: var(--sidebar-w, 268px);
+		transition: padding-right 0.2s ease;
+	}
+
+	/* 3. Estado recolhido.
+	      -----------------------------------------------------------------
+	      `position: fixed` AQUI NÃO É DETALHE: é o que impede a barra de
+	      ESTICAR O DOCUMENTO.
+
+	      Recolhida, ela sai da tela por `translateX(100%)` — e uma caixa
+	      comum empurrada para fora da direita faz o documento ficar mais
+	      largo. Foi o que a medicao mostrou: `scrollWidth` de 1543px numa
+	      janela de 1275, com a barra inteira em 1275->1543. Exatamente os
+	      268px dela, e uma barra de rolagem horizontal embaixo da pagina.
+
+	      Um elemento `fixed` nao entra na conta da rolagem: sai do fluxo E
+	      do documento. Era assim que a barra se comportava antes de a coluna
+	      passar para o fluxo (o que resolveu a rolagem dupla) — e e assim que
+	      ela volta a se comportar enquanto esta guardada, onde nao ha nada
+	      para alinhar com ela: o painel do `body::after` esta `display: none`
+	      neste estado. */
+	html[data-sidebar="collapsed"] .sidebar {
+		position: fixed;
+		transform: translateX(100%);
+		visibility: hidden;
+	}
+
+	html[data-sidebar="collapsed"] body {
+		padding-right: 0;
+	}
+
+	/* 4. Controles que so existem no drawer mobile. */
+	.sidebar-backdrop,
+	.sidebar__close {
+		display: none;
+	}
+
+	/* 5. "Voltar ao topo" e fixed a direita e ficaria atras do painel. */
+	.to-top {
+		right: calc(var(--sidebar-w, 268px) + 1.5rem);
+		transition: right 0.2s ease;
+	}
+
+	html[data-sidebar="collapsed"] .to-top {
+		right: 1.5rem;
+	}
+
+	/* 6. UMA ROLAGEM SO.
+	      -----------------------------------------------------------------
+	      MEDIDO: numa janela de 720px, o conteudo desta barra tem 881px. Com
+	      `height: 100dvh` e `overflow-y: auto`, ela era um SEGUNDO conteiner
+	      de rolagem ao lado do primeiro — duas barras de rolagem na mesma
+	      tela, e a roda do mouse fazendo uma coisa de cada lado do painel.
+
+	      `position: sticky` NAO RESOLVE, e vale registrar a conta: preso pelo
+	      topo, os 161px que passam da janela ficariam inalcancaveis para
+	      sempre; preso pelo rodape, o inalcancavel seria o topo. Um elemento
+	      maior que a janela nao cabe numa janela. Entao ele volta para o
+	      fluxo e rola COM a pagina — que e o unico jeito de existir uma
+	      rolagem so sem esconder item nenhum.
+
+	      O PAINEL FICA. Quem desenha o fundo e a borda da coluna passa a ser
+	      um pseudo-elemento do <body>, e nao mais a propria barra: assim a
+	      coluna continua parecendo coluna depois que os links acabam, em vez
+	      de o papel de tras aparecer do nada no meio da pagina.
+
+	      E O ANCORA E A CAIXA DO <body>, NAO O `.layout`. Isto foi erro
+	      medido DUAS vezes, e as duas medidas ficam registradas, porque as
+	      duas eram invisiveis a olho nu:
+
+	      1) Presa ao `.layout`, a barra saiu em 754->1022 numa janela de
+	      1290: a caixa do `.layout` ja exclui os 268px do `padding-right` do
+	      <body>, entao o `right: 0` a encostava no fim do CONTEUDO — em cima
+	      da coluna de texto, que termina em 814.
+
+	      2) Presa ao <body>, ela ficou certa (1007->1275) e foi o PAINEL que
+	      saiu do lugar: `position: fixed` se mede pelo viewport, e o viewport
+	      tem os 15px da barra de rolagem que a caixa do <body> nao tem. O
+	      painel ia de 1022 a 1290, a barra de 1007 a 1275: 15px de
+	      desencontro — exatamente a largura da barra de rolagem.
+
+	      Por isso o painel tambem e `absolute`: os dois passam a se medir
+	      pela MESMA caixa e o desencontro some por construcao, em vez de
+	      ficar dependendo de um numero magico que muda com o navegador e o
+	      sistema de quem le. Uma barra e um painel, os dois ancorados no
+	      <body>: 1007->1275. */
+	body {
+		position: relative;
+	}
+
+	.sidebar {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: auto;
+		height: auto;
+		max-height: none;
+		overflow-y: visible;
+		/*
+		   A barra TAMBEM pinta a propria coluna, e nao so o painel.
+
+		   Isto foi erro medido numa pagina CURTA (`/contato/`, 910px de
+		   documento): ali a caixa do <body> tem 813px, porque quem estica o
+		   documento e a propria barra — e o painel, que termina junto com o
+		   <body>, parava 97px antes do fim da barra. Os ultimos links ficavam
+		   sobre o papel de tras, sem coluna nenhuma atras deles.
+
+		   Com as duas pinturas a coluna fica coberta nos dois casos: numa
+		   pagina longa quem cobre e o painel (a barra tem so a altura dos
+		   links), numa curta quem cobre e a barra. As duas bordas esquerdas
+		   caem na mesma coluna de pixel, entao nao aparece linha dobrada.
+		*/
+		background: var(--paper-alt);
+		border-left: 1px solid var(--line);
+	}
+
+	body::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 40;
+		width: var(--sidebar-w, 268px);
+		background: var(--paper-alt);
+		border-left: 1px solid var(--line);
+		/*
+		   O painel passa por cima do cabecalho (como a barra fixa passava) e
+		   nao pode interceptar clique nenhum — quem clica ali esta clicando no
+		   cabecalho, que continua por baixo.
+		*/
+		pointer-events: none;
+	}
+
+	html[data-sidebar="collapsed"] body::after {
+		display: none;
+	}
+}
+
+/* 6. Sem animacao para quem pediu menos movimento. */
+@media (min-width: 860px) and (prefers-reduced-motion: reduce) {
+	.sidebar,
+	body,
+	.to-top {
+		transition: none;
+	}
+}
+
+/* ============================================================
+   A MARCA SE APRESENTA — UMA VEZ
+   ============================================================ */
+/*
+   A foto e o nome entram quando a página abre, e depois não se mexem mais.
+
+   POR QUE NÃO UM MOVIMENTO CONTÍNUO. Este arquivo já registra a decisão, no
+   bloco da rolagem suave: movimento que ninguém pediu faz a pessoa esperar por
+   ele. Um laço no cabeçalho é a versão extrema disso — ele não aparece uma vez e
+   sai de cena, ele está em TODA página, e a única forma de ficar livre dele é
+   sair do site. Uma entrada de meio segundo dá vida à marca sem cobrar nada de
+   quem já está lendo.
+
+   POR QUE `backwards`, E NÃO `both`. Medido no navegador com a animação isolada:
+   com `both`, o `transform` final fica aplicado PARA SEMPRE e vence o `scale` do
+   hover — a cor da borda virava `--green` e o tamanho não saía de 1, ou seja, o
+   realce aparecia pela metade.
+
+   E o medo que me fez usar `both` não se sustenta: ele estava ali para que quem
+   tem "reduzir movimento" ligado não ficasse com a marca apagada, já que o bloco
+   de `prefers-reduced-motion` reduz a duração a 0,01ms. Mas sem preenchimento
+   nenhum vale o estilo de BASE ao fim da animação, e a base não declara
+   `opacity` — é visível. O `both` evitava um problema que não existe e criava um
+   que existe.
+
+   SÓ `opacity` E `transform`. Nenhuma das duas passa pelo layout: o campo de
+   busca ao lado não se desloca enquanto a marca entra.
+*/
+@keyframes vc-marca-entra {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vc-marca-foto {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/*
+   O `.masthead` na frente do seletor é proposital: as regras de base da marca
+   estão mais acima no arquivo, e com a mesma especificidade quem vem depois
+   ganha — mas uma regra nova escrita lá em cima, com o nome mais longo, venceria
+   esta. É o mesmo degrau que o bloco de 380px documenta.
+*/
+.masthead .masthead__brand {
+  animation: vc-marca-entra 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+   A foto chega 120ms DEPOIS do nome, e com a mesma curva da gaveta lateral. O
+   atraso é o que faz a marca ser lida como duas coisas: primeiro o nome, que é o
+   que se lê; depois a foto, que é o que se reconhece.
+*/
+.masthead .masthead__brand img {
+  animation: vc-marca-foto 620ms cubic-bezier(0.16, 1, 0.3, 1) 120ms backwards;
+}
+
+/*
+   E ELA RESPONDE AO MOUSE E AO DEDO.
+
+   O realce é o do resto do site: o token `--green` no que era `--line`, e um
+   passo de escala pequeno o bastante para ser sentido sem virar salto. `:active`
+   existe por causa do celular, onde não há hover — sem ele, no dedo a marca não
+   responderia a nada.
+*/
+.masthead .masthead__brand img {
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.masthead .masthead__brand span {
+  transition: color 0.18s ease;
+}
+
+.masthead .masthead__brand:hover img,
+.masthead .masthead__brand:focus-visible img,
+.masthead .masthead__brand:active img {
+  transform: scale(1.09);
+  border-color: var(--green);
+}
+
+.masthead .masthead__brand:hover span,
+.masthead .masthead__brand:focus-visible span,
+.masthead .masthead__brand:active span {
+  color: var(--green);
+}
+/* ---------- os temas da home, em chips ---------- */
+
+/*
+   A grade de doze cartoes virou faixa de chips: icone e nome, sem contagem.
+   O cartao existia para fazer volume numa grade de tres colunas; numa faixa
+   que quebra sozinha, o mesmo conteudo ocupa tres linhas.
+
+   A CONTAGEM NAO ENTRA, pela mesma razao que saiu da barra lateral: "7 textos"
+   e informacao de catalogo, nao de leitura, e envelhece na tela.
+*/
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-card);
+  color: var(--ink-soft);
+  font-size: 0.87rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.chips a:hover,
+.chips a:focus-visible {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.chips__icone {
+  display: inline-flex;
+  color: var(--green);
+}
+
+/* ---------- o cabeçalho de seção ---------- */
+
+/*
+   POR QUE O CABEÇALHO VIROU UM BLOCO COM FUNDO.
+
+   O título tinha filete embaixo, e a lista tem filete em cima (`.post-list`).
+   O tema só cancela o da lista quando ela vem LOGO DEPOIS do título, e com a
+   descrição no meio isso nunca acontecia: a descrição ficava entre dois filetes,
+   com a mesma moldura dos itens. "os longos, com título, escritos com calma"
+   lia como se fosse o primeiro texto da lista.
+
+   O fundo resolve na origem: o cabeçalho deixa de ser uma linha entre duas e
+   passa a ser uma superfície. O filete de topo da lista perde a função de
+   separar o título do conteúdo, e sai.
+*/
+.section__cabeca {
+  margin: 0 0 0.35rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius);
+  background: var(--paper-alt);
+}
+
+.section__cabeca .section-title {
+  margin-bottom: 0.3rem;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.section__cabeca .section__desc {
+  margin: 0;
+}
+
+.section__cabeca + .post-list {
+  border-top: 0;
+}
+
+/* ---------- o invólucro do h-card da marca ---------- */
+
+/*
+   O `h-card` precisa de um elemento que ENVOLVA o link, e não do link em si: com
+   `h-card u-url` no próprio `<a>`, o parser do microformats2 devolve a lista de URL
+   vazia, e sem `u-url` o h-card não é reconhecido como o do domínio.
+
+   `display: contents` é o que faz o invólucro não existir para o layout: o
+   `masthead` é `flex` com `space-between`, e um terceiro item empurraria as
+   ferramentas para o meio da barra.
+*/
+.masthead__quem {
+  display: contents;
+}

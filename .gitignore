@@ -1,0 +1,19 @@
+# Logs: nascem na raiz do tema quando o PHP reclama
+error_log
+*.log
+logs/
+
+# Lixo de sistema e editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Dependencias e artefatos que nao pertencem ao tema
+node_modules/
+vendor/
+*.zip
+*.tar.gz
+*.bak
+*.old
+*.orig

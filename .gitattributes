@@ -1,0 +1,4 @@
+# Preserva o fim de linha original de cada arquivo.
+# O tema mistura CRLF e LF de proposito, e a normalizacao do git mudaria os
+# bytes na primeira checagem. Aqui o conteudo e guardado como esta.
+* -text

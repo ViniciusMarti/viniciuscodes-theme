@@ -1,0 +1,410 @@
+/*
+   A LINHA DO TEMPO DAS VIAGENS E DAS MORADIAS.
+
+   O TRAÇO E O PONTO SÃO DESENHADOS, e não elementos na marcação. Um `<span>` por
+   linha só para desenhar um ponto daria a um leitor de tela onze elementos vazios
+   por página; o `::before` e o `::after` não existem para quem lê, e fazem o
+   mesmo trabalho.
+
+   O PONTO É O QUE DIFERENCIA MORADIA DE VIAGEM, e a diferença é de forma, não de
+   cor: cheio e verde para onde eu morei, vazado para por onde eu passei. A cor
+   sozinha não serviria — quem não distingue verde de cinza perderia a única
+   informação que separa as duas coisas na mesma lista.
+
+   O ÚLTIMO ITEM NÃO DESENHA O TRAÇO, e é por isso que a regra existe: um risco
+   saindo do último ponto aponta para um lugar que não está na lista.
+*/
+
+/* ---------- a lista ---------- */
+
+.tempo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tempo__item {
+  position: relative;
+  padding: 0 0 1.9rem 1.85rem;
+}
+
+/* o traço, de um ponto até o próximo */
+.tempo__item::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1.5rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+/* o ponto */
+.tempo__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  box-sizing: border-box;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.tempo__item:last-child {
+  padding-bottom: 0;
+}
+
+.tempo__item:last-child::before {
+  content: none;
+}
+
+/* onde eu morei: ponto cheio */
+.tempo__item[data-tipo='moradia']::after {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+/* ---------- o que se lê ---------- */
+
+.tempo__quando {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0 0 0.1rem;
+  font-size: 0.8rem;
+  color: var(--ink-mute);
+}
+
+.tempo__quando time {
+  font-variant-numeric: tabular-nums;
+}
+
+.tempo__verbo {
+  text-transform: lowercase;
+}
+
+.tempo__lugar {
+  margin: 0;
+  font-size: 1.14rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+/*
+   A MARCA "ATUAL" É O ÚNICO SELO DA PÁGINA, e ela é deduzida da lista: quem
+   escreve a próxima moradia move a marca sem apagar nada. O verde de fundo é o
+   mesmo das pílulas de tema, para o selo não inventar uma cor que o site não tem.
+*/
+.tempo__atual {
+  display: inline-block;
+  margin-left: 0.45rem;
+  padding: 0.08rem 0.5rem;
+  border-radius: 999px;
+  background: var(--green-wash);
+  color: var(--green-deep);
+  font-size: 0.7rem;
+  font-weight: 500;
+  vertical-align: 0.12em;
+}
+
+.tempo__texto {
+  margin: 0.35rem 0 0;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* A abertura é prosa, e a distância dela para a lista é a mesma que separa
+   seções no resto do site. */
+.tempo__abertura {
+  margin-bottom: 2rem;
+}
+
+/* Numa tela larga a coluna do texto pode ceder um pouco para o traço. */
+@media (min-width: 40rem) {
+  .tempo__item {
+    padding-left: 2.2rem;
+  }
+}
+
+/* ---------- os lugares sem data ---------- */
+
+/*
+   A LISTA DE NOMES NÃO TEM MARCADOR NEM SEPARADOR. O `·` entre irmãos foi
+   descartado de propósito: numa lista que quebra em várias linhas, ele fica
+   órfão no começo da linha de baixo. O espaço entre os itens, feito com `gap`,
+   separa sem deixar marca para trás.
+
+   A LINHA NO TOPO SEPARA OS DOIS BLOCOS, e ela é a mesma que separa seções no
+   resto do site. O bloco de cima é a história, com data; este é o que sobrou
+   dela.
+*/
+
+.tempo__outros {
+  margin-top: 2.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+/*
+   A LISTA DE NOMES PASSOU A TER COLUNA, E NÃO FLUXO CONTÍNUO. A troca é
+   consequência dos textos: um lugar com dois textos ocupa três linhas, e num
+   fluxo que quebra sozinho isso empurraria os nomes seguintes para o meio da
+   frase. Com `columns`, cada nome é um bloco, e um bloco não se parte.
+
+   A COLUNA SÓ EXISTE EM TELA LARGA: abaixo de 34rem o nome e os textos de um
+   lugar já ocupam a largura toda, e duas colunas apertariam os dois.
+*/
+.tempo__lugares {
+  columns: 2;
+  column-gap: 2.25rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.tempo__lugar-item {
+  break-inside: avoid;
+  margin-bottom: 0.4rem;
+}
+
+.tempo__lugar-nome {
+  color: var(--ink);
+}
+
+@media (max-width: 34rem) {
+  .tempo__lugares {
+    columns: 1;
+  }
+}
+
+/* ---------- as fotos, em polaroide ---------- */
+
+/*
+   A POLAROIDE É BRANCA NOS DOIS TEMAS, e é a única coisa do site que é. O motivo
+   não é capricho: o quadro branco é o que faz a foto parecer um objeto deitado em
+   cima da página. Trocá-lo por `--paper-card` no tema escuro devolveria a imagem
+   para dentro do layout, e ela voltaria a ser um bloco de conteúdo como qualquer
+   outro.
+
+   NO TEMA ESCURO O BRANCO CEDE UM POUCO, para não estourar contra o fundo: a
+   diferença entre um branco e um branco levemente quente é a diferença entre uma
+   foto em cima da mesa e um clarão na tela.
+
+   TODAS SAEM NO MESMO QUADRADO, e a foto é recortada para caber nele. A fileira
+   fica alinhada e a lista de lugares não muda de altura conforme a orientação da
+   foto — que é o que aconteceria se a moldura seguisse cada original.
+
+   O RECORTE É DO CENTRO, e por isso uma foto muito em pé perde as pontas. Numa
+   foto de celular o assunto costuma estar no meio, mas nem sempre: se alguma
+   perder o que importava, o jeito de resolver é recortar o próprio arquivo na
+   biblioteca de mídia, que aí o centro passa a ser o que você escolheu.
+*/
+
+.tempo__fotos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.25rem 1rem;
+  margin: 1rem 0 0;
+}
+
+.tempo__polaroide {
+  position: relative;
+  flex: 0 0 auto;
+  width: 8.5rem;
+  margin: 0;
+  padding: 0.45rem 0.45rem 0;
+  background: #ffffff;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), 0 8px 18px -10px rgba(0, 0, 0, 0.35);
+  transform: rotate(-1.4deg);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* Cada foto em seu ângulo, e nenhuma exatamente reta: uma fileira alinhada vira
+   uma galeria, e a graça da polaroide é parecer largada ali. */
+.tempo__polaroide:nth-child(even) {
+  transform: rotate(1.6deg);
+}
+
+.tempo__polaroide:nth-child(3n) {
+  transform: rotate(-0.5deg);
+}
+
+/*
+   AO PASSAR O MOUSE A FOTO ENDIREITA E SOBE, e é a mesma coisa que uma mão
+   fazendo: pegar o papel da mesa. O giro volta a zero porque é o endireitar que
+   diz "esta é a que você está olhando"; a sombra acompanha, mais funda embaixo,
+   que é de onde vem a sensação de altura.
+
+   O `focus-within` repete tudo para quem chega pelo teclado: o link é o mesmo
+   alvo, e o teclado merece a mesma resposta que o mouse.
+*/
+.tempo__polaroide:hover,
+.tempo__polaroide:focus-within {
+  z-index: 1;
+  transform: rotate(0deg) translateY(-4px) scale(1.04);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 18px 30px -12px rgba(0, 0, 0, 0.42);
+}
+
+/* No clique ela cede um pouco, e a transição encurta para o toque parecer
+   imediato. */
+.tempo__polaroide:active {
+  transform: rotate(0deg) translateY(-1px) scale(0.99);
+  transition-duration: 0.07s;
+}
+
+.tempo__polaroide-link {
+  display: block;
+}
+
+.tempo__foto {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--paper-alt);
+}
+
+/*
+   A TARJA DE BAIXO EXISTE MESMO SEM LEGENDA, e é ela que faz a moldura parecer
+   polaroide e não passe-partout. O `min-height` é o que garante isso: sem ele, a
+   foto sem legenda ficaria com uma borda fina e igual dos quatro lados.
+*/
+.tempo__polaroide-legenda {
+  min-height: 1.7rem;
+  padding: 0.42rem 0.15rem 0.4rem;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: center;
+  color: #4c4c48;
+}
+
+[data-theme='dark'] .tempo__polaroide {
+  background: #e9e7e1;
+}
+
+/*
+   QUEM PEDIU MENOS MOVIMENTO RECEBE A MESMA RESPOSTA, SEM O CAMINHO ATÉ ELA. A
+   transição sai; o endireitar e a sombra ficam, porque eles informam qual foto
+   está sob o cursor, e essa informação não é enfeite.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .tempo__polaroide,
+  .tempo__polaroide:active {
+    transition: none;
+  }
+}
+/* ---------- a caixa de luz ---------- */
+
+/*
+   A CAIXA É A MESMA POLAROIDE, GRANDE. O quadro branco continua aqui, e é o que
+   faz a foto ampliada parecer a mesma foto que estava na página, e não outra
+   imagem parecida com ela.
+
+   QUEM ESCURECE O FUNDO É O `::backdrop`, que é do `<dialog>` e não um `<div>`
+   por cima de tudo. Ele fica FORA da pilha de camadas da página, e por isso não
+   disputa `z-index` com a barra lateral nem com o menu.
+
+   O `blur` no fundo é leve e tem motivo: sem ele, o texto da página atrás da
+   foto continua legível, e o olho insiste em ler em vez de olhar. Desfocar dois
+   pixels resolve o que a opacidade sozinha não resolve.
+*/
+
+.tempo__caixa {
+  position: relative;
+  max-width: 92vw;
+  max-height: 92vh;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+}
+
+.tempo__caixa::backdrop {
+  background: rgba(10, 12, 13, 0.76);
+  backdrop-filter: blur(3px);
+}
+
+.tempo__caixa-figura {
+  margin: 0;
+  padding: 0.6rem 0.6rem 0;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0 26px 60px -22px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme='dark'] .tempo__caixa-figura {
+  background: #e9e7e1;
+}
+
+/*
+   A FOTO CABE NA TELA SEM CORTE, ao contrário da polaroide da página. Lá o
+   quadrado é o desenho; aqui o pedido é ver a foto inteira, e cortar de novo
+   seria esconder justamente o que a pessoa clicou para ver.
+*/
+.tempo__caixa-foto {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(86vw, 44rem);
+  max-height: 72vh;
+  margin: 0 auto;
+  background: var(--paper-alt);
+}
+
+.tempo__caixa-legenda {
+  max-width: min(86vw, 44rem);
+  margin: 0 auto;
+  padding: 0.7rem 0.2rem 0.85rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  text-align: center;
+  color: #4c4c48;
+}
+
+/*
+   O BOTÃO DE FECHAR FICA, mesmo com o `Esc` e o clique fora funcionando. Nem
+   todo mundo sabe que o `Esc` fecha uma caixa, e no celular não existe `Esc`:
+   um alvo visível é a diferença entre fechar e recarregar a página.
+*/
+.tempo__caixa-fechar {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(18, 20, 22, 0.55);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.tempo__caixa-fechar:hover,
+.tempo__caixa-fechar:focus-visible {
+  background: rgba(18, 20, 22, 0.82);
+}
+
+/* O cursor de lupa vale na polaroide da página, e só nela: dentro da caixa não
+   há mais nada para ampliar. */
+.tempo__polaroide-link {
+  cursor: zoom-in;
+}
+
+.tempo__caixa[open] .tempo__caixa-foto {
+  cursor: default;
+}

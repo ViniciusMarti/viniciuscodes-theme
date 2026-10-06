@@ -1,0 +1,30 @@
+/*
+Theme Name: Vinicius Codes
+Theme URI: https://viniciuscodes.com.br
+Author: Vinicius Oliveira
+Author URI: https://viniciuscodes.com.br
+Description: O tema do site, portado do site Astro. As folhas de estilo de verdade ficam em assets/ e são carregadas por wp_enqueue_style — este arquivo existe porque o WordPress exige um style.css com o cabeçalho abaixo para reconhecer o tema.
+Version: 1.0.0
+Requires at least: 6.4
+Requires PHP: 7.4
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: viniciuscodes
+*/
+
+/*
+  POR QUE ESTE ARQUIVO ESTÁ QUASE VAZIO.
+
+  O cabeçalho acima não é decoração: sem ele o WordPress não lista o tema no
+  painel. Mas nenhuma regra de estilo mora aqui de propósito.
+
+  O WordPress carrega o `style.css` da raiz do tema automaticamente em vários
+  contextos, o que faz dele o pior lugar possível para CSS: ele entra em toda
+  página, sem versão, sem ordem declarada e sem ninguém decidir quando. As
+  folhas de verdade — `assets/fonts.css` e `assets/global.css`, que são o CSS do
+  site original, copiado inteiro — entram por `wp_enqueue_style()` em
+  `functions.php`, com versão e com a ordem explícita entre elas.
+
+  Regra do tema: nenhuma tag <style> e nenhum <link> escrito à mão dentro dos
+  templates.
+*/
