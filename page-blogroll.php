@@ -4,7 +4,7 @@
  *
  * A página `/blogroll/`: sites e blogs que eu acompanho pela internet.
  *
- * Cada linha exibe o favicon do site, o nome do blog e o domínio correspondente.
+ * Cada linha exibe o favicon local do site, o nome do blog e o domínio correspondente.
  * O clique na linha abre o site em uma nova aba.
  *
  * @package ViniciusCodes
@@ -17,187 +17,187 @@ $vc_blogroll = array(
 		'nome'    => 'aline Valek',
 		'url'     => 'https://alinevalek.com.br/',
 		'dominio' => 'alinevalek.com.br',
-		'feed'    => 'https://alinevalek.com.br/feed/',
+		'favicon' => 'alinevalek.com.br.png',
 	),
 	array(
 		'nome'    => 'Baty',
 		'url'     => 'https://baty.net/',
 		'dominio' => 'baty.net',
-		'feed'    => 'https://baty.net/index.xml',
+		'favicon' => 'baty.net.png',
 	),
 	array(
 		'nome'    => 'blog do TH',
 		'url'     => 'https://blogdoth.bearblog.dev/blog/',
 		'dominio' => 'blogdoth.bearblog.dev',
-		'feed'    => 'https://blogdoth.bearblog.dev/feed/',
+		'favicon' => 'blogdoth.bearblog.dev.png',
 	),
 	array(
 		'nome'    => 'BMRTT',
 		'url'     => 'https://bamoretti.com/',
 		'dominio' => 'bamoretti.com',
-		'feed'    => 'https://www.bamoretti.com/feeds/posts/default',
+		'favicon' => 'bamoretti.com.ico',
 	),
 	array(
 		'nome'    => 'Bruno Pulis',
 		'url'     => 'https://brunopulis.com',
 		'dominio' => 'brunopulis.com',
-		'feed'    => 'https://brunopulis.com/feeds/blog/rss.xml',
+		'favicon' => 'brunopulis.com.svg',
 	),
 	array(
 		'nome'    => 'Chris McCormick',
 		'url'     => 'https://mccormick.cx/',
 		'dominio' => 'mccormick.cx',
-		'feed'    => 'https://mccormick.cx/@chris.rss',
+		'favicon' => 'mccormick.cx.jpg',
 	),
 	array(
 		'nome'    => 'Cosmoliko',
 		'url'     => 'https://cosmoliko.com/',
 		'dominio' => 'cosmoliko.com',
-		'feed'    => 'https://cosmoliko.com/rss/',
+		'favicon' => 'cosmoliko.com.ico',
 	),
 	array(
 		'nome'    => 'daniel Santos',
 		'url'     => 'https://danielsantos.org/',
 		'dominio' => 'danielsantos.org',
-		'feed'    => 'https://danielsantos.org/blog/feed.xml',
+		'favicon' => 'danielsantos.org.ico',
 	),
 	array(
 		'nome'    => 'dennis Nunes',
 		'url'     => 'https://blog.nunesdennis.me/',
 		'dominio' => 'blog.nunesdennis.me',
-		'feed'    => 'https://blog.nunesdennis.me/feed',
+		'favicon' => 'blog.nunesdennis.me.jpg',
 	),
 	array(
 		'nome'    => 'Gustavo Belo',
 		'url'     => 'https://www.gustavobelo.com/',
 		'dominio' => 'gustavobelo.com',
-		'feed'    => 'https://www.gustavobelo.com/feed',
+		'favicon' => 'gustavobelo.com.ico',
 	),
 	array(
 		'nome'    => 'Gustavo Ribeiro',
 		'url'     => 'https://gustavoribeiro.net/blog',
 		'dominio' => 'gustavoribeiro.net',
-		'feed'    => 'https://gustavoribeiro.net/blog/rss.xml',
+		'favicon' => 'gustavoribeiro.net.png',
 	),
 	array(
 		'nome'    => 'Hey! I\'m With the Band',
 		'url'     => 'https://www.heyimwiththeband.com.br/',
 		'dominio' => 'heyimwiththeband.com.br',
-		'feed'    => 'https://www.heyimwiththeband.com.br/feeds/posts/default',
+		'favicon' => 'heyimwiththeband.com.br.ico',
 	),
 	array(
 		'nome'    => 'Igor Medeiroz',
 		'url'     => 'https://igormedeiroz.com/',
 		'dominio' => 'igormedeiroz.com',
-		'feed'    => 'https://www.igormedeiroz.com/feeds/posts/default',
+		'favicon' => 'igormedeiroz.com.ico',
 	),
 	array(
 		'nome'    => 'Inventando Assunto',
 		'url'     => 'https://www.inventandoassunto.com/',
 		'dominio' => 'inventandoassunto.com',
-		'feed'    => 'https://www.inventandoassunto.com/feeds/posts/default',
+		'favicon' => 'inventandoassunto.com.ico',
 	),
 	array(
 		'nome'    => 'Irrelefante',
 		'url'     => 'https://irrelefante.com.br/',
 		'dominio' => 'irrelefante.com.br',
-		'feed'    => 'https://irrelefante.com.br/feed.xml',
+		'favicon' => 'irrelefante.com.br.png',
 	),
 	array(
 		'nome'    => 'Maira Namba',
 		'url'     => 'https://www.mairanamba.com/',
 		'dominio' => 'mairanamba.com',
-		'feed'    => 'https://www.mairanamba.com/feed/',
+		'favicon' => 'mairanamba.com.png',
 	),
 	array(
 		'nome'    => 'Manual do Usuário',
 		'url'     => 'https://manualdousuario.net',
 		'dominio' => 'manualdousuario.net',
-		'feed'    => 'https://manualdousuario.net/feed/',
+		'favicon' => 'manualdousuario.net.png',
 	),
 	array(
 		'nome'    => 'Marcos Ramon',
 		'url'     => 'https://marcosramon.net/',
 		'dominio' => 'marcosramon.net',
-		'feed'    => 'https://marcosramon.net/feed.xml',
+		'favicon' => 'marcosramon.net.png',
 	),
 	array(
 		'nome'    => 'meu Tédio',
 		'url'     => 'https://www.meutedio.com/',
 		'dominio' => 'meutedio.com',
-		'feed'    => 'https://www.meutedio.com/feeds/posts/default?alt=rss',
+		'favicon' => 'meutedio.com.ico',
 	),
 	array(
 		'nome'    => 'o sol na cabeça',
 		'url'     => 'https://osolnacabeca.com.br/',
 		'dominio' => 'osolnacabeca.com.br',
-		'feed'    => 'https://osolnacabeca.com.br/feed/',
+		'favicon' => 'osolnacabeca.com.br.png',
 	),
 	array(
 		'nome'    => 'Papacapim',
 		'url'     => 'https://www.papacapim.org/',
 		'dominio' => 'papacapim.org',
-		'feed'    => 'https://www.papacapim.org/feed/',
+		'favicon' => 'papacapim.org.png',
 	),
 	array(
 		'nome'    => 'pedro.dalbo',
 		'url'     => 'https://pedro.dalbo.me/',
 		'dominio' => 'pedro.dalbo.me',
-		'feed'    => 'https://pedro.dalbo.me/feed.xml',
+		'favicon' => 'pedro.dalbo.me.png',
 	),
 	array(
 		'nome'    => 'prazer, Willian',
 		'url'     => 'https://prazerwillian.blogspot.com/',
 		'dominio' => 'prazerwillian.blogspot.com',
-		'feed'    => 'https://prazerwillian.blogspot.com/feeds/posts/default?alt=rss',
+		'favicon' => 'prazerwillian.blogspot.com.ico',
 	),
 	array(
 		'nome'    => 'rádio escafandro',
 		'url'     => 'https://radioescafandro.com/',
 		'dominio' => 'radioescafandro.com',
-		'feed'    => 'https://radioescafandro.com/feed/podcast/',
+		'favicon' => 'radioescafandro.com.png',
 	),
 	array(
 		'nome'    => 'Rua da Feira 🥬',
 		'url'     => 'https://ruadafeira.varzea.recife.br/',
 		'dominio' => 'ruadafeira.varzea.recife.br',
-		'feed'    => 'https://ruadafeira.varzea.recife.br/rss/',
+		'favicon' => 'ruadafeira.varzea.recife.br.svg',
 	),
 	array(
 		'nome'    => 'Sandy Uraz',
 		'url'     => 'https://sandyuraz.com/',
 		'dominio' => 'sandyuraz.com',
-		'feed'    => 'https://sandyuraz.com/feed.xml',
+		'favicon' => 'sandyuraz.com.ico',
 	),
 	array(
 		'nome'    => 'Taddone',
 		'url'     => 'https://www.taddone.it/',
 		'dominio' => 'taddone.it',
-		'feed'    => 'https://www.taddone.it/feed/',
+		'favicon' => 'taddone.it.png',
 	),
 	array(
 		'nome'    => 'tech Demo',
 		'url'     => 'https://techdemo.bearblog.dev/',
 		'dominio' => 'techdemo.bearblog.dev',
-		'feed'    => 'https://techdemo.bearblog.dev/feed/',
+		'favicon' => 'techdemo.bearblog.dev.png',
 	),
 	array(
 		'nome'    => 'th.blog.br',
 		'url'     => 'https://th.blog.br/',
 		'dominio' => 'th.blog.br',
-		'feed'    => 'https://th.blog.br/feed/',
+		'favicon' => 'th.blog.br.svg',
 	),
 	array(
 		'nome'    => 'Winnie Lim',
 		'url'     => 'https://winnielim.org/',
 		'dominio' => 'winnielim.org',
-		'feed'    => 'https://winnielim.org/feed/',
+		'favicon' => 'winnielim.org.png',
 	),
 	array(
 		'nome'    => 'Zachary Kai',
 		'url'     => 'https://zacharykai.net/',
 		'dominio' => 'zacharykai.net',
-		'feed'    => 'https://zacharykai.net/assets/rss.xml',
+		'favicon' => 'zacharykai.net.ico',
 	),
 );
 
@@ -211,12 +211,12 @@ $vc_blogroll = array(
 	<ul class="blogroll-list">
 		<?php foreach ( $vc_blogroll as $vc_item ) : ?>
 			<?php
-			$vc_fav_dominio = rawurlencode( $vc_item['dominio'] );
-			$vc_favicon     = "https://www.google.com/s2/favicons?domain={$vc_fav_dominio}&sz=32";
+			$vc_fav_arquivo = $vc_item['favicon'] ?? ( $vc_item['dominio'] . '.png' );
+			$vc_favicon_src = get_theme_file_uri( "assets/favicons/{$vc_fav_arquivo}" );
 			?>
 			<li class="blogroll-item">
 				<a href="<?php echo esc_url( $vc_item['url'] ); ?>" class="blogroll-item__link" target="_blank" rel="noopener noreferrer">
-					<img class="blogroll-item__favicon" src="<?php echo esc_url( $vc_favicon ); ?>" alt="" width="18" height="18" loading="lazy" decoding="async">
+					<img class="blogroll-item__favicon" src="<?php echo esc_url( $vc_favicon_src ); ?>" alt="" width="18" height="18" loading="lazy" decoding="async">
 					<span class="blogroll-item__nome"><?php echo esc_html( $vc_item['nome'] ); ?></span>
 					<span class="blogroll-item__dominio" aria-hidden="true"><?php echo esc_html( $vc_item['dominio'] ); ?></span>
 				</a>
