@@ -2090,6 +2090,7 @@ blockquote p:last-child,
   own when it follows a heading that already has one.
 */
 .term-header + .post-list,
+.term-header + [data-lista] > .post-list,
 .section-title + .post-list {
   border-top: 0;
 }
