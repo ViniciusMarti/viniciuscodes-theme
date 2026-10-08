@@ -1,0 +1,45 @@
+/**
+ * CSS carregado no cabeçalho do wp-admin para limpar a interface do Gutenberg:
+ * - Centraliza o container de escrita
+ * - Ajusta largura de linha (620px) igual ao site publicado
+ * - Esconde caixas de metadados vazias/poluídas no rodapé do editor
+ * - Suaviza a barra lateral
+ */
+
+/* Ajuste da largura do bloco principal de escrita no Gutenberg */
+.edit-post-visual-editor .editor-styles-wrapper {
+  max-width: 100% !important;
+}
+
+.edit-post-visual-editor .is-root-container {
+  max-width: 620px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Largura de blocos individuais */
+.wp-block {
+  max-width: 620px !important;
+}
+
+/* Oculta caixas de metadados herdadas do rodapé que poluem o visual */
+.edit-post-layout .edit-post-meta-boxes-area {
+  margin: 2rem auto !important;
+  max-width: 620px !important;
+}
+
+/* Barra inferior de breadcrumbs / contadores mais discreta */
+.edit-post-editor-regions__footer {
+  opacity: 0.7;
+}
+
+/* Título de post */
+.editor-post-title .editor-post-title__input {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !important;
+  font-size: clamp(2rem, 4.4vw, 2.9rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  letter-spacing: normal !important;
+}
