@@ -2848,6 +2848,7 @@ add_action(
    CONEXÕES HIPERTEXTUAIS AUTOMÁTICAS (LINKS CITADOS E BACKLINKS)
    ------------------------------------------------------------------------- */
 require_once get_theme_file_path( 'inc/post-connections.php' );
+require_once get_theme_file_path(  'inc/editor-conexoes.php' );
 
 /* -------------------------------------------------------------------------
    PRESERVAR ANIMAÇÃO DE ARQUIVOS GIF
