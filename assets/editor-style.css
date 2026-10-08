@@ -137,3 +137,15 @@ body.block-editor-page .editor-styles-wrapper,
   text-align: center !important;
   margin-top: 0.5rem !important;
 }
+
+/* Compatibilidade quando editando Nota dentro do iframe Gutenberg */
+.post-type-nota .block-editor-block-list__layout,
+.editor-styles-wrapper.is-nota {
+  background-color: #ffffff !important;
+  border: 1px solid #e8e6df !important;
+  border-radius: 10px !important;
+  padding: 1.2rem 1.35rem 1.5rem 1.35rem !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
+  margin-top: 2.5rem !important;
+  margin-bottom: 2.5rem !important;
+}
