@@ -10,9 +10,10 @@
   display: none !important;
 }
 
-/* Fundo da tela de escrita */
+/* Fundo da tela de escrita uniforme (sem bloco cinza na direita) */
 .post-type-nota .edit-post-visual-editor,
-.post-type-nota .editor-styles-wrapper {
+.post-type-nota .editor-styles-wrapper,
+.post-type-nota .interface-interface-skeleton__content {
   background-color: #faf9f6 !important;
 }
 
@@ -21,13 +22,13 @@
 .post-type-nota .editor-styles-wrapper .block-editor-block-list__layout {
   max-width: 620px !important;
   width: 100% !important;
-  margin: 3rem auto !important;
+  margin: 3.5rem auto !important;
   background-color: #ffffff !important;
   border: 1px solid #e8e6df !important;
   border-radius: 10px !important;
   padding: 1.2rem 1.35rem 1.5rem 1.35rem !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
-  position: relative !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  box-sizing: border-box !important;
 }
 
 /* Cabeçalho de autor antes do conteúdo da nota */
@@ -39,10 +40,10 @@
   font-size: 0.9rem !important;
   font-weight: 700 !important;
   color: #1a1a1a !important;
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.1rem !important;
   padding-bottom: 0.75rem !important;
   border-bottom: 1px solid #f1efe9 !important;
-  background-image: url('/wp-content/uploads/2026/09/vinicius-profile-150x150.webp') !important;
+  background-image: url('https://viniciuscodes.com.br/wp-content/uploads/2026/09/vinicius-profile-150x150.webp') !important;
   background-size: 34px 34px !important;
   background-repeat: no-repeat !important;
   background-position: left center !important;

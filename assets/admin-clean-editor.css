@@ -1,11 +1,11 @@
 /**
  * CSS administrativo para limpar a interface do editor Gutenberg:
- * - Remove containers e fundos cinzas colaterais ao redor do título
+ * - Remove containers e fundos cinzas colaterais ao redor do canvas
  * - Centraliza a folha de escrita exatamente em 620px
  * - Estiliza o bloco de Código do Gutenberg
  */
 
-/* Remove a coluna/bloco lateral escuro ao lado do título */
+/* Remove a coluna/bloco lateral escuro ao lado do canvas em qualquer largura */
 .edit-post-visual-editor,
 .editor-styles-wrapper,
 .interface-interface-skeleton__content,
@@ -24,7 +24,7 @@
   background-color: transparent !important;
 }
 
-/* Garante que nenhum elemento em volta do título crie faixas ou colunas escuras */
+/* Garante que nenhum elemento crie faixas ou colunas escuras */
 .edit-post-visual-editor .editor-post-title,
 .edit-post-visual-editor .wp-block-post-title,
 .edit-post-visual-editor .editor-visual-editor__post-title-wrapper {
