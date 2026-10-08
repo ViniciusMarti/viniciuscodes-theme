@@ -3,7 +3,8 @@
  * Faz a tela de escrita no admin ficar idêntica à visualização pública:
  * - Mesma largura máxima (620px)
  * - Mesma tipografia, line-height, cores e ritmo vertical
- * - Remove bordas, caixas e poluições visuais excessivas
+ * - Bloco de Código idêntico ao site (.prose pre / pre code)
+ * - Fundo limpo e uniforme
  */
 
 /* Largura máxima do conteúdo no editor (idêntico ao site: 620px) */
@@ -18,14 +19,21 @@
   margin-right: auto !important;
 }
 
-/* Área de trabalho / tela de fundo */
-body.block-editor-page .editor-styles-wrapper {
+/* Área de escrita / canvas */
+body.block-editor-page .editor-styles-wrapper,
+.editor-styles-wrapper {
   background-color: #faf9f6 !important;
   color: #1a1a1a !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !important;
   font-size: 1.06rem !important;
   line-height: 1.7 !important;
-  padding: 3rem 1.5rem !important;
+}
+
+/* Remove qualquer container ou bloco cinza/escuro no topo ou ao redor do título */
+.editor-styles-wrapper > *,
+.block-editor-block-list__layout > *,
+.editor-visual-editor__post-title-wrapper {
+  background: transparent !important;
 }
 
 /* Título do post igual ao single.php (.article__title) */
@@ -37,8 +45,10 @@ body.block-editor-page .editor-styles-wrapper {
   font-weight: 700 !important;
   line-height: 1.15 !important;
   color: #1a1a1a !important;
+  margin-top: 1rem !important;
   margin-bottom: 2rem !important;
   border: none !important;
+  background: transparent !important;
   padding: 0 !important;
 }
 
@@ -51,11 +61,57 @@ body.block-editor-page .editor-styles-wrapper {
   color: #1a1a1a !important;
 }
 
+/* Headings (h2, h3, h4) */
+.editor-styles-wrapper h2,
+.editor-styles-wrapper .wp-block-heading h2 {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin-top: 2.2rem !important;
+  margin-bottom: 1rem !important;
+  color: #1a1a1a !important;
+}
+
+.editor-styles-wrapper h3,
+.editor-styles-wrapper .wp-block-heading h3 {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  margin-top: 1.8rem !important;
+  margin-bottom: 0.8rem !important;
+  color: #1a1a1a !important;
+}
+
 /* Links */
 .editor-styles-wrapper a {
   color: #16a34a !important;
   text-decoration: underline !important;
   text-underline-offset: 3px !important;
+}
+
+/* BLOCO DE CÓDIGO (Pre / Code) - Fiel ao .prose pre do site */
+.editor-styles-wrapper pre,
+.editor-styles-wrapper .wp-block-code,
+.editor-styles-wrapper .wp-block-code pre,
+.editor-styles-wrapper .wp-block-code textarea.block-editor-plain-text {
+  background-color: #1f2328 !important;
+  color: #f4f2ec !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,  Liberation Mono, Courier New, monospace !important;
+  font-size: 0.88rem !important;
+  line-height: 1.6 !important;
+  padding: 1.1rem 1.25rem !important;
+  border-radius: 10px !important;
+  border: none !important;
+  overflow-x: auto !important;
+}
+
+.editor-styles-wrapper .wp-block-code textarea.block-editor-plain-text {
+  color: #f4f2ec !important;
+}
+
+.editor-styles-wrapper code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace !important;
+  font-size: 0.88rem !important;
 }
 
 /* Citação / Quote */
@@ -67,6 +123,7 @@ body.block-editor-page .editor-styles-wrapper {
   border-left: 3px solid #22c55e !important;
   font-style: italic !important;
   color: #4b5563 !important;
+  background: transparent !important;
 }
 
 /* Imagens */
@@ -79,9 +136,4 @@ body.block-editor-page .editor-styles-wrapper {
   color: #6b7280 !important;
   text-align: center !important;
   margin-top: 0.5rem !important;
-}
-
-/* Ocultar elementos desnecessários e ruídos */
-#postcustom, #trackbacksdiv, #slugdiv, #postexcerpt {
-  display: none !important;
 }
