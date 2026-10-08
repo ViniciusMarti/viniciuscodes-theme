@@ -149,3 +149,15 @@ body.block-editor-page .editor-styles-wrapper,
   margin-top: 2.5rem !important;
   margin-bottom: 2.5rem !important;
 }
+
+/* Marcador de texto artesanal no editor Gutenberg */
+.editor-styles-wrapper strong,
+.editor-styles-wrapper b,
+.editor-styles-wrapper mark {
+  font-weight: 600 !important;
+  background: linear-gradient(104deg, rgba(254, 240, 138, 0.82) 0.9%, rgba(253, 224, 71, 0.72) 100%) !important;
+  padding: 0.12em 0.35em !important;
+  border-radius: 3px !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
+}

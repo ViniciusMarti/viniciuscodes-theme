@@ -4194,3 +4194,27 @@ a.link-externo:focus-visible .link-externo__icone {
     font-size: 0.78rem;
   }
 }
+
+/* ============================================================
+   MARCADOR DE TEXTO ARTESANAL (ESTILO CADERNO/LIVRO)
+   Aplica nos elementos de ênfase (strong / b / mark) do corpo de texto (.prose)
+   um efeito suave de caneta marca-texto feita à mão.
+   ============================================================ */
+
+.prose strong,
+.prose b,
+.prose mark {
+  font-weight: 600;
+  background: linear-gradient(104deg, rgba(254, 240, 138, 0.82) 0.9%, rgba(253, 224, 71, 0.72) 100%);
+  padding: 0.12em 0.35em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+[data-theme='dark'] .prose strong,
+[data-theme='dark'] .prose b,
+[data-theme='dark'] .prose mark {
+  background: linear-gradient(104deg, rgba(202, 138, 4, 0.42) 0.9%, rgba(234, 179, 8, 0.46) 100%);
+  color: #fef08a;
+}
