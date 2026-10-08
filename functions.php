@@ -1114,6 +1114,47 @@ add_filter(
 	}
 );
 
+/**
+ * ANEXOS NÃO ACEITAM COMENTÁRIOS.
+ *
+ * O WordPress por padrão insere mídias com comment_status = open. Bots de spam
+ * usam isso para disparar requisições diretamente para wp-comments-post.php com o ID
+ * de imagens. As três regras abaixo fecham essa porta:
+ * 1. comments_open responde false para qualquer anexo.
+ * 2. wp_insert_attachment_data força comentários e pings fechados em novos uploads.
+ * 3. pre_comment_on_post bloqueia na hora qualquer tentativa de comentar em anexo.
+ */
+add_filter(
+	'comments_open',
+	static function ( bool $open, $post_id ): bool {
+		$post = get_post( $post_id );
+		if ( $post && 'attachment' === $post->post_type ) {
+			return false;
+		}
+		return $open;
+	},
+	20,
+	2
+);
+
+add_filter(
+	'wp_insert_attachment_data',
+	static function ( array $data ): array {
+		$data['comment_status'] = 'closed';
+		$data['ping_status']    = 'closed';
+		return $data;
+	}
+);
+
+add_action(
+	'pre_comment_on_post',
+	static function ( $comment_post_id ): void {
+		$post = get_post( $comment_post_id );
+		if ( $post && 'attachment' === $post->post_type ) {
+			wp_die( 'comentários não são permitidos em arquivos de mídia.', 'comentários desativados', array( 'response' => 403 ) );
+		}
+	}
+);
 /*
  * AS REGRAS DE URL PRECISAM SER REGRAVADAS quando CPTs ou taxonomias mudam.
  */
@@ -2921,6 +2962,13 @@ add_action(
  */
 
 require_once get_theme_file_path( 'inc/cpt-notas.php' );
+
+/*
+ * O acervo e um tipo de post, e nao mais uma lista dentro do conteudo da
+ * pagina. O comentario acima explica por que o `nota` virou arquivo proprio;
+ * o acervo seguiu o mesmo caminho quando cresceu.
+ */
+require_once get_theme_file_path( 'inc/cpt-obras.php' );
 
 require_once get_theme_file_path( 'inc/notas-admin.php' );
 
