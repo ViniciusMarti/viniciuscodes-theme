@@ -625,18 +625,60 @@ while ( have_posts() ) :
 
 					<?php
 					/*
-					 * OS LIVROS NÃO TÊM DATA, e a ordem deles é a do editor. O que os
-					 * separa em dois blocos é o `status:`, que veio da seção em que
-					 * estavam na página antiga: quem estava antes do título "lidos"
-					 * está sendo lido agora.
+					 * OS LIVROS NÃO TÊM DATA, e a ordem deles é a do editor — é a única
+					 * informação de ordem que eles têm. Em vez de data, quem os separa em
+					 * blocos é o `status:`.
+					 *
+					 * A ESTANTE NÃO É UM DIÁRIO. Em filme, série e teatro, a data
+					 * responde tudo: ou já passou, ou está na vontade. Com livro não
+					 * funciona assim — ter comprado e não ter lido ainda é um estado, e
+					 * é o estado mais comum de quem tem estante. Por isso o livro ganha
+					 * quatro rótulos e os outros tipos continuam com dois.
 					 */
-					$vc_por_status = array( 'lendo' => array(), 'lido' => array() );
+					$vc_por_status = array( 'lendo' => array(), 'quero' => array(), 'estante' => array(), 'lido' => array() );
 
 					foreach ( $vc_itens as $vc_o ) {
-						$vc_por_status[ 'lendo' === ( $vc_o['campos']['status'] ?? '' ) ? 'lendo' : 'lido' ][] = $vc_o;
+						/*
+						 * QUATRO ESTADOS, E NAO DOIS. O agrupamento anterior era uma
+						 * comparacao de igualdade — `'lendo' === $status` — com tudo o
+						 * que nao casasse caindo em "lidos". Bastava um livro sem
+						 * status, ou com um status novo, para ele aparecer como lido.
+						 *
+						 * O ESTADO NEUTRO E "NA ESTANTE", nao "lido". Ter o livro e nao
+						 * ter marcado nada sobre ele e o caso mais comum de quem esta
+						 * montando a estante; tratar isso como leitura concluida e a
+						 * unica leitura errada possivel.
+						 *
+						 * A COMPARACAO IGNORA ACENTO E CAIXA porque o campo e texto
+						 * livre, preenchido no editor do celular. "Quero Ler", "quero
+						 * ler" e "quero" sao a mesma intencao, e obrigar a forma exata
+						 * seria criar um erro que nao aparece em lugar nenhum: o livro
+						 * simplesmente cairia no balde errado, calado.
+						 */
+						$vc_s = strtolower( (string) ( $vc_o['campos']['status'] ?? '' ) );
+						$vc_s = strtr( $vc_s, array( 'á' => 'a', 'ã' => 'a', 'â' => 'a', 'é' => 'e', 'ê' => 'e', 'í' => 'i', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ú' => 'u', 'ç' => 'c' ) );
+						$vc_s = trim( preg_replace( '/\s+/', ' ', $vc_s ) );
+
+						if ( in_array( $vc_s, array( 'lendo', 'lendo agora', 'a ler', 'em leitura' ), true ) ) {
+							$vc_grupo = 'lendo';
+						} elseif ( in_array( $vc_s, array( 'quero ler', 'quero', 'a ler em breve', 'na lista', 'lista' ), true ) ) {
+							$vc_grupo = 'quero';
+						} elseif ( in_array( $vc_s, array( 'lido', 'li', 'lida', 'terminado', 'terminado' ), true ) ) {
+							$vc_grupo = 'lido';
+						} else {
+							$vc_grupo = 'estante';
+						}
+
+						$vc_por_status[ $vc_grupo ][] = $vc_o;
 					}
 
-					foreach ( array( 'lendo' => 'lendo no momento', 'lido' => 'lidos' ) as $vc_chave_status => $vc_rotulo_status ) :
+					/*
+					 * A ORDEM DOS ROTULOS E A DA ESTANTE, e nao a do alfabeto: o que
+					 * esta sendo lido agora vem primeiro porque e o que interessa a
+					 * quem chega; o que ja foi lido fica por ultimo porque e o mais
+					 * numeroso e o menos urgente.
+					 */
+					foreach ( array( 'lendo' => 'lendo no momento', 'quero' => 'quero ler', 'estante' => 'na estante', 'lido' => 'lidos' ) as $vc_chave_status => $vc_rotulo_status ) :
 						if ( ! $vc_por_status[ $vc_chave_status ] ) {
 							continue;
 						}
