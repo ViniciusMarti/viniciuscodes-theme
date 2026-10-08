@@ -4220,7 +4220,8 @@ a.link-externo:focus-visible .link-externo__icone {
 }
 /* ============================================================
    MARCADOR DE TEXTO ARTESANAL (OPÇÃO 4: TRAÇO INCLINADO FEITO À MÃO)
-   Tom de amarelo quente, suave e discreto (marca-texto pastel envelhecido).
+   Aplica nos elementos de ênfase (strong / b / mark) do corpo de texto (.prose)
+   um efeito artesanal marcante com leve rotação e cantos assimétricos.
    ============================================================ */
 
 .prose strong,
@@ -4229,7 +4230,7 @@ a.link-externo:focus-visible .link-externo__icone {
   display: inline-block;
   font-weight: 600;
   position: relative;
-  padding: 0.05em 0.25em;
+  padding: 0.05em 0.3em;
   z-index: 1;
 }
 
@@ -4238,8 +4239,8 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose mark::before {
   content: "";
   position: absolute;
-  inset: 12% -2px 10% -2px;
-  background: rgba(253, 230, 138, 0.45);
+  inset: 10% -2px 8% -2px;
+  background: rgba(254, 240, 138, 0.82);
   border-radius: 4px 2px 5px 2px;
   transform: rotate(-0.8deg) skew(-2deg);
   z-index: -1;
@@ -4248,13 +4249,13 @@ a.link-externo:focus-visible .link-externo__icone {
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  color: #fef9c3;
+  color: #fef08a;
 }
 
 [data-theme='dark'] .prose strong::before,
 [data-theme='dark'] .prose b::before,
 [data-theme='dark'] .prose mark::before {
-  background: rgba(234, 179, 8, 0.22);
+  background: rgba(202, 138, 4, 0.45);
 }
 /* ============================================================
    MARCADOR DE TEXTO ARTESANAL (SUTIL, DISCRETO & COMPATÍVEL COM QUEBRA DE LINHA)
@@ -4266,34 +4267,26 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose strong,
 .prose b,
 .prose mark {
-  display: inline !important;
   font-weight: 600;
-  background-color: rgba(253, 230, 138, 0.42) !important;
-  background-image: linear-gradient(104deg, rgba(254, 240, 138, 0.5) 0%, rgba(253, 224, 71, 0.35) 100%) !important;
-  padding: 0.12em 0.25em !important;
-  border-radius: 3px !important;
-  box-decoration-break: clone !important;
-  -webkit-box-decoration-break: clone !important;
-}
-
-.prose strong::before,
-.prose b::before,
-.prose mark::before {
-  content: none !important;
+  background-color: rgba(253, 230, 138, 0.42);
+  background-image: linear-gradient(104deg, rgba(254, 240, 138, 0.5) 0%, rgba(253, 224, 71, 0.35) 100%);
+  padding: 0.12em 0.3em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  background-color: rgba(234, 179, 8, 0.2) !important;
-  background-image: linear-gradient(104deg, rgba(202, 138, 4, 0.25) 0%, rgba(234, 179, 8, 0.18) 100%) !important;
-  color: #fef9c3 !important;
+  background-color: rgba(234, 179, 8, 0.2);
+  background-image: linear-gradient(104deg, rgba(202, 138, 4, 0.25) 0%, rgba(234, 179, 8, 0.18) 100%);
+  color: #fef9c3;
 }
 /* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (OPÇÃO C1: DUPLA PASSADA DESALINHADA)
-   Simula a física de um marcador de texto passado duas vezes à mão:
-   - 1ª passada ampla na altura do texto (78% de cobertura)
-   - 2ª passada de reforço na base com ângulo e densidade diferentes
+   MARCADOR DE TEXTO ARTESANAL (OPÇÃO A: CANTOS ORGÂNICOS ASSIMÉTRICOS)
+   Traço imperfeito feito à mão, com curvatura irregular em 8 direções
+   simulando a passada natural da caneta marca-texto sobre o papel de caderno.
    100% inline nativo com box-decoration-break: clone.
    ============================================================ */
 
@@ -4302,14 +4295,51 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose mark {
   display: inline !important;
   font-weight: 600;
+  background: linear-gradient(102deg, rgba(254, 240, 138, 0.45) 2%, rgba(253, 224, 71, 0.55) 50%, rgba(254, 240, 138, 0.38) 98%) !important;
+  padding: 0.14em 0.35em 0.18em 0.35em !important;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
+}
+
+.prose strong::before,
+.prose b::before,
+.prose mark::before {
+  content: none !important;
+}
+
+[data-theme='dark'] .prose strong,
+[data-theme='dark'] .prose b,
+[data-theme='dark'] .prose mark {
+  background: linear-gradient(102deg, rgba(234, 179, 8, 0.22) 2%, rgba(202, 138, 4, 0.28) 50%, rgba(234, 179, 8, 0.2) 98%) !important;
+  color: #fef9c3 !important;
+}
+/* ============================================================
+   MARCADOR DE TEXTO ARTESANAL (DUPLA PASSADA + GOTA DE SAÍDA / PARADA)
+   Simula a física exata da caneta marca-texto de feltro no papel:
+   - 1ª passada suave cobrindo o texto (altura imperfeita)
+   - 2ª passada de reforço cortando a base
+   - Acúmulo de tinta ("juntadinha") mais escura no finalzinho,
+     onde a ponta chanfrada parou antes de levantar da folha.
+   ============================================================ */
+
+.prose strong,
+.prose b,
+.prose mark {
+  display: inline !important;
+  font-weight: 600;
   background-image:
-    linear-gradient(100deg, rgba(253, 224, 71, 0.45) 15%, rgba(250, 204, 21, 0.35) 60%, transparent 85%),
+    /* Gota / acúmulo de tinta na saída final (canto direito inferior) */
+    radial-gradient(ellipse 7px 11px at calc(100% - 2px) 80%, rgba(245, 158, 11, 0.48) 0%, rgba(251, 191, 36, 0.35) 60%, transparent 85%),
+    /* 2ª passada de reforço na base */
+    linear-gradient(100deg, rgba(253, 224, 71, 0.45) 15%, rgba(250, 204, 21, 0.38) 60%, transparent 92%),
+    /* 1ª passada ampla base */
     linear-gradient(to right, rgba(254, 240, 138, 0.42), rgba(253, 224, 71, 0.38)) !important;
   background-repeat: no-repeat !important;
-  background-size: 100% 55%, 100% 78% !important;
-  background-position: 2px 90%, 0 76% !important;
-  padding: 0.08em 0.32em 0.16em 0.32em !important;
-  border-radius: 180px 12px 160px 10px / 12px 180px 10px 160px !important;
+  background-size: 100% 100%, 100% 55%, 100% 78% !important;
+  background-position: 0 0, 2px 90%, 0 76% !important;
+  padding: 0.08em 0.38em 0.16em 0.32em !important;
+  border-radius: 180px 14px 160px 10px / 14px 180px 10px 160px !important;
   box-decoration-break: clone !important;
   -webkit-box-decoration-break: clone !important;
 }
@@ -4324,7 +4354,8 @@ a.link-externo:focus-visible .link-externo__icone {
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
   background-image:
-    linear-gradient(100deg, rgba(234, 179, 8, 0.28) 15%, rgba(202, 138, 4, 0.22) 60%, transparent 85%),
+    radial-gradient(ellipse 7px 11px at calc(100% - 2px) 80%, rgba(217, 119, 6, 0.38) 0%, rgba(245, 158, 11, 0.28) 60%, transparent 85%),
+    linear-gradient(100deg, rgba(234, 179, 8, 0.28) 15%, rgba(202, 138, 4, 0.22) 60%, transparent 92%),
     linear-gradient(to right, rgba(234, 179, 8, 0.2), rgba(202, 138, 4, 0.18)) !important;
   color: #fef9c3 !important;
 }
