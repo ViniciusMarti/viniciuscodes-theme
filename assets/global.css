@@ -4259,3 +4259,188 @@ a.link-externo:focus-visible .link-externo__icone {
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
 }
+
+/* ============================================================
+   CHARMES VISUAIS & MICRO-INTERAÇÕES
+   ============================================================ */
+
+/* 1. BARRA DE LEITURA NO TOPO */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--green, #15803d), #eab308);
+  width: 0%;
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.08s ease-out;
+}
+
+/* 2. SELEÇÃO DE TEXTO PERSONALIZADA */
+::selection {
+  background: rgba(254, 240, 138, 0.75);
+  color: #1a1a1a;
+}
+[data-theme='dark'] ::selection {
+  background: rgba(234, 179, 8, 0.45);
+  color: #ffffff;
+}
+
+/* 4. SUBLINHADO DESLIZANTE NOS LINKS (.prose a) */
+.prose a:not(.link-externo):not(.button):not(.wp-block-button__link) {
+  text-decoration: none;
+  position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  transition: background-size 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+  padding-bottom: 1px;
+}
+
+.prose a:not(.link-externo):not(.button):not(.wp-block-button__link):hover,
+.prose a:not(.link-externo):not(.button):not(.wp-block-button__link):focus-visible {
+  background-size: 100% 1.5px;
+  color: var(--green-deep);
+}
+
+/* 7. DIVISOR EDITORIAL COM GLIFOS NO SEPARADOR (.prose hr) */
+.prose hr,
+.prose .wp-block-separator {
+  border: 0;
+  text-align: center;
+  margin: 2.5rem 0;
+  height: auto;
+  background: transparent;
+  position: relative;
+  overflow: visible;
+}
+
+.prose hr::before,
+.prose .wp-block-separator::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: var(--line, #e2e8f0);
+  z-index: 1;
+}
+
+.prose hr::after,
+.prose .wp-block-separator::after {
+  content: "✦ ✦ ✦";
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  background: var(--paper, #faf9f5);
+  padding: 0 0.8rem;
+  color: var(--ink-mute, #a1a1aa);
+  font-size: 0.82rem;
+  letter-spacing: 0.25em;
+}
+
+/* 8. TECLAS FÍSICAS DE ATALHO (<kbd>) */
+kbd,
+.prose kbd {
+  display: inline-block;
+  padding: 0.15em 0.45em;
+  font-size: 0.78em;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  background-color: var(--paper-card, #ffffff);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.05);
+  line-height: 1.2;
+}
+
+/* 9. EASTER EGG: CHUVA DELICADA DE GIRASSÓIS */
+.sunflower-rain-word {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  border-bottom: 1.5px dotted rgba(234, 179, 8, 0.65);
+  transition: color 0.15s ease;
+}
+
+.sunflower-rain-word:hover {
+  color: #ca8a04;
+}
+[data-theme='dark'] .sunflower-rain-word:hover {
+  color: #facc15;
+}
+
+.sunflower-rain-shower {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  width: 140px;
+  height: 70px;
+  overflow: visible;
+  z-index: 100;
+}
+
+.sf-drop {
+  position: absolute;
+  opacity: 0;
+  user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+.sunflower-rain-word:hover .sf-d1 {
+  animation: sfFloat1 1.25s 0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+.sunflower-rain-word:hover .sf-d2 {
+  animation: sfFloat2 1.35s 0.08s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+.sunflower-rain-word:hover .sf-d3 {
+  animation: sfFloat3 1.45s 0.16s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+.sunflower-rain-word:hover .sf-d4 {
+  animation: sfFloat4 1.3s 0.22s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+.sunflower-rain-word:hover .sf-d5 {
+  animation: sfFloat5 1.5s 0.12s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes sfFloat1 {
+  0%   { opacity: 0; transform: translate(50px, 60px) scale(0.3) rotate(-10deg); }
+  35%  { opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(32px, 5px) scale(1.1) rotate(25deg); }
+}
+
+@keyframes sfFloat2 {
+  0%   { opacity: 0; transform: translate(65px, 60px) scale(0.4) rotate(0deg); }
+  30%  { opacity: 1; }
+  80%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(68px, -15px) scale(1.3) rotate(-20deg); }
+}
+
+@keyframes sfFloat3 {
+  0%   { opacity: 0; transform: translate(80px, 60px) scale(0.3) rotate(15deg); }
+  35%  { opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(105px, 8px) scale(1.15) rotate(35deg); }
+}
+
+@keyframes sfFloat4 {
+  0%   { opacity: 0; transform: translate(58px, 60px) scale(0.2) rotate(-5deg); }
+  40%  { opacity: 0.9; }
+  85%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(45px, -20px) scale(0.9) rotate(-35deg); }
+}
+
+@keyframes sfFloat5 {
+  0%   { opacity: 0; transform: translate(75px, 60px) scale(0.25) rotate(5deg); }
+  35%  { opacity: 0.95; }
+  85%  { opacity: 0.75; }
+  100% { opacity: 0; transform: translate(92px, -18px) scale(1) rotate(15deg); }
+}

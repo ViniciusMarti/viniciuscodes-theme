@@ -163,6 +163,7 @@ $vc_imagem = vc_imagem_social( $vc_id );
 </head>
 
 <body <?php body_class(); ?>>
+<div class="reading-progress-bar" id="reading-progress-bar" aria-hidden="true"></div>
 <a class="skip-link" href="#conteudo">pular para o conteúdo</a>
 
 <?php

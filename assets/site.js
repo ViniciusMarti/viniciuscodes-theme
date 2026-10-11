@@ -391,6 +391,53 @@
 				})
 				.catch(function () {});
 		});
+		});
 	});
+
+	/* ------------------------------------------- barra de progresso de leitura */
+	var barraLeitura = document.getElementById('reading-progress-bar');
+	if (barraLeitura) {
+		var atualizarBarra = function () {
+			var alturaTotal = document.documentElement.scrollHeight - window.innerHeight;
+			if (alturaTotal > 120) {
+				var porcentagem = (window.scrollY / alturaTotal) * 100;
+				barraLeitura.style.width = Math.min(100, Math.max(0, porcentagem)) + '%';
+			} else {
+				barraLeitura.style.width = '0%';
+			}
+		};
+
+		window.addEventListener('scroll', atualizarBarra, { passive: true });
+		window.addEventListener('resize', atualizarBarra, { passive: true });
+		atualizarBarra();
+	}
+
+	/* ----------------------- easter egg: chuva de girassóis em neurodivergência */
+	var tagsProse = document.querySelectorAll('.prose p, .prose li, .prose blockquote');
+	if (tagsProse.length) {
+		var regexNeuro = /\b(autismo|autista|autistas|audhd|tdah)\b/gi;
+		tagsProse.forEach(function (el) {
+			/* Evita processar dentro de links, scripts ou se já foi envolvido */
+			var childNodes = Array.prototype.slice.call(el.childNodes);
+			childNodes.forEach(function (node) {
+				if (node.nodeType === Node.TEXT_NODE && regexNeuro.test(node.nodeValue)) {
+					var spanWrapper = document.createElement('span');
+					spanWrapper.innerHTML = node.nodeValue.replace(regexNeuro, function (palavra) {
+						return '<span class="sunflower-rain-word">' + palavra +
+							'<span class="sunflower-rain-shower" aria-hidden="true">' +
+								'<span class="sf-drop sf-d1">🌻</span>' +
+								'<span class="sf-drop sf-d2">🌻</span>' +
+								'<span class="sf-drop sf-d3">🌻</span>' +
+								'<span class="sf-drop sf-d4">🌻</span>' +
+								'<span class="sf-drop sf-d5">🌻</span>' +
+							'</span>' +
+						'</span>';
+					});
+					el.replaceChild(spanWrapper, node);
+				}
+			});
+		});
+	}
 })();
+
 
