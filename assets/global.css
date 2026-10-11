@@ -4287,22 +4287,19 @@ a.link-externo:focus-visible .link-externo__icone {
   color: #ffffff;
 }
 
-/* 4. SUBLINHADO DESLIZANTE NOS LINKS (.prose a) */
-.prose a:not(.link-externo):not(.button):not(.wp-block-button__link) {
-  text-decoration: none;
-  position: relative;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-position: 0% 100%;
-  background-repeat: no-repeat;
-  background-size: 0% 1.5px;
-  transition: background-size 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
-  padding-bottom: 1px;
+/* 4. SUBLINHADO TRACEJADO CHARMOSO NOS LINKS (.prose a) */
+.prose a:not(.button):not(.wp-block-button__link) {
+  text-decoration: underline dashed rgba(234, 179, 8, 0.6) !important;
+  text-underline-offset: 4px !important;
+  text-decoration-thickness: 1.5px !important;
+  transition: all 0.2s ease !important;
 }
 
-.prose a:not(.link-externo):not(.button):not(.wp-block-button__link):hover,
-.prose a:not(.link-externo):not(.button):not(.wp-block-button__link):focus-visible {
-  background-size: 100% 1.5px;
-  color: var(--green-deep);
+.prose a:not(.button):not(.wp-block-button__link):hover,
+.prose a:not(.button):not(.wp-block-button__link):focus-visible {
+  text-decoration-style: solid !important;
+  text-decoration-color: var(--green-deep, #15803d) !important;
+  color: var(--green-deep, #15803d) !important;
 }
 
 /* 7. DIVISOR EDITORIAL COM GLIFOS NO SEPARADOR (.prose hr) */
@@ -4387,20 +4384,23 @@ kbd,
 .sunflower-rain-shower {
   position: absolute;
   left: 50%;
-  bottom: 100%;
+  bottom: 80%;
   transform: translateX(-50%);
   pointer-events: none;
   width: 140px;
-  height: 70px;
+  height: 90px;
   overflow: visible;
-  z-index: 100;
+  z-index: 999999;
+  display: block;
 }
 
 .sf-drop {
   position: absolute;
   opacity: 0;
   user-select: none;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  font-size: 1.15rem;
+  line-height: 1;
 }
 
 .sunflower-rain-word:hover .sf-d1 {
