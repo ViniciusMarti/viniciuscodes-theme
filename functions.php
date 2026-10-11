@@ -458,7 +458,7 @@ function vc_imagem_social( int $post_id = 0 ): string {
 		}
 	}
 
-	return '';
+	return get_theme_file_uri( 'assets/og-padrao.webp' );
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
