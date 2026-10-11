@@ -72,6 +72,12 @@
   /* Text placed on a saturated accent background. */
   --on-accent: #ffffff;
 
+  /* Text placed on the ink surface. `--ink` is the only background the
+     site fills with, and it INVERTS between the themes: dark in light
+     mode, light in dark mode. White text only works on one of the two,
+     and this token is what makes the pair follow the theme. */
+  --on-ink: #ffffff;
+
   /* Code surfaces are intentionally darker than the page in both themes. */
   --code-bg: #1f2328;
   --code-ink: #f4f2ec;
@@ -175,6 +181,9 @@
   --clay: #d9a86c;
 
   --on-accent: #16181a;
+
+  /* See `--on-ink` in the light theme. */
+  --on-ink: #16181a;
   --code-bg: #101214;
   --code-ink: #e8e6e0;
 
@@ -826,24 +835,9 @@ hr {
   color: var(--ink-soft);
 }
 
-.navlink__count {
-  margin-left: auto;
-  font-size: 0.72rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-  opacity: 0.55;
-  font-weight: 400;
-  transition: opacity 0.15s ease;
-}
-
-.navlink:hover .navlink__count {
-  opacity: 0.85;
-}
-
 /*
-  Every theme carries its own emoji. The count already uses
-  `margin-left: auto`, so the emoji only needs a stable box to keep the
-  names aligned — emoji glyph widths vary between systems.
+  Every theme carries its own emoji, and the emoji needs a stable box to keep
+  the names aligned: emoji glyph widths vary between systems.
 */
 .navlink__icon {
   display: inline-flex;
@@ -939,36 +933,6 @@ hr {
   opacity: 0.75;
 }
 
-.article__meta {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
-  margin-bottom: 2rem;
-  padding: 0 !important;
-  background-color: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: var(--ink-mute);
-  text-transform: lowercase;
-}
-
-.article__meta-sep {
-  display: inline-flex;
-  align-items: center;
-  color: var(--ink-mute);
-  opacity: 0.5;
-  user-select: none;
-}
-
-.article__meta-updated {
-  color: var(--ink-mute);
-}
-
 .article__end-themes {
   display: flex;
   flex-wrap: wrap;
@@ -1004,9 +968,10 @@ hr {
   Metadata links stay muted: they are references, not calls to action, and
   colouring them like navigation would pull the eye off the title.
 
-  Grouped with the listing's date line on purpose: a note header and a list
-  row print the same thing - the date, then the theme it belongs to - and the
-  separator below only holds if both sides draw it the same way.
+  This comment used to say that a list row and a note header printed the same
+  thing - "the date, then the theme it belongs to" - and that this was why both
+  drew the separator the same way. THE DATE LEFT BOTH: what is left is the
+  theme, and the separator still earns its place on a row with more than one.
 */
 .post-item__meta a {
   display: inline-flex;
@@ -1026,7 +991,6 @@ hr {
   margin-right: 0.5rem;
 }
 
-.article__meta__part,
 .post-item__meta__part {
   /* So a long label shrinks instead of pushing the line past the column. */
   min-width: 0;
@@ -2126,6 +2090,7 @@ blockquote p:last-child,
   own when it follows a heading that already has one.
 */
 .term-header + .post-list,
+.term-header + [data-lista] > .post-list,
 .section-title + .post-list {
   border-top: 0;
 }
@@ -2623,6 +2588,14 @@ blockquote p:last-child,
   margin-top: 4rem;
 }
 
+
+.section__desc {
+  margin: -0.6rem 0 1.5rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .section__foot {
   margin-top: 1.5rem;
 }
@@ -2959,92 +2932,6 @@ blockquote p:last-child,
   }
 }
 
-/* ---------- feedback (closing note of a post) ---------- */
-
-/*
-  The invitation to reply, where a comment box would normally be.
-
-  A tone, not a card. The block needed to stop being just a hairline - a rule
-  above a paragraph reads as the tail of the article, and this is a section of
-  its own, with a heading and a button - but it must NOT become a third
-  --paper-card panel: the article footer already has one for the themes and
-  one for the reviewed book, and this closing note is the least important of
-  the three.
-
-  So it uses --paper-alt, the one surface the site had not spent yet. It is
-  DARKER than the paper in the light theme and LIGHTER in the dark one, which
-  is the opposite direction from --paper-card in both: the cards read as
-  raised, this one reads as recessed. No border and no shadow, because either
-  would promote it to a card.
-
-  No JS, no transition, nothing that moves on its own - the brief asked for
-  no intrusive animation, and the honest version of that is a block that
-  cannot animate because it has no behaviour at all.
-*/
-.post-feedback {
-  margin: 3rem 0 0;
-  padding: 1.5rem;
-  background: var(--paper-alt);
-  border-radius: var(--radius);
-}
-
-.post-feedback__titulo {
-  margin: 0 0 0.8rem;
-  color: var(--ink);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.post-feedback__texto {
-  margin: 0 0 0.8rem;
-  color: var(--ink-soft);
-  font-size: 0.92rem;
-  line-height: 1.65;
-}
-
-.post-feedback__acao {
-  margin: 1.25rem 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-/*
-  Outlined, not filled. The share block directly above already has the one
-  filled button on this page, and two filled pills in the same footer would
-  each dilute the other. Outline also matches "discreet", which is what this
-  closing note should be. It is 44px tall: discreet is about colour and
-  border weight, not about making the target harder to hit.
-*/
-.post-feedback__botao {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-height: 44px;
-  padding: 0.4rem 1rem;
-  background: transparent;
-  border: 1px solid var(--field-border);
-  border-radius: 999px;
-  color: var(--ink-soft);
-  font-size: 0.86rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.post-feedback__botao:hover {
-  background: var(--green-wash);
-  border-color: var(--green);
-  color: var(--green-deep);
-  text-decoration: none;
-}
-
-.post-feedback__nota {
-  margin: 0.7rem 0 0;
-  color: var(--ink-mute);
-  font-size: 0.78rem;
-}
-
 /* ---------- comentários zen e minimalistas ---------- */
 
 .post-comments {
@@ -3071,13 +2958,6 @@ blockquote p:last-child,
   font-size: 0.95rem;
   font-weight: 400;
   color: var(--ink-mute);
-}
-
-.post-comments__subtitle {
-  margin: 0;
-  font-size: 0.88rem;
-  color: var(--ink-mute);
-  line-height: 1.5;
 }
 
 .post-comments__list {
@@ -3114,6 +2994,23 @@ blockquote p:last-child,
   font-size: 0.85rem;
 }
 
+/*
+   O avatar de quem comentou ou reagiu. Redondo e pequeno:
+   ele acompanha a linha do nome, não compete com o texto.
+*/
+.post-comment__avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.post-comment__avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: block;
+}
+
 .post-comment__author {
   color: var(--ink);
   font-weight: 600;
@@ -3130,6 +3027,16 @@ blockquote p:last-child,
 }
 
 .post-comment__date {
+  color: var(--ink-mute);
+  font-size: 0.8rem;
+}
+
+/*
+   O verbo da interação: "curtiu", "republicou", "mencionou".
+   Vem da federação, e sem ele o leitor vê só um nome e um vazio.
+   Mesma cor e mesmo corpo da data, porque é a mesma camada de informação.
+*/
+.post-comment__verbo {
   color: var(--ink-mute);
   font-size: 0.8rem;
 }
@@ -3335,7 +3242,7 @@ blockquote p:last-child,
   font-size: 0.92rem;
   font-weight: 600;
   font-family: inherit;
-  color: #fff;
+  color: var(--on-ink);
   background: var(--ink);
   border: 1px solid var(--ink);
   border-radius: 999px;
@@ -3343,8 +3250,14 @@ blockquote p:last-child,
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
+/*
+  The hover swaps the ink ground for the accent, and the text has to swap
+  with it: `--green-deep` is light in the dark theme, so the white that
+  worked on the resting state would disappear into it.
+*/
 .post-comments__submit:hover,
 .comment-form input[type="submit"]:hover {
+  color: var(--on-accent);
   background: var(--green-deep);
   border-color: var(--green-deep);
   transform: translateY(-1px);
@@ -4099,4 +4012,250 @@ a.link-externo:focus-visible .link-externo__icone {
 .masthead .masthead__brand:focus-visible span,
 .masthead .masthead__brand:active span {
   color: var(--green);
+}
+/* ---------- os temas da home, em chips ---------- */
+
+/*
+   A grade de doze cartoes virou faixa de chips: icone e nome, sem contagem.
+   O cartao existia para fazer volume numa grade de tres colunas; numa faixa
+   que quebra sozinha, o mesmo conteudo ocupa tres linhas.
+
+   A CONTAGEM NAO ENTRA, pela mesma razao que saiu da barra lateral: "7 textos"
+   e informacao de catalogo, nao de leitura, e envelhece na tela.
+*/
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-card);
+  color: var(--ink-soft);
+  font-size: 0.87rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.chips a:hover,
+.chips a:focus-visible {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.chips__icone {
+  display: inline-flex;
+  color: var(--green);
+}
+
+/* ---------- o cabeçalho de seção ---------- */
+
+/*
+   POR QUE O CABEÇALHO VIROU UM BLOCO COM FUNDO.
+
+   O título tinha filete embaixo, e a lista tem filete em cima (`.post-list`).
+   O tema só cancela o da lista quando ela vem LOGO DEPOIS do título, e com a
+   descrição no meio isso nunca acontecia: a descrição ficava entre dois filetes,
+   com a mesma moldura dos itens. "os longos, com título, escritos com calma"
+   lia como se fosse o primeiro texto da lista.
+
+   O fundo resolve na origem: o cabeçalho deixa de ser uma linha entre duas e
+   passa a ser uma superfície. O filete de topo da lista perde a função de
+   separar o título do conteúdo, e sai.
+*/
+.section__cabeca {
+  margin: 0 0 0.35rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--radius);
+  background: var(--paper-alt);
+}
+
+.section__cabeca .section-title {
+  margin-bottom: 0.3rem;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.section__cabeca .section__desc {
+  margin: 0;
+}
+
+.section__cabeca + .post-list {
+  border-top: 0;
+}
+
+/* ---------- o invólucro do h-card da marca ---------- */
+
+/*
+   O `h-card` precisa de um elemento que ENVOLVA o link, e não do link em si: com
+   `h-card u-url` no próprio `<a>`, o parser do microformats2 devolve a lista de URL
+   vazia, e sem `u-url` o h-card não é reconhecido como o do domínio.
+
+   `display: contents` é o que faz o invólucro não existir para o layout: o
+   `masthead` é `flex` com `space-between`, e um terceiro item empurraria as
+   ferramentas para o meio da barra.
+*/
+.masthead__quem {
+  display: contents;
+}
+
+/* ---------- blogroll (/blogroll/) ---------- */
+
+.blogroll-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.term-header + .blogroll-list {
+  border-top: 0;
+}
+
+.blogroll-item {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.blogroll-item__link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 0.6rem;
+  margin-inline: -0.6rem;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.blogroll-item__link:hover {
+  background: var(--paper-alt);
+  color: var(--green-deep);
+}
+
+.blogroll-item__favicon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.blogroll-item__nome {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.blogroll-item__dominio {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.blogroll-item__link:hover .blogroll-item__dominio {
+  color: var(--ink-soft);
+}
+
+@media (max-width: 500px) {
+  .blogroll-item__link {
+    padding-block: 0.8rem;
+    gap: 0.65rem;
+  }
+
+  .blogroll-item__nome {
+    font-size: 0.95rem;
+  }
+
+  .blogroll-item__dominio {
+    font-size: 0.78rem;
+  }
+}
+
+/* ============================================================
+   MARCADOR DE TEXTO SUAVE & TRANSLÚCIDO (MINIMALISTA)
+   Aplica nos elementos de ênfase (strong / b / mark) do corpo de texto (.prose)
+   um grifado leve e discreto em tons de amarelo/âmbar.
+   ============================================================ */
+
+.prose strong,
+.prose b,
+.prose mark {
+  display: inline !important;
+  font-weight: 600;
+  background-color: rgba(254, 240, 138, 0.38) !important;
+  background-image: none !important;
+  padding: 0.1em 0.32em !important;
+  border-radius: 4px !important;
+  filter: none !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
+}
+
+.prose strong::before,
+.prose b::before,
+.prose mark::before {
+  content: none !important;
+}
+
+[data-theme='dark'] .prose strong,
+[data-theme='dark'] .prose b,
+[data-theme='dark'] .prose mark {
+  background-color: rgba(234, 179, 8, 0.16) !important;
+  background-image: none !important;
+  filter: none !important;
+  color: #fef08a !important;
+}
+
+
+
+/* Metadados Editoriais da Home (Tema, Data, Tempo de Leitura) */
+.post-item__meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+
+.post-item__meta-line .post-item__theme {
+  margin-bottom: 0;
+}
+
+.post-item__meta-divider {
+  color: var(--ink-mute, #a1a1aa);
+  user-select: none;
+  font-size: 0.75rem;
+}
+
+.post-item__date,
+.post-item__reading-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
 }
