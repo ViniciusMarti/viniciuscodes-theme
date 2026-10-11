@@ -5,13 +5,13 @@
    ============================================================ */
 
 :root {
-  --paper: #faf9f5;
-  --paper-alt: #f2efe9;
+  --paper: #f8f6f0;
+  --paper-alt: #eee9dc;
   /* Off-white instead of #fff: a pure-white surface is the brightest thing
      on screen and causes glare for light-sensitive readers. */
-  --paper-card: #fcfbf7;
-  --line: #e4e2dc;
-  --line-strong: #d5d2c9;
+  --paper-card: #ffffff;
+  --line: #e2dbcc;
+  --line-strong: #d2c8b3;
 
   /* Boundaries of form controls carry meaning, so they must reach the 3:1
      non-text ratio. This one measures 3.86:1 on --paper and 3.92:1 on
@@ -19,10 +19,10 @@
      Decorative dividers keep using --line. */
   --field-border: #837e6d;
 
-  --ink: #1f2328;
+  --ink: #212521;
   /* 8.50:1 on --paper, 8.65:1 on --paper-card, 7.81:1 on --paper-alt
      (was #575d65 at 6.31/6.42/5.79 — AA but not AAA). */
-  --ink-soft: #444a51;
+  --ink-soft: #4a524a;
   /* 7.64:1 on --paper, 7.77:1 on --paper-card, 7.01:1 on --paper-alt
      (was #666d75 at 4.97/5.06/4.56, the weakest text in the light theme).
      The value already existed in the contrast block; it was promoted.
@@ -33,7 +33,7 @@
      by 0.01. Since the tightest surface is the one at 7.01, margin — if it is
      wanted — only comes from going DARKER: #464d54 measures 7.47:1 and
      #424950 measures 7.95:1. */
-  --ink-mute: #4a5158;
+  --ink-mute: #697368;
 
   /*
     The same hue, four points of lightness lower. #3b5e43 measured 6.95:1 on
@@ -42,13 +42,13 @@
     AAA on all three surfaces, with the hue intact (hsl 134 became hsl 138,
     which is imperceptible as colour).
   */
-  --green: #365740;
-  --green-deep: #2c4732;
-  --green-wash: #eef2ed;
+  --green: #2e593d;
+  --green-deep: #20422c;
+  --green-wash: #e8f0ea;
   /* --green as channels, so the prose underline can be a fraction of it:
      rgba(var(--green-rgb), 0.45). THIS MUST FOLLOW --green — it draws the
      link underline, and a stale value here shows the old green. */
-  --green-rgb: 54, 87, 64;
+  --green-rgb: 46, 89, 61;
 
   /*
     The second accent, and the only one besides the green.
@@ -67,7 +67,7 @@
   */
   /* 5.83:1 on --paper (was #8a5a2b at 5.11). Clay is a glyph, not body text,
      so AA was already enough; the darker step buys margin for free. */
-  --clay: #7f5227;
+  --clay: #94683c;
 
   /* Text placed on a saturated accent background. */
   --on-accent: #ffffff;
@@ -156,36 +156,29 @@
 /* Dark palette. Driven by `data-theme` on <html>, set by the toggle script
    and restored from localStorage before paint to avoid a flash. */
 [data-theme='dark'] {
-  --paper: #16181a;
-  --paper-alt: #1c1f21;
-  --paper-card: #202325;
-  --line: #2e3335;
-  --line-strong: #3c4144;
+  --paper: #141715;
+  --paper-alt: #1a1e1b;
+  --paper-card: #202622;
+  --line: #2d3630;
+  --line-strong: #3b473f;
 
-  --field-border: #6b7272;
+  --field-border: #647067;
 
-  --ink: #e8e6e0;
-  /* 9.64:1 on --paper-card. This is what --ink-mute used to be: the two
-     levels swapped so both clear AAA instead of one sitting at 5.25:1. */
-  --ink-soft: #c6cbcb;
-  /* 7.02:1 on --paper-card and 7.91:1 on --paper (was #8f9696 at 5.25/5.91). */
-  --ink-mute: #a8aeae;
+  --ink: #eceee9;
+  --ink-soft: #b8c2b9;
+  --ink-mute: #8e9c90;
 
-  --green: #8fb996;
-  --green-deep: #a8cdae;
-  --green-wash: #232a25;
-  /* Clears 8.09:1 against --paper. */
-  --green-rgb: 143, 185, 150;
+  --green: #78be8c;
+  --green-deep: #95d4a6;
+  --green-wash: #1e2921;
+  --green-rgb: 120, 190, 140;
 
-  /* The page accent, lifted for a dark ground: 8.28:1 on --paper. */
-  --clay: #d9a86c;
+  --clay: #dfa96e;
 
-  --on-accent: #16181a;
-
-  /* See `--on-ink` in the light theme. */
-  --on-ink: #16181a;
-  --code-bg: #101214;
-  --code-ink: #e8e6e0;
+  --on-accent: #141715;
+  --on-ink: #141715;
+  --code-bg: #0f1210;
+  --code-ink: #eceee9;
 
   color-scheme: dark;
 }
@@ -4206,7 +4199,7 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose mark {
   display: inline !important;
   font-weight: 600;
-  background-color: rgba(254, 240, 138, 0.38) !important;
+  background-color: rgba(253, 230, 138, 0.45) !important;
   background-image: none !important;
   padding: 0.1em 0.32em !important;
   border-radius: 4px !important;
@@ -4224,7 +4217,7 @@ a.link-externo:focus-visible .link-externo__icone {
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  background-color: rgba(234, 179, 8, 0.16) !important;
+  background-color: rgba(234, 179, 8, 0.18) !important;
   background-image: none !important;
   filter: none !important;
   color: #fef08a !important;

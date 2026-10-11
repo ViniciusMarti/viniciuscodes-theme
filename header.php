@@ -120,8 +120,8 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	 */
 	?>
 	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=2" type="image/svg+xml" />
-	<meta name="theme-color" content="#faf9f5" media="(prefers-color-scheme: light)" />
-	<meta name="theme-color" content="#16181a" media="(prefers-color-scheme: dark)" />
+	<meta name="theme-color" content="#f8f6f0" media="(prefers-color-scheme: light)" />
+	<meta name="theme-color" content="#141715" media="(prefers-color-scheme: dark)" />
 
 	<?php
 	/*
