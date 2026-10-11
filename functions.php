@@ -456,17 +456,9 @@ function vc_imagem_social( int $post_id = 0 ): string {
 		if ( has_post_thumbnail( $post_id ) ) {
 			return (string) get_the_post_thumbnail_url( $post_id, 'full' );
 		}
-
-		// Gera cartao dinamico de alta qualidade (1200x630) com o titulo do post
-		if ( function_exists( 'vc_obter_og_imagem_dinamica' ) ) {
-			$og_dinamico = vc_obter_og_imagem_dinamica( $post_id );
-			if ( ! empty( $og_dinamico ) ) {
-				return $og_dinamico;
-			}
-		}
 	}
 
-	return vc_midia( 'og-default.jpg' );
+	return '';
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
@@ -2989,8 +2981,3 @@ require_once get_theme_file_path( 'inc/notas-feed.php' );
  * painel.
  */
 require_once get_theme_file_path( 'inc/acervo-admin.php' );
-
-/* -------------------------------------------------------------------------
-   GERADOR AUTOMATICO DE IMAGEM OPEN GRAPH
-   ------------------------------------------------------------------------- */
-require_once get_theme_file_path( 'inc/og-generator.php' );
