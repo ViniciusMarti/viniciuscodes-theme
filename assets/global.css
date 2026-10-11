@@ -3293,10 +3293,7 @@ a.link-externo {
 
 .prose a.link-externo .link-externo__texto,
 a.link-externo .link-externo__texto {
-  text-decoration: underline;
-  text-decoration-color: rgba(var(--green-rgb), 0.45);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 3px;
+  text-decoration: none !important;
 }
 
 .prose a.link-externo:hover .link-externo__texto,
@@ -4281,18 +4278,42 @@ a.link-externo:focus-visible .link-externo__icone {
 }
 
 /* 4. SUBLINHADO TRACEJADO CHARMOSO NOS LINKS (.prose a) */
-.prose a:not(.button):not(.wp-block-button__link) {
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo) {
   text-decoration: underline dashed rgba(234, 179, 8, 0.6) !important;
   text-underline-offset: 4px !important;
   text-decoration-thickness: 1.5px !important;
   transition: all 0.2s ease !important;
 }
 
-.prose a:not(.button):not(.wp-block-button__link):hover,
-.prose a:not(.button):not(.wp-block-button__link):focus-visible {
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo):hover,
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo):focus-visible {
   text-decoration-style: solid !important;
-  text-decoration-color: var(--green-deep, #15803d) !important;
-  color: var(--green-deep, #15803d) !important;
+  text-decoration-color: var(--green-deep, #20422c) !important;
+  color: var(--green-deep, #20422c) !important;
+}
+
+/* Links dentro ou envolvendo grifados não têm sublinhado para evitar linha dupla feia */
+.prose strong a,
+.prose b a,
+.prose mark a,
+.prose a:has(strong),
+.prose a:has(b),
+.prose a:has(mark),
+.prose strong,
+.prose b,
+.prose mark,
+.prose a.link-externo,
+a.link-externo {
+  text-decoration: none !important;
+}
+
+.prose strong a:hover,
+.prose b a:hover,
+.prose mark a:hover,
+.prose a:has(strong):hover,
+.prose a:has(b):hover,
+.prose a:has(mark):hover {
+  text-decoration: none !important;
 }
 
 /* 7. DIVISOR EDITORIAL COM GLIFOS NO SEPARADOR (.prose hr) */
