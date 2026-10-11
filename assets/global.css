@@ -4195,10 +4195,11 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose b,
 .prose mark {
   display: inline !important;
-  font-weight: 600;
-  background-color: rgba(253, 230, 138, 0.45) !important;
+  font-weight: 600 !important;
+  background-color: #d8e5db !important;
+  color: #173822 !important;
   background-image: none !important;
-  padding: 0.1em 0.32em !important;
+  padding: 0.1em 0.35em !important;
   border-radius: 4px !important;
   filter: none !important;
   box-decoration-break: clone !important;
@@ -4214,10 +4215,10 @@ a.link-externo:focus-visible .link-externo__icone {
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  background-color: rgba(234, 179, 8, 0.18) !important;
+  background-color: rgba(120, 190, 140, 0.22) !important;
   background-image: none !important;
   filter: none !important;
-  color: #fef08a !important;
+  color: #bbf0cb !important;
 }
 
 
@@ -4279,7 +4280,7 @@ a.link-externo:focus-visible .link-externo__icone {
 
 /* 4. SUBLINHADO TRACEJADO CHARMOSO NOS LINKS (.prose a) */
 .prose a:not(.button):not(.wp-block-button__link):not(.link-externo) {
-  text-decoration: underline dashed rgba(234, 179, 8, 0.6) !important;
+  text-decoration: underline dashed rgba(46, 89, 61, 0.5) !important;
   text-underline-offset: 4px !important;
   text-decoration-thickness: 1.5px !important;
   transition: all 0.2s ease !important;
@@ -4292,16 +4293,13 @@ a.link-externo:focus-visible .link-externo__icone {
   color: var(--green-deep, #20422c) !important;
 }
 
-/* Links dentro ou envolvendo grifados não têm sublinhado para evitar linha dupla feia */
+/* Remove sublinhado APENAS de links que envolvem ou estão dentro de grifados */
 .prose strong a,
 .prose b a,
 .prose mark a,
 .prose a:has(strong),
 .prose a:has(b),
 .prose a:has(mark),
-.prose strong,
-.prose b,
-.prose mark,
 .prose a.link-externo,
 a.link-externo {
   text-decoration: none !important;
