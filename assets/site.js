@@ -457,16 +457,20 @@
 
 					var span = document.createElement('span');
 					span.className = 'sunflower-rain-word';
-					span.textContent = match[0];
+
+					var textSpan = document.createElement('span');
+					textSpan.className = 'sunflower-rain-text';
+					textSpan.textContent = match[0];
+					span.appendChild(textSpan);
 
 					var shower = document.createElement('span');
 					shower.className = 'sunflower-rain-shower';
 					shower.setAttribute('aria-hidden', 'true');
-					shower.innerHTML = '<span class="sf-drop sf-d1">🌻</span>' +
-						'<span class="sf-drop sf-d2">🌻</span>' +
-						'<span class="sf-drop sf-d3">🌻</span>' +
-						'<span class="sf-drop sf-d4">🌻</span>' +
-						'<span class="sf-drop sf-d5">🌻</span>';
+					shower.innerHTML = '<span class="sf-drop sf-d1">&#127803;</span>' +
+						'<span class="sf-drop sf-d2">&#127803;</span>' +
+						'<span class="sf-drop sf-d3">&#127803;</span>' +
+						'<span class="sf-drop sf-d4">&#127803;</span>' +
+						'<span class="sf-drop sf-d5">&#127803;</span>';
 
 					span.appendChild(shower);
 					fragmento.appendChild(span);
