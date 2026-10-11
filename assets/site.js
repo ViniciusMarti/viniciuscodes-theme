@@ -417,7 +417,8 @@
 		var containers = document.querySelectorAll('.prose');
 		if (!containers.length) return;
 
-		var regexNeuro = /\b(autismo|autista|autistas|audhd|tdah)\b/gi;
+		var regexTeste = /\b(autismo|autista|autistas|audhd|tdah)\b/i;
+		var regexGlobal = /\b(autismo|autista|autistas|audhd|tdah)\b/gi;
 
 		containers.forEach(function (container) {
 			var walker = document.createTreeWalker(
@@ -431,7 +432,7 @@
 						if (tag === 'script' || tag === 'style' || tag === 'textarea' || parent.closest('.sunflower-rain-word')) {
 							return NodeFilter.FILTER_REJECT;
 						}
-						return regexNeuro.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+						return regexTeste.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
 					}
 				},
 				false
@@ -446,10 +447,10 @@
 				var fragmento = document.createDocumentFragment();
 				var texto = node.nodeValue;
 				var ultimoIndex = 0;
-				regexNeuro.lastIndex = 0;
+				regexGlobal.lastIndex = 0;
 				var match;
 
-				while ((match = regexNeuro.exec(texto)) !== null) {
+				while ((match = regexGlobal.exec(texto)) !== null) {
 					var antes = texto.substring(ultimoIndex, match.index);
 					if (antes) {
 						fragmento.appendChild(document.createTextNode(antes));
@@ -470,7 +471,7 @@
 
 					span.appendChild(shower);
 					fragmento.appendChild(span);
-					ultimoIndex = regexNeuro.lastIndex;
+					ultimoIndex = regexGlobal.lastIndex;
 				}
 
 				var depois = texto.substring(ultimoIndex);
