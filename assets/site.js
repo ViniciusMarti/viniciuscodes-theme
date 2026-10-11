@@ -413,30 +413,82 @@
 	}
 
 	/* ----------------------- easter egg: chuva de girassóis em neurodivergência */
-	var tagsProse = document.querySelectorAll('.prose p, .prose li, .prose blockquote');
-	if (tagsProse.length) {
+	function inicializarGirassois() {
+		var containers = document.querySelectorAll('.prose');
+		if (!containers.length) return;
+
 		var regexNeuro = /\b(autismo|autista|autistas|audhd|tdah)\b/gi;
-		tagsProse.forEach(function (el) {
-			/* Evita processar dentro de links, scripts ou se já foi envolvido */
-			var childNodes = Array.prototype.slice.call(el.childNodes);
-			childNodes.forEach(function (node) {
-				if (node.nodeType === Node.TEXT_NODE && regexNeuro.test(node.nodeValue)) {
-					var spanWrapper = document.createElement('span');
-					spanWrapper.innerHTML = node.nodeValue.replace(regexNeuro, function (palavra) {
-						return '<span class="sunflower-rain-word">' + palavra +
-							'<span class="sunflower-rain-shower" aria-hidden="true">' +
-								'<span class="sf-drop sf-d1">🌻</span>' +
-								'<span class="sf-drop sf-d2">🌻</span>' +
-								'<span class="sf-drop sf-d3">🌻</span>' +
-								'<span class="sf-drop sf-d4">🌻</span>' +
-								'<span class="sf-drop sf-d5">🌻</span>' +
-							'</span>' +
-						'</span>';
-					});
-					el.replaceChild(spanWrapper, node);
+
+		containers.forEach(function (container) {
+			var walker = document.createTreeWalker(
+				container,
+				NodeFilter.SHOW_TEXT,
+				{
+					acceptNode: function (node) {
+						var parent = node.parentElement;
+						if (!parent) return NodeFilter.FILTER_REJECT;
+						var tag = parent.tagName.toLowerCase();
+						if (tag === 'script' || tag === 'style' || tag === 'textarea' || parent.closest('.sunflower-rain-word')) {
+							return NodeFilter.FILTER_REJECT;
+						}
+						return regexNeuro.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+					}
+				},
+				false
+			);
+
+			var nosParaTrocar = [];
+			while (walker.nextNode()) {
+				nosParaTrocar.push(walker.currentNode);
+			}
+
+			nosParaTrocar.forEach(function (node) {
+				var fragmento = document.createDocumentFragment();
+				var texto = node.nodeValue;
+				var ultimoIndex = 0;
+				regexNeuro.lastIndex = 0;
+				var match;
+
+				while ((match = regexNeuro.exec(texto)) !== null) {
+					var antes = texto.substring(ultimoIndex, match.index);
+					if (antes) {
+						fragmento.appendChild(document.createTextNode(antes));
+					}
+
+					var span = document.createElement('span');
+					span.className = 'sunflower-rain-word';
+					span.textContent = match[0];
+
+					var shower = document.createElement('span');
+					shower.className = 'sunflower-rain-shower';
+					shower.setAttribute('aria-hidden', 'true');
+					shower.innerHTML = '<span class="sf-drop sf-d1">🌻</span>' +
+						'<span class="sf-drop sf-d2">🌻</span>' +
+						'<span class="sf-drop sf-d3">🌻</span>' +
+						'<span class="sf-drop sf-d4">🌻</span>' +
+						'<span class="sf-drop sf-d5">🌻</span>';
+
+					span.appendChild(shower);
+					fragmento.appendChild(span);
+					ultimoIndex = regexNeuro.lastIndex;
+				}
+
+				var depois = texto.substring(ultimoIndex);
+				if (depois) {
+					fragmento.appendChild(document.createTextNode(depois));
+				}
+
+				if (node.parentNode) {
+					node.parentNode.replaceChild(fragmento, node);
 				}
 			});
 		});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', inicializarGirassois);
+	} else {
+		inicializarGirassois();
 	}
 })();
 

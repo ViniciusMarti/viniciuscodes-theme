@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VC_VERSAO', '1.0.54' );
+define( 'VC_VERSAO', '1791739070969' );
 
 /* -------------------------------------------------------------------------
    RECURSOS DO TEMA

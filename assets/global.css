@@ -4306,40 +4306,49 @@ a.link-externo:focus-visible .link-externo__icone {
 }
 
 /* 7. DIVISOR EDITORIAL COM GLIFOS NO SEPARADOR (.prose hr) */
+hr.wp-block-separator,
 .prose hr,
-.prose .wp-block-separator {
-  border: 0;
-  text-align: center;
-  margin: 2.5rem 0;
-  height: auto;
-  background: transparent;
-  position: relative;
-  overflow: visible;
+.prose .wp-block-separator,
+.wp-block-separator {
+  border: 0 !important;
+  text-align: center !important;
+  margin: 3rem 0 !important;
+  height: 24px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  background: transparent !important;
+  position: relative !important;
+  overflow: visible !important;
+  opacity: 1 !important;
 }
 
+hr.wp-block-separator::before,
 .prose hr::before,
-.prose .wp-block-separator::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  background: var(--line, #e2e8f0);
-  z-index: 1;
+.prose .wp-block-separator::before,
+.wp-block-separator::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 5% !important;
+  right: 5% !important;
+  height: 1px !important;
+  background: var(--line, #e2e8f0) !important;
+  z-index: 1 !important;
 }
 
+hr.wp-block-separator::after,
 .prose hr::after,
-.prose .wp-block-separator::after {
-  content: "✦ ✦ ✦";
-  position: relative;
-  z-index: 2;
-  display: inline-block;
-  background: var(--paper, #faf9f5);
-  padding: 0 0.8rem;
-  color: var(--ink-mute, #a1a1aa);
-  font-size: 0.82rem;
-  letter-spacing: 0.25em;
+.prose .wp-block-separator::after,
+.wp-block-separator::after {
+  content: "✦ ✦ ✦" !important;
+  position: relative !important;
+  z-index: 2 !important;
+  display: inline-block !important;
+  background: var(--paper, #faf9f5) !important;
+  padding: 0 0.8rem !important;
+  color: var(--ink-mute, #a1a1aa) !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.25em !important;
 }
 
 /* 8. TECLAS FÍSICAS DE ATALHO (<kbd>) */
