@@ -4467,7 +4467,3 @@ kbd,
   80%  { opacity: 0.8; }
   100% { opacity: 0; transform: translate(20px, -50px) scale(1) rotate(15deg); }
 }
-  35%  { opacity: 0.95; }
-  85%  { opacity: 0.75; }
-  100% { opacity: 0; transform: translate(92px, -18px) scale(1) rotate(15deg); }
-}
