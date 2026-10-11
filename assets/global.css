@@ -4196,8 +4196,8 @@ a.link-externo:focus-visible .link-externo__icone {
 .prose mark {
   display: inline !important;
   font-weight: 600 !important;
-  background-color: #d8e5db !important;
-  color: #173822 !important;
+  background-color: #f0e6cf !important;
+  color: #2b251a !important;
   background-image: none !important;
   padding: 0.1em 0.35em !important;
   border-radius: 4px !important;
@@ -4215,10 +4215,10 @@ a.link-externo:focus-visible .link-externo__icone {
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  background-color: rgba(120, 190, 140, 0.22) !important;
+  background-color: rgba(217, 185, 130, 0.2) !important;
   background-image: none !important;
   filter: none !important;
-  color: #bbf0cb !important;
+  color: #f2dec0 !important;
 }
 
 
@@ -4280,7 +4280,7 @@ a.link-externo:focus-visible .link-externo__icone {
 
 /* 4. SUBLINHADO TRACEJADO CHARMOSO NOS LINKS (.prose a) */
 .prose a:not(.button):not(.wp-block-button__link):not(.link-externo) {
-  text-decoration: underline dashed rgba(46, 89, 61, 0.5) !important;
+  text-decoration: underline dashed rgba(180, 145, 90, 0.55) !important;
   text-underline-offset: 4px !important;
   text-decoration-thickness: 1.5px !important;
   transition: all 0.2s ease !important;
