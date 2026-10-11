@@ -391,7 +391,6 @@
 				})
 				.catch(function () {});
 		});
-		});
 	});
 
 	/* ------------------------------------------- barra de progresso de leitura */
