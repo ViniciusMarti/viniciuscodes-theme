@@ -457,21 +457,12 @@ function vc_imagem_social( int $post_id = 0 ): string {
 			return (string) get_the_post_thumbnail_url( $post_id, 'full' );
 		}
 
-		/*
-		 * A NOTA QUE NÃO TEM IMAGEM NÃO RECEBE UMA.
-		 *
-		 * Ela caía no `og-default.jpg`, o cartão do site, e o efeito apareceu quando
-		 * a ponte para o Fediverso entrou: toda nota chegava ao Bluesky e ao Mastodon
-		 * com a MESMA figura anexada, uma fileira de publicações idênticas embaixo de
-		 * textos diferentes. Numa nota COM imagem a varredura acima já respondeu, e
-		 * continua respondendo (é o que `inc/notas-admin.php` documenta). Sem imagem, o
-		 * cartão genérico não informa nada e só polui a linha do tempo.
-		 *
-		 * O TEXTO CONTINUA SAINDO COM PRÉVIA: sem `og:image`, o compartilhamento cai no
-		 * cartão de texto, com título e descrição. É o formato certo para um post curto.
-		 */
-		if ( defined( 'VC_NOTA' ) && VC_NOTA === get_post_type( $post_id ) ) {
-			return '';
+		// Gera cartao dinamico de alta qualidade (1200x630) com o titulo do post
+		if ( function_exists( 'vc_obter_og_imagem_dinamica' ) ) {
+			$og_dinamico = vc_obter_og_imagem_dinamica( $post_id );
+			if ( ! empty( $og_dinamico ) ) {
+				return $og_dinamico;
+			}
 		}
 	}
 
@@ -479,6 +470,13 @@ function vc_imagem_social( int $post_id = 0 ): string {
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
+/** Data curta em portugues: "08 out 2026". */
+function vc_data_curta( ?int $post_id = null ): string {
+    $meses = array( 1 => "jan", 2 => "fev", 3 => "mar", 4 => "abr", 5 => "mai", 6 => "jun", 7 => "jul", 8 => "ago", 9 => "set", 10 => "out", 11 => "nov", 12 => "dez" );
+    list( $ano, $mes, $dia ) = array_map( "intval", explode( "-", (string) get_the_date( "Y-m-d", $post_id ) ) );
+    return sprintf( "%02d %s %d", $dia, $meses[ $mes ], $ano );
+}
+
 function vc_data_longa( ?int $post_id = null ): string {
 	/*
 	 * O mês é escrito aqui, e não pedido ao WordPress, porque este site está
@@ -2991,3 +2989,8 @@ require_once get_theme_file_path( 'inc/notas-feed.php' );
  * painel.
  */
 require_once get_theme_file_path( 'inc/acervo-admin.php' );
+
+/* -------------------------------------------------------------------------
+   GERADOR AUTOMATICO DE IMAGEM OPEN GRAPH
+   ------------------------------------------------------------------------- */
+require_once get_theme_file_path( 'inc/og-generator.php' );
