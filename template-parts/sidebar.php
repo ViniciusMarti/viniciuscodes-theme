@@ -21,23 +21,7 @@ $vc_esta  = static function ( string $href ) use ( $vc_atual ): bool {
 $vc_temas = vc_temas_ordenados( true );
 ?>
 <aside class="sidebar" id="barra-lateral" aria-label="Menu principal">
-	<div class="sidebar__header">
-		<span class="sidebar__title">menu</span>
-		<button
-			type="button"
-			class="sidebar__close"
-			data-sidebar-close
-			aria-label="fechar menu"
-		>
-			<?php echo vc_icone( 'x', 20 ); ?>
-		</button>
-	</div>
-
 	<div class="sidebar__content">
-		<div class="sidebar__search">
-			<?php echo vc_formulario_de_busca( 'sidebar-search' ); ?>
-		</div>
-
 		<nav class="sidebar__group" aria-labelledby="barra-grupo-paginas">
 			<p class="sidebar__label" id="barra-grupo-paginas">páginas</p>
 			<?php foreach ( vc_itens_do_menu( 'vc-principal' ) as $vc_item ) : ?>
