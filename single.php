@@ -70,7 +70,9 @@ while ( have_posts() ) :
 			$vc_citados   = vc_get_outbound_internal_links( $vc_id );
 			$vc_backlinks = vc_get_backlinks( $vc_id );
 
-			if ( ! empty( $vc_citados ) || ! empty( $vc_backlinks ) ) :
+			$vc_tem_conexoes = ! empty( $vc_citados ) || ! empty( $vc_backlinks );
+
+			if ( $vc_tem_conexoes ) :
 				?>
 				<section class="post-connections" aria-label="conexões deste texto">
 					<?php if ( ! empty( $vc_citados ) ) : ?>
@@ -105,11 +107,7 @@ while ( have_posts() ) :
 			endif;
 
 			/*
-			 * A ordem destes três é a mesma do site, e ela é intencional:
-			 *
-			 *   compartilhar   → o leitor decide se aquilo serve para outra pessoa
-			 *   conversa       → decide se quer falar comigo sobre o que leu
-			 *   relacionadas   → decide o que ler depois
+			 * Compartilhar e comentários.
 			 */
 			get_template_part( 'template-parts/article', 'share' );
 
@@ -117,7 +115,13 @@ while ( have_posts() ) :
 				comments_template();
 			endif;
 
-			get_template_part( 'template-parts/article', 'related' );
+			/*
+			 * Só exibe posts relacionados genéricos se não houver conexões internas
+			 * específicas (evita empilhar listas duplicadas de sugestões).
+			 */
+			if ( ! $vc_tem_conexoes ) :
+				get_template_part( 'template-parts/article', 'related' );
+			endif;
 			?>
 			<p class="article__back">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>">← voltar para o início</a>
