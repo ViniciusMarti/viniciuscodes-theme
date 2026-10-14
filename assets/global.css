@@ -4171,116 +4171,61 @@ a.link-externo:focus-visible .link-externo__icone {
 	}
 
 	.layout {
-		padding-right: var(--sidebar-w, 268px);
-		transition: padding-right 0.2s ease;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: flex-start;
+		gap: 3.5rem;
+		width: 100%;
+		max-width: calc(var(--content-max, 620px) + var(--sidebar-w, 268px) + 3.5rem + 5rem);
+		margin-inline: auto;
+		padding: 0 2.5rem;
+		transition: max-width 0.2s ease, padding 0.2s ease;
 	}
 
-	/* 3. Estado recolhido.
-	      -----------------------------------------------------------------
-	      `position: fixed` AQUI NÃO É DETALHE: é o que impede a barra de
-	      ESTICAR O DOCUMENTO.
+	.content {
+		order: 1;
+		flex: 1;
+		min-width: 0;
+		max-width: var(--content-max, 620px);
+		padding: 1.75rem 0 4rem;
+	}
 
-	      Recolhida, ela sai da tela por `translateX(100%)` — e uma caixa
-	      comum empurrada para fora da direita faz o documento ficar mais
-	      largo. Foi o que a medicao mostrou: `scrollWidth` de 1543px numa
-	      janela de 1275, com a barra inteira em 1275->1543. Exatamente os
-	      268px dela, e uma barra de rolagem horizontal embaixo da pagina.
+	.content__inner {
+		max-width: 100%;
+		margin-inline: 0;
+	}
 
-	      Um elemento `fixed` nao entra na conta da rolagem: sai do fluxo E
-	      do documento. Era assim que a barra se comportava antes de a coluna
-	      passar para o fluxo (o que resolveu a rolagem dupla) — e e assim que
-	      ela volta a se comportar enquanto esta guardada, onde nao ha nada
-	      para alinhar com ela: o painel do `body::after` esta `display: none`
-	      neste estado. */
+	.sidebar {
+		order: 2;
+		position: static;
+		width: var(--sidebar-w, 268px);
+		flex-shrink: 0;
+		margin-top: 1.75rem;
+		padding: 0 0 2rem;
+		background: transparent;
+		border-left: none;
+		height: auto;
+		max-height: none;
+		overflow-y: visible;
+		z-index: 10;
+	}
+
 	html[data-sidebar="collapsed"] .sidebar {
-		position: fixed;
-		transform: translateX(100%);
-		visibility: hidden;
-	}
-
-	html[data-sidebar="collapsed"] body {
-		padding-right: 0;
+		display: none;
 	}
 
 	html[data-sidebar="collapsed"] .layout {
-		padding-right: 0;
+		max-width: var(--content-max, 620px);
 	}
 
-	/* 4. Controles que so existem no drawer mobile. */
 	.sidebar-backdrop,
 	.sidebar__close {
 		display: none;
 	}
 
-	/* 5. "Voltar ao topo" e fixed a direita e ficaria atras do painel. */
 	.to-top {
-		right: calc(var(--sidebar-w, 268px) + 1.5rem);
-		transition: right 0.2s ease;
-	}
-
-	html[data-sidebar="collapsed"] .to-top {
 		right: 1.5rem;
-	}
-
-	/* 6. UMA ROLAGEM SO.
-	      -----------------------------------------------------------------
-	      MEDIDO: numa janela de 720px, o conteudo desta barra tem 881px. Com
-	      `height: 100dvh` e `overflow-y: auto`, ela era um SEGUNDO conteiner
-	      de rolagem ao lado do primeiro — duas barras de rolagem na mesma
-	      tela, e a roda do mouse fazendo uma coisa de cada lado do painel.
-
-	      `position: sticky` NAO RESOLVE, e vale registrar a conta: preso pelo
-	      topo, os 161px que passam da janela ficariam inalcancaveis para
-	      sempre; preso pelo rodape, o inalcancavel seria o topo. Um elemento
-	      maior que a janela nao cabe numa janela. Entao ele volta para o
-	      fluxo e rola COM a pagina — que e o unico jeito de existir uma
-	      rolagem so sem esconder item nenhum.
-
-	      O PAINEL FICA. Quem desenha o fundo e a borda da coluna passa a ser
-	      um pseudo-elemento do <body>, e nao mais a propria barra: assim a
-	      coluna continua parecendo coluna depois que os links acabam, em vez
-	      de o papel de tras aparecer do nada no meio da pagina.
-
-	      E O ANCORA E A CAIXA DO <body>, NAO O `.layout`. Isto foi erro
-	      medido DUAS vezes, e as duas medidas ficam registradas, porque as
-	      duas eram invisiveis a olho nu:
-
-	      1) Presa ao `.layout`, a barra saiu em 754->1022 numa janela de
-	      1290: a caixa do `.layout` ja exclui os 268px do `padding-right` do
-	      <body>, entao o `right: 0` a encostava no fim do CONTEUDO — em cima
-	      da coluna de texto, que termina em 814.
-
-	      2) Presa ao <body>, ela ficou certa (1007->1275) e foi o PAINEL que
-	      saiu do lugar: `position: fixed` se mede pelo viewport, e o viewport
-	      tem os 15px da barra de rolagem que a caixa do <body> nao tem. O
-	      painel ia de 1022 a 1290, a barra de 1007 a 1275: 15px de
-	      desencontro — exatamente a largura da barra de rolagem.
-
-	      Por isso o painel tambem e `absolute`: os dois passam a se medir
-	      pela MESMA caixa e o desencontro some por construcao, em vez de
-	      ficar dependendo de um numero magico que muda com o navegador e o
-	      sistema de quem le. Uma barra e um painel, os dois ancorados no
-	      <body>: 1007->1275. */
-	body {
-		position: relative;
-	}
-
-	.sidebar {
-		position: absolute;
-		top: var(--header-h, 68px);
-		right: 0;
-		bottom: auto;
-		height: auto;
-		max-height: none;
-		overflow-y: visible;
-		z-index: 10;
-		padding: 1.5rem 1rem 2rem;
-		/*
-		   A barra agora e integrada e continua com a pagina: fundo transparente
-		   e sem divisoria vertical rigida, posicionada abaixo da linha do cabecalho.
-		*/
-		background: transparent;
-		border-left: none;
 	}
 
 	body::after {
