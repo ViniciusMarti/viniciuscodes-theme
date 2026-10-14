@@ -553,9 +553,10 @@ function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'notas',               'href' => '/notas/',       'icone' => 'square-pen' ),
-		array( 'label' => 'vídeos',              'href' => '/videos/',      'icone' => 'film' ),
+		array( 'label' => 'vídeos',              'href' => '/videos/',      'icone' => 'play' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
-		array( 'label' => 'acervo',              'href' => '/acervo/',      'icone' => 'library-big' ),
+		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
+		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
 		array( 'label' => 'música',              'href' => '/musica/',      'icone' => 'music' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
@@ -724,8 +725,10 @@ function vc_icone_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'newspaper',
 		'/notas/'     => 'square-pen',
-		'/videos/'    => 'film',
+		'/videos/'    => 'play',
 		'/sobre/'     => 'user-round',
+		'/livros/'    => 'book',
+		'/filmes/'    => 'film',
 		'/acervo/'    => 'library-big',
 		'/musica/'    => 'music',
 		'/blogroll/'  => 'handshake',
@@ -782,7 +785,9 @@ function vc_contexto_da_url( string $url ): string {
 		'/notas/'     => 'os textos curtos, sem título, na ordem em que saem',
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
-		'/acervo/'    => 'o que eu li e assisti: livros, filmes, séries e peças, com a data de cada um',
+		'/livros/'    => 'o que estou lendo, o que já li e a minha estante',
+		'/filmes/'    => 'o que eu assisti no cinema e em casa, com as datas de cada sessão',
+		'/acervo/'    => 'o que eu li e assisti: livros e filmes',
 		'/musica/'    => 'os álbuns, artistas, músicas e podcasts mais ouvidos por ano via spotify',
 		'/blogroll/'  => 'cada um com o feed para assinar',
 		'/manifesto/' => 'por que este site existe e como ele se organiza',
@@ -2260,3 +2265,20 @@ require_once get_theme_file_path( 'inc/acervo-admin.php' );
    VÍDEOS DO CANAL @VINICIUSCODES
    ------------------------------------------------------------------------- */
 require_once get_theme_file_path( 'inc/cpt-videos.php' );
+
+/* -------------------------------------------------------------------------
+   REDIRECIONAMENTO DO ACERVO
+   ------------------------------------------------------------------------- */
+/**
+ * Redireciona /acervo/ para a nova página de livros /livros/ (301 permanente).
+ */
+add_action(
+	'template_redirect',
+	static function () {
+		if ( is_page( 'acervo' ) || ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#^/acervo/?(\?.*)?$#i', (string) $_SERVER['REQUEST_URI'] ) ) ) {
+			wp_safe_redirect( home_url( '/livros/' ), 301 );
+			exit;
+		}
+	}
+);
+
