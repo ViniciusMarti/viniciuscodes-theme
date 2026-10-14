@@ -121,6 +121,15 @@ $vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 						<h2 class="post-item__title p-name">
 							<a class="u-url" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 						</h2>
+
+						<?php
+						$vc_resumo = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 35, '…' );
+						if ( '' !== trim( $vc_resumo ) ) :
+							?>
+							<p class="post-item__excerpt e-summary">
+								<?php echo esc_html( $vc_resumo ); ?>
+							</p>
+						<?php endif; ?>
 					</li>
 				<?php endif; ?>
 				<?php

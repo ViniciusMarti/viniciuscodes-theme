@@ -2406,6 +2406,17 @@ blockquote p:last-child,
   text-underline-offset: 0.18em;
 }
 
+.post-item__excerpt {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ---------- cards / grids ---------- */
 
 /*

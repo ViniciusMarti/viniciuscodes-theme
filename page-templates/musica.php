@@ -206,13 +206,20 @@ while ( have_posts() ) :
 					<ul class="musica__grade-podcasts">
 						<?php foreach ( $vc_podcasts as $vc_pod ) : ?>
 							<li class="musica__podcast-card">
-								<div>
-									<h3 class="musica__podcast-nome"><?php echo esc_html( $vc_pod['nome'] ); ?></h3>
-									<p class="musica__podcast-desc"><?php echo esc_html( $vc_pod['descricao'] ); ?></p>
+								<div class="musica__podcast-topo">
+									<?php if ( ! empty( $vc_pod['imagem'] ) ) : ?>
+										<div class="musica__podcast-capa">
+											<img src="<?php echo esc_url( $vc_pod['imagem'] ); ?>" alt="" loading="lazy" width="56" height="56" />
+										</div>
+									<?php endif; ?>
+									<div>
+										<h3 class="musica__podcast-nome"><?php echo esc_html( $vc_pod['nome'] ); ?></h3>
+									</div>
 								</div>
+								<p class="musica__podcast-desc"><?php echo esc_html( $vc_pod['descricao'] ); ?></p>
 								<?php if ( ! empty( $vc_pod['link'] ) ) : ?>
 									<a href="<?php echo esc_url( $vc_pod['link'] ); ?>" class="musica__podcast-link" target="_blank" rel="noopener noreferrer">
-										<?php esc_html_e( 'conhecer no spotify', 'viniciuscodes' ); ?> <span aria-hidden="true">↗</span>
+										<?php esc_html_e( 'ouvir no spotify', 'viniciuscodes' ); ?> <span aria-hidden="true">↗</span>
 									</a>
 								<?php endif; ?>
 							</li>

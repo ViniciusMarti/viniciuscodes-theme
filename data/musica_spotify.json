@@ -131,14 +131,22 @@
     ],
     "podcasts": [
       {
-        "nome": "raciocínio clínico",
-        "descricao": "discussões de casos médicos, condutas e raciocínio diagnóstico.",
-        "link": "https://open.spotify.com/genre/podcasts"
+        "nome": "rádio novelo apresenta",
+        "descricao": "toda quinta-feira, histórias que você nem sabia que precisava ouvir. investigações sonoras e crônicas jornalísticas surpreendentes.",
+        "imagem": "https://i.scdn.co/image/ab6765630000ba8ac40af7f7b2c3eafb324f322e",
+        "link": "https://open.spotify.com/show/5FN1BLdgT0R4K8WhXOtcCx"
       },
       {
-        "nome": "ted talks daily",
-        "descricao": "ideias diárias sobre inovação, comportamento e sociedade.",
-        "link": "https://open.spotify.com/genre/podcasts"
+        "nome": "não inviabilize (picolé de limão)",
+        "descricao": "o canal de contos, crônicas e laboratório de histórias reais e cotidianas da Déia Freitas, lar do clássico quadro picolé de limão.",
+        "imagem": "https://i.scdn.co/image/ab6765630000ba8a2179516ddcb6bc6caf115d69",
+        "link": "https://open.spotify.com/show/66XCLKbi33MubYTZX2G2jW"
+      },
+      {
+        "nome": "bom dia, obvious",
+        "descricao": "marcela ceribelli e convidadas em conversas abertas sobre temas atuais do universo feminino, bem-estar, autocuidado e carreira.",
+        "imagem": "https://i.scdn.co/image/ab6765630000ba8ac18297c4a2e769c41056de44",
+        "link": "https://open.spotify.com/show/1592iJQt0IlC5u5lKXrbyS"
       }
     ]
   }
