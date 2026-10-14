@@ -16,9 +16,9 @@ wp_enqueue_style(
 );
 
 $vc_categorias_canais = array(
-	'tecnologia & ciência' => array(
+	'tecnologia e ciência' => array(
 		'descricao' => 'programação, hardware, experimentos e divulgação científica.',
-		'icone'     => 'cpu',
+		'icone'     => 'terminal',
 		'canais'    => array(
 			array(
 				'nome'   => 'Coisa de Nerd',
@@ -46,7 +46,7 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'cinema & audiovisual' => array(
+	'cinema e audiovisual' => array(
 		'descricao' => 'crítica de filmes, ensaios em vídeo, narrativas e fotografia analógica.',
 		'icone'     => 'film',
 		'canais'    => array(
@@ -76,9 +76,9 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'viagens & lugares' => array(
+	'viagens e lugares' => array(
 		'descricao' => 'expedições, culturas pelo mundo e roteiros pé no chão.',
-		'icone'     => 'compass',
+		'icone'     => 'plane',
 		'canais'    => array(
 			array(
 				'nome'   => 'Japão Nosso De Cada Dia',
@@ -106,9 +106,9 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'urbanismo & sustentabilidade' => array(
+	'urbanismo e sustentabilidade' => array(
 		'descricao' => 'cidades pensadas para pessoas, vida simples e reflexões sociais.',
-		'icone'     => 'tree-pine',
+		'icone'     => 'sprout',
 		'canais'    => array(
 			array(
 				'nome'   => 'Eixo XYZ',
@@ -136,9 +136,9 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'cultura, livros & ensaios' => array(
+	'cultura, livros e ensaios' => array(
 		'descricao' => 'literatura, retrospectivas históricas, cultura pop e música.',
-		'icone'     => 'book-open',
+		'icone'     => 'book',
 		'canais'    => array(
 			array(
 				'nome'   => 'Arbóreo Literário',
@@ -166,7 +166,7 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'cotidiano & vlogs' => array(
+	'cotidiano e vlogs' => array(
 		'descricao' => 'rotina, vida real, conversas e reflexões diárias.',
 		'icone'     => 'coffee',
 		'canais'    => array(
@@ -196,9 +196,9 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'humor & entretenimento' => array(
+	'humor e entretenimento' => array(
 		'descricao' => 'comédia, cortes de conversas e bate-papo descontraído.',
-		'icone'     => 'smile',
+		'icone'     => 'sparkles',
 		'canais'    => array(
 			array(
 				'nome'   => 'CORTES - Leon e Nilce [Oficial]',
@@ -226,9 +226,9 @@ $vc_categorias_canais = array(
 			),
 		),
 	),
-	'diy, culinária & casa' => array(
+	'diy, culinária e casa' => array(
 		'descricao' => 'marcenaria, receitas fáceis e dicas para o lar.',
-		'icone'     => 'wrench',
+		'icone'     => 'package',
 		'canais'    => array(
 			array(
 				'nome'   => 'Almanaque SOS',
