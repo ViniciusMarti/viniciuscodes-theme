@@ -83,6 +83,10 @@ add_action(
 		 * primeira pintura.
 		 */
 		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
+
+		if ( is_home() ) {
+			wp_enqueue_script( 'vc-feed-infinito', get_theme_file_uri( 'assets/feed-infinito.js' ), array( 'vc-site' ), VC_VERSAO, true );
+		}
 	}
 );
 

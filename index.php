@@ -140,9 +140,24 @@ $vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 		<p class="empty"><?php esc_html_e( 'nada por aqui ainda.', 'viniciuscodes' ); ?></p>
 	<?php endif; ?>
 
-	<div class="section__foot" style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-		<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>"><?php esc_html_e( 'ver todos os textos →', 'viniciuscodes' ); ?></a>
-		<a href="<?php echo esc_url( home_url( '/notas/' ) ); ?>"><?php esc_html_e( 'ver todas as notas →', 'viniciuscodes' ); ?></a>
+	<div class="feed-paginacao-wrap" data-infinite-scroll-container>
+		<?php
+		global $wp_query;
+		$vc_total_paginas = (int) ( $wp_query->max_num_pages ?? 1 );
+		$vc_pagina_atual  = max( 1, (int) get_query_var( 'paged' ) );
+
+		if ( $vc_total_paginas > 1 ) :
+			?>
+			<div class="feed-paginacao" data-feed-nav>
+				<?php vc_paginacao( $vc_total_paginas, $vc_pagina_atual ); ?>
+			</div>
+			<div class="feed-sentinela" data-feed-sentinel style="height: 1px;"></div>
+		<?php endif; ?>
+
+		<div class="section__foot" style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>"><?php esc_html_e( 'ver todos os textos →', 'viniciuscodes' ); ?></a>
+			<a href="<?php echo esc_url( home_url( '/notas/' ) ); ?>"><?php esc_html_e( 'ver todas as notas →', 'viniciuscodes' ); ?></a>
+		</div>
 	</div>
 </section>
 

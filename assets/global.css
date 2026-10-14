@@ -2417,6 +2417,50 @@ blockquote p:last-child,
   overflow: hidden;
 }
 
+/* ---------- scroll infinito da home & fade-in ---------- */
+
+@keyframes vcFadeInItem {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-item--animado {
+  animation: vcFadeInItem 0.4s ease forwards;
+}
+
+.feed-carregando {
+  text-align: center;
+  padding: 1.5rem 0;
+  color: var(--ink-mute);
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.feed-carregando::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: vcRotacionar 0.6s linear infinite;
+}
+
+@keyframes vcRotacionar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ---------- cards / grids ---------- */
 
 /*
