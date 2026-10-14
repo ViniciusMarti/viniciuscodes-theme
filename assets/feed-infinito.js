@@ -111,10 +111,16 @@
 					var novosItens = doc.querySelectorAll('#fluxo .post-list > li');
 
 					if (novosItens && novosItens.length > 0) {
+						var itensInseridos = 0;
 						novosItens.forEach(function (item) {
+							// Se o item já existir no feed (pelo ID único nota-X ou post-X), não duplica
+							if (item.id && document.getElementById(item.id)) {
+								return;
+							}
 							item.classList.add('post-item--animado');
 							feedLista.appendChild(item);
 							inicializarCurtidaItem(item);
+							itensInseridos++;
 						});
 
 						// Atualiza a URL na barra de endereços (/page/2/, etc.)
@@ -125,7 +131,7 @@
 						var novoNav = doc.querySelector('[data-feed-nav]');
 						proximaUrl = obterProximoLink(novoNav);
 
-						if (!proximaUrl) {
+						if (!proximaUrl || itensInseridos === 0) {
 							observer.disconnect();
 							indicadorCarregando.remove();
 						}
