@@ -527,7 +527,7 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
  *
  *   o que mais tem para ler   -> todos os posts
  *   quem escreveu isso        -> sobre mim
- *   o que essa pessoa indica  -> o acervo, blogs que eu leio
+ *   o que essa pessoa indica  -> o acervo, blogroll
  *   que lugar é este          -> manifesto, como o site é feito
  *   falar comigo e acompanhar -> contato, feed RSS
  *
@@ -557,7 +557,7 @@ function vc_navegacao(): array {
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'acervo',              'href' => '/acervo/',      'icone' => 'library-big' ),
 		array( 'label' => 'música',              'href' => '/musica/',      'icone' => 'music' ),
-		array( 'label' => 'blogs que eu leio',   'href' => '/blogroll/',    'icone' => 'handshake' ),
+		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
 		array( 'label' => 'changelog',           'href' => '/changelog/',   'icone' => 'history' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
