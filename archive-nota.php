@@ -55,7 +55,7 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 		<?php
 		while ( have_posts() ) :
 			the_post();
-			?>
+
 			$vc_id     = (int) get_the_ID();
 			$vc_numero = function_exists( 'vc_nota_numero' ) ? vc_nota_numero( $vc_id ) : 0;
 			$vc_autor  = (string) get_the_author();
