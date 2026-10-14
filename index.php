@@ -42,31 +42,13 @@ $vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 					?>
 					<li id="nota-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( $vc_slugs ); ?>">
 						<header class="nota__cabecalho">
-							<?php if ( $vc_avatar ) : ?>
-								<a class="nota__avatar" href="<?php echo esc_url( $vc_autor_url ); ?>" aria-label="<?php echo esc_attr( $vc_autor ); ?>">
-									<img
-										class="nota__avatar-img u-photo"
-										src="<?php echo esc_url( $vc_avatar ); ?>"
-										alt=""
-										width="40"
-										height="40"
-										loading="lazy"
-										decoding="async"
-									/>
-								</a>
-							<?php endif; ?>
+							<span class="p-author h-card" style="display:none;">
+								<a class="u-url p-name" rel="author" href="<?php echo esc_url( $vc_autor_url ); ?>"><?php echo esc_html( $vc_autor ?: 'viniciuscodes' ); ?></a>
+							</span>
 
-							<div class="nota__cabecalho-info">
-								<span class="p-author h-card">
-									<a class="nota__autor-nome u-url p-name" rel="author" href="<?php echo esc_url( $vc_autor_url ); ?>"><?php echo esc_html( $vc_autor ?: 'viniciuscodes' ); ?></a>
-								</span>
-
-								<span class="nota__sep" aria-hidden="true">·</span>
-
-								<a class="nota__data-link u-url" href="<?php the_permalink(); ?>">
-									<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
-								</a>
-							</div>
+							<a class="nota__data-link u-url" href="<?php the_permalink(); ?>">
+								<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
+							</a>
 						</header>
 
 						<div class="e-content prose nota__conteudo">
