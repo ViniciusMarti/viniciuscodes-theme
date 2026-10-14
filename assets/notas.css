@@ -20,49 +20,43 @@
    linha a mais.
    ============================================================ */
 
-/* ---------- o item da linha do tempo: Opção 4 (Post-it com Washi Tape) ---------- */
+/* ---------- o item da linha do tempo: Flat Soft Wash (sem borda) ---------- */
 
 .post-item--nota {
-  margin: 1.75rem 0 1.25rem;
-  padding: 1.4rem 1.5rem 1.15rem;
-  background: var(--paper-card);
-  border: 1px solid var(--line);
+  margin: 1.25rem 0;
+  padding: 1.25rem 1.4rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
   border-radius: var(--radius);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .post-item--nota:hover {
-  border-color: var(--line-strong);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+  background: rgba(255, 255, 255, 0.85);
+  border-color: transparent;
+  box-shadow: none;
 }
 
-/* A fita adesiva (Washi Tape) decorativa no topo central */
+/* Sem fita adesiva decorativa */
 .post-item--nota::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 76px;
-  height: 20px;
-  background: rgba(226, 219, 204, 0.7);
-  border: 1px dashed rgba(180, 170, 150, 0.55);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(2px);
-  border-radius: 2px;
-  z-index: 5;
-  pointer-events: none;
+  display: none !important;
+}
+
+[data-theme='dark'] .post-item--nota {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .post-item--nota:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 [data-theme='dark'] .post-item--nota::before {
-  background: rgba(65, 75, 80, 0.55);
-  border-color: rgba(100, 115, 120, 0.45);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  display: none !important;
 }
 
 .nota__cabecalho {
