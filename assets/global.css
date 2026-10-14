@@ -818,6 +818,98 @@ hr {
   color: var(--ink-mute);
 }
 
+/* ---------- sidebar profile block ---------- */
+.sidebar__profile-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.sidebar__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--line);
+  flex-shrink: 0;
+}
+
+.sidebar__profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sidebar__profile-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.sidebar__profile-handle {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sidebar__profile-bio {
+  margin: 0 0 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.sidebar__social {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sidebar__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  background: rgba(0, 0, 0, 0.04);
+  transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+[data-theme='dark'] .sidebar__social-link {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-mute);
+}
+
+.sidebar__social-link:hover {
+  color: var(--green);
+  background: var(--green-wash);
+  transform: translateY(-1px);
+}
+
+/* ---------- sidebar search block ---------- */
+.sidebar__search-wrap {
+  padding: 0.6rem 0.75rem;
+}
+
+.sidebar__search-wrap .site-search-form {
+  min-height: 38px;
+  padding: 0 0.75rem;
+  background: transparent;
+  border: none;
+}
+
+.sidebar__search-wrap .site-search-form:focus-within {
+  outline: none;
+}
+
 .navlink {
   display: flex;
   align-items: center;
