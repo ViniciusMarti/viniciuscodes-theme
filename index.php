@@ -162,25 +162,4 @@ $vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 </section>
 
 <?php
-$vc_temas_da_home = is_home() ? vc_temas_ordenados() : array();
-if ( ! empty( $vc_temas_da_home ) ) :
-	?>
-	<section class="section" id="temas">
-		<h2 class="section-title"><?php esc_html_e( 'temas', 'viniciuscodes' ); ?></h2>
-
-		<ul class="grid">
-			<?php foreach ( $vc_temas_da_home as $vc_tema ) : ?>
-				<li>
-					<a class="card" href="<?php echo esc_url( '/tema/' . $vc_tema->slug . '/' ); ?>">
-						<span class="card__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 24 ); ?></span>
-						<p class="card__title"><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></p>
-						<p class="card__meta"><?php echo esc_html( $vc_tema->count . ( 1 === (int) $vc_tema->count ? ' post' : ' posts' ) ); ?></p>
-					</a>
-				</li>
-			<?php endforeach; ?>
-		</ul>
-	</section>
-<?php endif; ?>
-
-<?php
 get_footer();

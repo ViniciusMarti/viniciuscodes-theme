@@ -60,7 +60,7 @@ $vc_retrato_id = attachment_url_to_postid( vc_midia( 'vinicius-profile.webp' ) )
 
 			<p class="hero__lede hero__lede--links">
 				leia o <a href="<?php echo esc_url( home_url( '/manifesto/' ) ); ?>">manifesto</a>,
-				explore os <a href="#temas">temas</a> ou veja as publicações recentes abaixo:
+				explore os temas na barra lateral ou veja as publicações recentes abaixo:
 			</p>
 		</div>
 	</div>
