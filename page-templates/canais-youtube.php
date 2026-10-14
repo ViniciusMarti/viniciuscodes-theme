@@ -252,12 +252,6 @@ $vc_categorias_canais = array(
 	),
 );
 
-// Contagem total
-$vc_total_canais = 0;
-foreach ( $vc_categorias_canais as $vc_cat_data ) {
-	$vc_total_canais += count( $vc_cat_data['canais'] );
-}
-
 get_header();
 
 while ( have_posts() ) :
@@ -269,9 +263,6 @@ while ( have_posts() ) :
 			<p class="canais__intro">
 				os canais, criadores e formatos que acompanho com frequência no youtube, organizados por afinidade e temas de interesse.
 			</p>
-			<div class="canais__meta-info">
-				<span class="canais__contador"><?php echo esc_html( $vc_total_canais . ' canais em ' . count( $vc_categorias_canais ) . ' categorias' ); ?></span>
-			</div>
 		</header>
 
 		<div class="canais__categorias">
