@@ -39,7 +39,11 @@ $vc_temas = vc_temas_ordenados( true );
 
 		<nav class="sidebar__group" aria-labelledby="barra-grupo-temas">
 			<p class="sidebar__label" id="barra-grupo-temas">temas</p>
-			<?php foreach ( $vc_temas as $vc_tema ) : ?>
+			<?php
+			$vc_temas_principais = array_slice( $vc_temas, 0, 5 );
+			$vc_temas_extras     = array_slice( $vc_temas, 5 );
+			?>
+			<?php foreach ( $vc_temas_principais as $vc_tema ) : ?>
 				<?php $vc_href = '/tema/' . $vc_tema->slug . '/'; ?>
 				<a
 					class="navlink navlink--term"
@@ -49,6 +53,36 @@ $vc_temas = vc_temas_ordenados( true );
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></span>
 				</a>
 			<?php endforeach; ?>
+
+			<?php if ( ! empty( $vc_temas_extras ) ) : ?>
+				<?php
+				$vc_tem_extra_ativo = false;
+				foreach ( $vc_temas_extras as $vc_extra ) {
+					if ( $vc_esta( '/tema/' . $vc_extra->slug . '/' ) ) {
+						$vc_tem_extra_ativo = true;
+						break;
+					}
+				}
+				?>
+				<details class="sidebar__temas-extras" <?php echo $vc_tem_extra_ativo ? 'open' : ''; ?>>
+					<summary class="sidebar__temas-trigger">
+						<span class="sidebar__temas-trigger-text">mais temas</span>
+						<span class="sidebar__temas-trigger-arrow" aria-hidden="true">▾</span>
+					</summary>
+					<div class="sidebar__temas-extras-list">
+						<?php foreach ( $vc_temas_extras as $vc_tema ) : ?>
+							<?php $vc_href = '/tema/' . $vc_tema->slug . '/'; ?>
+							<a
+								class="navlink navlink--term"
+								href="<?php echo esc_url( $vc_href ); ?>"
+								<?php echo $vc_esta( $vc_href ) ? 'aria-current="page"' : ''; ?>
+							>
+								<span><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></span>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</details>
+			<?php endif; ?>
 		</nav>
 	</div>
 

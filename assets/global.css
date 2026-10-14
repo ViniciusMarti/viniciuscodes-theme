@@ -841,7 +841,51 @@ hr {
   line-height: 1;
 }
 
-/* ---------- nav more (the disclosure that replaced /mais/) ---------- */
+/* ---------- nav more: temas extras recolhidos na sidebar ---------- */
+.sidebar__temas-extras {
+  margin-top: 0.35rem;
+}
+
+.sidebar__temas-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-mute);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  border-radius: var(--radius);
+  transition: color 0.15s ease;
+}
+
+.sidebar__temas-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar__temas-trigger:hover {
+  color: var(--green);
+}
+
+.sidebar__temas-trigger-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar__temas-extras[open] .sidebar__temas-trigger-arrow {
+  transform: rotate(180deg);
+}
+
+.sidebar__temas-extras[open] .sidebar__temas-trigger {
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+.sidebar__temas-extras-list {
+  padding-left: 0;
+}
 
 /* ---------- content ---------- */
 
