@@ -4108,29 +4108,17 @@ a.link-externo:focus-visible .link-externo__icone {
 
 	.sidebar {
 		position: absolute;
-		top: 0;
+		top: var(--header-h, 68px);
 		right: 0;
 		bottom: auto;
 		height: auto;
 		max-height: none;
 		overflow-y: visible;
-		/*
-		   A barra TAMBEM pinta a propria coluna, e nao so o painel.
-
-		   Isto foi erro medido numa pagina CURTA (`/contato/`, 910px de
-		   documento): ali a caixa do <body> tem 813px, porque quem estica o
-		   documento e a propria barra — e o painel, que termina junto com o
-		   <body>, parava 97px antes do fim da barra. Os ultimos links ficavam
-		   sobre o papel de tras, sem coluna nenhuma atras deles.
-
-		   Com as duas pinturas a coluna fica coberta nos dois casos: numa
-		   pagina longa quem cobre e o painel (a barra tem so a altura dos
-		   links), numa curta quem cobre e a barra. As duas bordas esquerdas
-		   caem na mesma coluna de pixel, entao nao aparece linha dobrada.
+		z-index: 10;
+		padding-top: 1.5rem;
 		/*
 		   A barra agora e integrada e continua com a pagina: fundo transparente
-		   e sem divisoria vertical rigida, permitindo que a pagina respire como
-		   uma folha unica sem enjaular o texto.
+		   e sem divisoria vertical rigida, posicionada abaixo da linha do cabecalho.
 		*/
 		background: transparent;
 		border-left: none;
