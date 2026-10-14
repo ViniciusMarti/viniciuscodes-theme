@@ -49,76 +49,34 @@ get_header();
  */
 $vc_pagina = max( 1, (int) get_query_var( 'paged' ) );
 
-/*
- * TODOS os textos, sem paginação do servidor.
- *
- * O endereço da página 2 era `/posts/page/2/`. Ele não existe mais: a paginação
- * é do cliente agora, junto do filtro, porque filtrar sobre uma fatia paginada
- * mostraria menos do que existe. A regra de reescrita continua no mu-plugin, e
- * por isso o endereço antigo ainda responde — a saída abaixo o devolve para cá.
- */
 $vc_textos = new WP_Query(
 	array(
 		'post_type'      => 'post',
 		'post_status'    => 'publish',
-		'posts_per_page' => -1,
+		'posts_per_page' => 12,
+		'paged'          => $vc_pagina,
 	)
 );
-
-/*
- * Página numerada não existe mais: volta para a lista, e não devolve 200 com uma
- * tela repetida. `/posts/page/99/` responde porque a regra de reescrita casa
- * qualquer número, então sem esta saída ele seria um endereço infinito de
- * conteúdo repetido, bom para ninguém.
- */
-if ( $vc_pagina > 1 ) {
-	wp_safe_redirect( home_url( '/posts/' ), 301 );
-	exit;
-}
-
-/*
- * AQUI HAVIA A BARRA DE FILTRO POR TEMA — os botões com ícone, o "todas" e a
- * contagem em `role="status"` — e, acima dela, o rótulo "do mais novo para o
- * mais antigo". Os dois saíram a pedido do dono.
- *
- * Com a barra foi embora a consulta de temas que só existia para alimentá-la:
- * `vc_temas_ordenados()` continua em `functions.php`, usado pela home e pela
- * barra lateral, e os temas vazios continuam sendo assunto de lá. A ordem da
- * lista não mudou: a consulta acima continua vindo da nota mais nova para a
- * mais antiga.
- *
- * O que fica nesta página é a lista inteira e a paginação — e é por isso que a
- * folha do filtro continua sendo carregada (`functions.php`): é dela a regra
- * que esconde as linhas fora da página.
- */
 ?>
 <article>
 	<header class="term-header">
 		<h1 class="term-header__name"><?php the_title(); ?></h1>
 	</header>
 
-	<?php
-	/*
-	 * A lista vai embrulhada em `[data-lista]`, que é por onde o script a acha —
-	 * o `post-list` sozinho também aparece na home e nos arquivos, e lá não há
-	 * paginação para ligar: são páginas do WordPress, com a fatia já recortada
-	 * pelo servidor.
-	 */
-	?>
 	<div data-lista>
 		<?php
 		$vc_original         = $GLOBALS['wp_query'];
 		$GLOBALS['wp_query'] = $vc_textos; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		/*
-		 * A lista sai sem resumo, como em todo o site: esta página existe para varrer
-		 * títulos e achar o que ler.
+		 * A lista sai com resumo de 2-3 linhas igual ao feed da home.
 		 */
 		get_template_part(
 			'template-parts/lista-de-textos',
 			null,
 			array(
-				'vazio' => 'nenhum post publicado ainda.',
+				'vazio'          => 'nenhum post publicado ainda.',
+				'mostrar_resumo' => true,
 			)
 		);
 
@@ -127,14 +85,14 @@ if ( $vc_pagina > 1 ) {
 		?>
 	</div>
 
-	<?php
-	/*
-	 * O pager nasce vazio e escondido: quem escreve a marcação é o script, com os
-	 * mesmos nomes de classe do `vc_paginacao()` — o desenho não muda, só a conta
-	 * passa a ser feita sobre o que sobrou do filtro.
-	 */
-	?>
-	<nav class="paginacao" data-paginacao hidden aria-label="paginação"></nav>
+	<div class="feed-paginacao-wrap" data-infinite-scroll-container>
+		<?php if ( $vc_textos->max_num_pages > 1 ) : ?>
+			<div class="feed-paginacao" data-feed-nav>
+				<?php vc_paginacao( (int) $vc_textos->max_num_pages, $vc_pagina, home_url( '/posts/page/%#%/' ) ); ?>
+			</div>
+			<div class="feed-sentinela" data-feed-sentinel style="height: 1px;"></div>
+		<?php endif; ?>
+	</div>
 </article>
 
 <?php

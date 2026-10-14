@@ -50,7 +50,7 @@ if ( ! have_posts() ) {
 			$vc_slugs[] = $vc_tema['slug'];
 		}
 		?>
-		<li class="post-item" data-temas="<?php echo esc_attr( implode( ' ', $vc_slugs ) ); ?>">
+		<li id="post-<?php echo (int) $vc_id; ?>" class="post-item" data-temas="<?php echo esc_attr( implode( ' ', $vc_slugs ) ); ?>">
 			<?php if ( $vc_opcoes['mostrar_meta'] ) : ?>
 				<p class="post-item__meta">
 					<?php
@@ -94,6 +94,17 @@ if ( ! have_posts() ) {
 			<h2 class="post-item__title">
 				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 			</h2>
+
+			<?php if ( ! empty( $vc_opcoes['mostrar_resumo'] ) ) : ?>
+				<?php
+				$vc_resumo = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 35, '…' );
+				if ( '' !== trim( $vc_resumo ) ) :
+					?>
+					<p class="post-item__excerpt e-summary">
+						<?php echo esc_html( $vc_resumo ); ?>
+					</p>
+				<?php endif; ?>
+			<?php endif; ?>
 		</li>
 		<?php
 	endwhile;

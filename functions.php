@@ -84,7 +84,7 @@ add_action(
 		 */
 		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
 
-		if ( is_home() || is_post_type_archive( 'nota' ) ) {
+		if ( is_home() || is_post_type_archive( 'nota' ) || is_page_template( 'page-templates/lista-de-posts.php' ) ) {
 			wp_enqueue_script( 'vc-feed-infinito', get_theme_file_uri( 'assets/feed-infinito.js' ), array( 'vc-site' ), VC_VERSAO, true );
 		}
 	}
@@ -141,38 +141,7 @@ add_filter(
 	2
 );
 
-/*
- * A folha do filtro da lista de textos, e só naquela página.
- *
- * No site ela também é uma folha à parte, dentro do `<style>` da página de
- * posts, e aqui essa divisão é útil pelo motivo somado: são poucas regras, usadas
- * em um lugar só. Carregá-las em toda página seria pedir a cada visitante da home
- * um arquivo a mais por causa de uma página que ele talvez não abra.
- *
- * `is_page_template()` responde nesta altura porque o gancho roda depois de o
- * WordPress já ter resolvido qual página está sendo pedida — e não antes, que é
- * quando a resposta seria sempre "nenhuma".
- */
-add_action(
-	'wp_enqueue_scripts',
-	static function () {
-		if ( ! is_page_template( 'page-templates/lista-de-posts.php' ) ) {
-			return;
-		}
 
-		wp_enqueue_style( 'vc-filtros', get_theme_file_uri( 'assets/filtros.css' ), array( 'vc-global' ), VC_VERSAO );
-
-		/*
-		 * O script do filtro vai junto e só aqui, pelo mesmo motivo da folha: sem
-		 * ele a barra fica `hidden` e a lista aparece inteira, em ordem. É o
-		 * comportamento degradado que queremos, não um meio-termo quebrado.
-		 *
-		 * `true` carrega no rodape: o script mexe no DOM da lista, que ja existe
-		 * quando ele roda.
-		 */
-		wp_enqueue_script( 'vc-filtros-js', get_theme_file_uri( 'assets/filtros.js' ), array(), VC_VERSAO, true );
-	}
-);
 
 
 /* -------------------------------------------------------------------------

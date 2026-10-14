@@ -12,6 +12,7 @@
 	'use strict';
 
 	var feedLista = document.querySelector('#fluxo .post-list') ||
+	                document.querySelector('[data-lista] .post-list') ||
 	                document.querySelector('.post-type-archive-nota .post-list') ||
 	                document.querySelector('.content__inner .post-list');
 	var feedNav = document.querySelector('[data-feed-nav]');
@@ -111,6 +112,9 @@
 					var parser = new DOMParser();
 					var doc = parser.parseFromString(html, 'text/html');
 					var novosItens = doc.querySelectorAll('#fluxo .post-list > li');
+					if (!novosItens || novosItens.length === 0) {
+						novosItens = doc.querySelectorAll('[data-lista] .post-list > li');
+					}
 					if (!novosItens || novosItens.length === 0) {
 						novosItens = doc.querySelectorAll('.content__inner .post-list > li');
 					}
