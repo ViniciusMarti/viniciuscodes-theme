@@ -4127,27 +4127,17 @@ a.link-externo:focus-visible .link-externo__icone {
 		   pagina longa quem cobre e o painel (a barra tem so a altura dos
 		   links), numa curta quem cobre e a barra. As duas bordas esquerdas
 		   caem na mesma coluna de pixel, entao nao aparece linha dobrada.
+		/*
+		   A barra agora e integrada e continua com a pagina: fundo transparente
+		   e sem divisoria vertical rigida, permitindo que a pagina respire como
+		   uma folha unica sem enjaular o texto.
 		*/
-		background: var(--paper-alt);
-		border-left: 1px solid var(--line);
+		background: transparent;
+		border-left: none;
 	}
 
 	body::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 40;
-		width: var(--sidebar-w, 268px);
-		background: var(--paper-alt);
-		border-left: 1px solid var(--line);
-		/*
-		   O painel passa por cima do cabecalho (como a barra fixa passava) e
-		   nao pode interceptar clique nenhum — quem clica ali esta clicando no
-		   cabecalho, que continua por baixo.
-		*/
-		pointer-events: none;
+		display: none;
 	}
 
 	html[data-sidebar="collapsed"] body::after {
