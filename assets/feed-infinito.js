@@ -11,7 +11,9 @@
 (function () {
 	'use strict';
 
-	var feedLista = document.querySelector('#fluxo .post-list');
+	var feedLista = document.querySelector('#fluxo .post-list') ||
+	                document.querySelector('.post-type-archive-nota .post-list') ||
+	                document.querySelector('.content__inner .post-list');
 	var feedNav = document.querySelector('[data-feed-nav]');
 	var sentinela = document.querySelector('[data-feed-sentinel]');
 
@@ -109,6 +111,9 @@
 					var parser = new DOMParser();
 					var doc = parser.parseFromString(html, 'text/html');
 					var novosItens = doc.querySelectorAll('#fluxo .post-list > li');
+					if (!novosItens || novosItens.length === 0) {
+						novosItens = doc.querySelectorAll('.content__inner .post-list > li');
+					}
 
 					if (novosItens && novosItens.length > 0) {
 						var itensInseridos = 0;

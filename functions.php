@@ -84,7 +84,7 @@ add_action(
 		 */
 		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
 
-		if ( is_home() ) {
+		if ( is_home() || is_post_type_archive( 'nota' ) ) {
 			wp_enqueue_script( 'vc-feed-infinito', get_theme_file_uri( 'assets/feed-infinito.js' ), array( 'vc-site' ), VC_VERSAO, true );
 		}
 	}

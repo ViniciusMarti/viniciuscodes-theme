@@ -125,15 +125,17 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 	</ul>
 
 	<?php
-	/*
-	 * A paginação oficial do arquivo, a mesma do `archive.php` do tema: o
-	 * arquivo usa a consulta principal e o WordPress já a pagina.
-	 */
-	vc_paginacao(
-		(int) $GLOBALS['wp_query']->max_num_pages,
-		max( 1, (int) get_query_var( 'paged' ) )
-	);
+	$vc_total_paginas = (int) ( $GLOBALS['wp_query']->max_num_pages ?? 1 );
+	$vc_pagina_atual  = max( 1, (int) get_query_var( 'paged' ) );
 	?>
+	<div class="feed-paginacao-wrap" data-infinite-scroll-container>
+		<?php if ( $vc_total_paginas > 1 ) : ?>
+			<div class="feed-paginacao" data-feed-nav>
+				<?php vc_paginacao( $vc_total_paginas, $vc_pagina_atual ); ?>
+			</div>
+			<div class="feed-sentinela" data-feed-sentinel style="height: 1px;"></div>
+		<?php endif; ?>
+	</div>
 <?php else : ?>
 	<p class="empty"><?php esc_html_e( 'ainda não há notas por aqui.', 'viniciuscodes' ); ?></p>
 <?php endif; ?>
