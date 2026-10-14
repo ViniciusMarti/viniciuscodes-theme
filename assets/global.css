@@ -4033,9 +4033,14 @@ a.link-externo:focus-visible .link-externo__icone {
 		transition: transform 0.2s ease, visibility 0.2s ease;
 	}
 
-	/* 2. O conteudo reserva a coluna. O padding fica no <body> para valer
-	      tambem para o cabecalho sticky e o rodape. */
+	/* 2. O cabeçalho e sua linha agora atravessam a tela inteira de ponta a ponta.
+	      A reserva de espaço da coluna da sidebar fica no .layout (ou .content),
+	      permitindo que o cabeçalho tenha largura total e seus botões fiquem no canto direito. */
 	body {
+		padding-right: 0;
+	}
+
+	.layout {
 		padding-right: var(--sidebar-w, 268px);
 		transition: padding-right 0.2s ease;
 	}
@@ -4064,6 +4069,10 @@ a.link-externo:focus-visible .link-externo__icone {
 	}
 
 	html[data-sidebar="collapsed"] body {
+		padding-right: 0;
+	}
+
+	html[data-sidebar="collapsed"] .layout {
 		padding-right: 0;
 	}
 
