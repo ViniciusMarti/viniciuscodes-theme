@@ -112,7 +112,6 @@ while ( have_posts() ) :
 			 *   relacionadas   → decide o que ler depois
 			 */
 			get_template_part( 'template-parts/article', 'share' );
-			get_template_part( 'template-parts/article', 'conversation' );
 
 			if ( comments_open() || get_comments_number() ) :
 				comments_template();

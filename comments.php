@@ -14,24 +14,9 @@
 if ( post_password_required() ) {
 	return;
 }
-
-$vc_total_comentarios = get_comments_number();
 ?>
 
 <section id="comentarios" class="post-comments" aria-label="comentários e respostas">
-	<div class="post-comments__header">
-		<h2 class="post-comments__title">
-			<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( 'message-circle', 18 ); ?></span>
-			<span>conversa pública</span>
-			<?php if ( $vc_total_comentarios > 0 ) : ?>
-				<span class="post-comments__count">(<?php echo (int) $vc_total_comentarios; ?>)</span>
-			<?php endif; ?>
-		</h2>
-		<p class="post-comments__subtitle">
-			comentários abertos e moderados antes da primeira publicação. sem rastreadores ou captchas.
-		</p>
-	</div>
-
 	<?php if ( have_comments() ) : ?>
 		<ol class="post-comments__list">
 			<?php
@@ -90,11 +75,6 @@ $vc_total_comentarios = get_comments_number();
 			<nav class="post-comments__nav" aria-label="navegação de comentários">
 				<?php paginate_comments_links(); ?>
 			</nav>
-		<?php endif; ?>
-
-	<?php else : ?>
-		<?php if ( comments_open() ) : ?>
-			<p class="post-comments__empty">ainda não há comentários por aqui. seja a primeira pessoa a deixar uma resposta!</p>
 		<?php endif; ?>
 	<?php endif; ?>
 
