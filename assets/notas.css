@@ -20,25 +20,105 @@
    linha a mais.
    ============================================================ */
 
-/* ---------- o item da linha do tempo ---------- */
+/* ---------- o item da linha do tempo (Twitter / microblog style) ---------- */
 
 .post-item--nota {
-  /* Sem título, o peso do item vai todo para o texto: um respiro a
-     mais em cima e embaixo separa uma nota da outra sem precisar de
-     nada além disso. */
-  padding-block: 1.75rem;
-
-  /* O item é o sistema de coordenadas da área de clique: ver "a nota
-     inteira é o alvo do clique", logo abaixo. */
+  padding-block: 1.5rem;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 
-.post-item--nota .post-item__meta {
-  /* A meta do tema já tem o `margin-bottom` de 0.45rem que serve a um
-     título de 1.3rem logo abaixo. Aqui o que vem abaixo é um
-     parágrafo, que já traz a própria margem de topo — um pouco mais
-     de ar evita que a data encoste na primeira linha. */
-  margin-bottom: 0.7rem;
+.nota__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nota__avatar {
+  flex-shrink: 0;
+  display: block;
+  line-height: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.nota__avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--line);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.nota__avatar:hover .nota__avatar-img {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+.nota__cabecalho-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.nota__autor-nome {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.nota__autor-nome:hover {
+  text-decoration: underline;
+  color: var(--green);
+}
+
+.nota__sep {
+  color: var(--ink-mute);
+  user-select: none;
+  font-size: 0.8rem;
+}
+
+.nota__data-link {
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.nota__data-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.nota__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.nota__numero-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 1;
+}
+
+.nota__numero-link:hover {
+  color: var(--green);
+  text-decoration: underline;
 }
 
 /* ---------- a nota inteira é o alvo do clique ---------- */
@@ -73,46 +153,20 @@
    JavaScript; a alternativa seria depender de script para algo que o CSS
    resolve sozinho, e aí o clique só existiria para quem tem script ligado.
 */
-.post-item--nota .post-item__meta > .u-url::after {
+.post-item--nota .nota__data-link::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-/*
-   O `>` ACIMA NÃO É DETALHE DE ESTILO: existem DOIS elementos com `u-url` em
-   cada nota — o link da data e o do autor, que no microformato também carrega
-   `u-url` para dizer que o autor é o mesmo daquele endereço. Sem o `>`, a regra
-   dava área de clique aos dois, e como o do autor vem depois no HTML ele vencia
-   a disputa: clicar no TEXTO da nota abria a página do autor, não a da nota.
-
-   NÃO FOI DEDUZIDO, FOI MEDIDO. `document.elementFromPoint()` na coordenada do
-   texto devolvia `a.u-url.p-name` (o link do autor) em vez do link da data —
-   o navegador respondendo qual elemento receberia o clique, sem depender de eu
-   acertar a mira.
-
-   O `>` resolve porque o link da data é filho DIRETO da linha de meta, enquanto
-   o do autor está dentro de `.p-author`.
-*/
-
-/*
-   Quem fica acima da área de clique: todo link do item, menos o da data, que É
-   a área. O do autor entra dito à mão porque também carrega `u-url`, e o
-   `:not()` abaixo — que existe para não mexer em quem carrega a área — não o
-   alcançaria.
-
-   O BOTÃO DE GOSTAR ENTRA NA MESMA LISTA, e por isso ele é um `<button>` e não
-   um `<a>`: os dois seletores acima pegam LINKS, e o botão não é um. Sem esta
-   linha o coração ficaria embaixo da área de clique — visível, e morto. Foi o
-   mesmo defeito que o link do autor já teve, e é por isso que a lista virou uma
-   lista: quem for clicável dentro do item precisa subir aqui.
-*/
-.post-item--nota .p-author a,
-.post-item--nota a:not(.u-url),
+.post-item--nota .nota__avatar,
+.post-item--nota .nota__autor-nome,
+.post-item--nota .nota__numero-link,
+.post-item--nota .nota__conteudo a,
 .post-item--nota .nota__acoes .post-like__btn {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* ---------- o texto ---------- */

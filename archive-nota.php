@@ -56,88 +56,68 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 		while ( have_posts() ) :
 			the_post();
 			?>
-			<li id="nota-<?php the_ID(); ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( vc_nota_slugs_de_tema() ); ?>">
-				<p class="post-item__meta">
-					<?php
-					$vc_numero = vc_nota_numero();
-					$vc_autor  = (string) get_the_author();
-
-					/*
-					 * O NÚMERO VEM PRIMEIRO e é ele o link da nota: sem o rodapé
-					 * de "link permanente", o `#N` passou a ser a âncora óbvia do
-					 * item. Ele NÃO leva `u-url` de propósito — quem carrega o
-					 * microformato é a data logo ao lado, e um segundo `u-url` no
-					 * mesmo `h-entry` só criaria dúvida sobre qual é o canônico.
-					 */
-					if ( $vc_numero > 0 ) :
-						?>
-						<a class="vc-nota-numero" href="<?php the_permalink(); ?>">#<?php echo (int) $vc_numero; ?></a>
-						<?php
-					endif;
-
-					/*
-					 * O AUTOR É OPCIONAL, e a checagem não é paranoia: medido no
-					 * site, uma nota criada por `wp post create` sem
-					 * `--post_author` fica com `post_author = 0`. Sem o `if`, o
-					 * `h-card` sai vazio e o separador do tema
-					 * (`.post-item__meta > * + *::before`) fica pendurado depois
-					 * da data. O separador é do CSS, então omitir o `<span>` já
-					 * o remove junto — não há o que limpar aqui.
-					 */
-					?>
-					<a class="u-url" href="<?php the_permalink(); ?>">
-						<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i' ) ); ?>"><?php echo esc_html( vc_nota_tempo_relativo() ); ?></time>
-					</a>
-
-					<?php if ( '' !== $vc_autor ) : ?>
-						<span class="p-author h-card post-item__meta__part">
-							<a class="u-url p-name" rel="author" href="<?php echo esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ); ?>"><?php echo esc_html( $vc_autor ); ?></a>
-						</span>
+			$vc_id     = (int) get_the_ID();
+			$vc_numero = function_exists( 'vc_nota_numero' ) ? vc_nota_numero( $vc_id ) : 0;
+			$vc_autor  = (string) get_the_author();
+			$vc_tempo  = function_exists( 'vc_nota_tempo_relativo' ) ? vc_nota_tempo_relativo( $vc_id ) : get_the_date();
+			$vc_slugs  = function_exists( 'vc_nota_slugs_de_tema' ) ? vc_nota_slugs_de_tema( $vc_id ) : '';
+			$vc_avatar = function_exists( 'vc_midia' ) ? vc_midia( 'vinicius-profile.webp' ) : '';
+			$vc_autor_url = get_author_posts_url( (int) get_the_author_meta( 'ID' ) );
+			?>
+			<li id="nota-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( $vc_slugs ); ?>">
+				<header class="nota__cabecalho">
+					<?php if ( $vc_avatar ) : ?>
+						<a class="nota__avatar" href="<?php echo esc_url( $vc_autor_url ); ?>" aria-label="<?php echo esc_attr( $vc_autor ); ?>">
+							<img
+								class="nota__avatar-img u-photo"
+								src="<?php echo esc_url( $vc_avatar ); ?>"
+								alt=""
+								width="40"
+								height="40"
+								loading="lazy"
+								decoding="async"
+							/>
+						</a>
 					<?php endif; ?>
-				</p>
+
+					<div class="nota__cabecalho-info">
+						<span class="p-author h-card">
+							<a class="nota__autor-nome u-url p-name" rel="author" href="<?php echo esc_url( $vc_autor_url ); ?>"><?php echo esc_html( $vc_autor ?: 'viniciuscodes' ); ?></a>
+						</span>
+
+						<span class="nota__sep" aria-hidden="true">·</span>
+
+						<a class="nota__data-link u-url" href="<?php the_permalink(); ?>">
+							<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
+						</a>
+					</div>
+				</header>
 
 				<div class="e-content prose nota__conteudo">
 					<?php the_content(); ?>
 				</div>
 
-				<?php
-				/*
-				 * AQUI O "GOSTAR" É COMPACTO, e a diferença é de densidade, não de
-				 * gosto. Esta lista mostra dez notas de uma vez, e dez pílulas de
-				 * 44px embaixo de dez notas viram uma barra de controles — o
-				 * oposto do que o próprio tema diz do bloco de compartilhamento,
-				 * que se apresenta como um pedaço da informação do texto e não
-				 * como um painel parafusado nele. O coração com a contagem diz a
-				 * mesma coisa e some no visual.
-				 *
-				 * O `z-index` DESTE BOTÃO NÃO É ENFEITE. O item da linha do tempo
-				 * tem uma área de clique que cobre ele inteiro (ver "a nota
-				 * inteira é o alvo do clique", no `assets/notas.css`), e ela nasce
-				 * em `z-index: 0`. Sem número maior, o clique seria engolido e o
-				 * botão ficaria decorativo — foi o que já aconteceu com o link do
-				 * autor antes. A regra de lá agora inclui este botão.
-				 *
-				 * O RÓTULO LEVA O NÚMERO DA NOTA porque aqui o botão não tem
-				 * rótulo visível: sem o número, quem usa leitor de tela ouviria
-				 * "gostar desta nota" três vezes na mesma página, sem saber qual
-				 * é qual.
-				 */
-				?>
-				<div class="nota__acoes">
-					<?php
-					get_template_part(
-						'template-parts/article',
-						'like',
-						array(
-							'compacto' => true,
-							'rotulo'   => $vc_numero > 0
-								/* translators: %d: o número da nota, como ele aparece na linha do tempo. */
-								? sprintf( __( 'gostar da nota #%d', 'viniciuscodes' ), $vc_numero )
-								: __( 'gostar desta nota', 'viniciuscodes' ),
-						)
-					);
-					?>
-				</div>
+				<footer class="nota__rodape">
+					<div class="nota__acoes">
+						<?php
+						get_template_part(
+							'template-parts/article',
+							'like',
+							array(
+								'compacto' => true,
+								'rotulo'   => $vc_numero > 0
+									/* translators: %d: o número da nota. */
+									? sprintf( __( 'gostar da nota #%d', 'viniciuscodes' ), $vc_numero )
+									: __( 'gostar desta nota', 'viniciuscodes' ),
+							)
+						);
+						?>
+					</div>
+
+					<?php if ( $vc_numero > 0 ) : ?>
+						<a class="nota__numero-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'link da nota #%d', 'viniciuscodes' ), $vc_numero ) ); ?>">#<?php echo (int) $vc_numero; ?></a>
+					<?php endif; ?>
+				</footer>
 			</li>
 			<?php
 		endwhile;

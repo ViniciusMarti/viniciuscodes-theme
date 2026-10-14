@@ -37,43 +37,63 @@ $vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 					$vc_autor  = (string) get_the_author();
 					$vc_tempo  = function_exists( 'vc_nota_tempo_relativo' ) ? vc_nota_tempo_relativo( $vc_id ) : get_the_date();
 					$vc_slugs  = function_exists( 'vc_nota_slugs_de_tema' ) ? vc_nota_slugs_de_tema( $vc_id ) : '';
+					$vc_avatar = function_exists( 'vc_midia' ) ? vc_midia( 'vinicius-profile.webp' ) : '';
+					$vc_autor_url = get_author_posts_url( (int) get_the_author_meta( 'ID' ) );
 					?>
 					<li id="nota-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( $vc_slugs ); ?>">
-						<p class="post-item__meta">
-							<?php if ( $vc_numero > 0 ) : ?>
-								<a class="vc-nota-numero" href="<?php the_permalink(); ?>">#<?php echo (int) $vc_numero; ?></a>
+						<header class="nota__cabecalho">
+							<?php if ( $vc_avatar ) : ?>
+								<a class="nota__avatar" href="<?php echo esc_url( $vc_autor_url ); ?>" aria-label="<?php echo esc_attr( $vc_autor ); ?>">
+									<img
+										class="nota__avatar-img u-photo"
+										src="<?php echo esc_url( $vc_avatar ); ?>"
+										alt=""
+										width="40"
+										height="40"
+										loading="lazy"
+										decoding="async"
+									/>
+								</a>
 							<?php endif; ?>
 
-							<a class="u-url" href="<?php the_permalink(); ?>">
-								<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
-							</a>
-
-							<?php if ( '' !== $vc_autor ) : ?>
-								<span class="p-author h-card post-item__meta__part">
-									<a class="u-url p-name" rel="author" href="<?php echo esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ); ?>"><?php echo esc_html( $vc_autor ); ?></a>
+							<div class="nota__cabecalho-info">
+								<span class="p-author h-card">
+									<a class="nota__autor-nome u-url p-name" rel="author" href="<?php echo esc_url( $vc_autor_url ); ?>"><?php echo esc_html( $vc_autor ?: 'viniciuscodes' ); ?></a>
 								</span>
-							<?php endif; ?>
-						</p>
+
+								<span class="nota__sep" aria-hidden="true">·</span>
+
+								<a class="nota__data-link u-url" href="<?php the_permalink(); ?>">
+									<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
+								</a>
+							</div>
+						</header>
 
 						<div class="e-content prose nota__conteudo">
 							<?php the_content(); ?>
 						</div>
 
-						<div class="nota__acoes">
-							<?php
-							get_template_part(
-								'template-parts/article',
-								'like',
-								array(
-									'compacto' => true,
-									'rotulo'   => $vc_numero > 0
-										/* translators: %d: o número da nota. */
-										? sprintf( __( 'gostar da nota #%d', 'viniciuscodes' ), $vc_numero )
-										: __( 'gostar desta nota', 'viniciuscodes' ),
-								)
-							);
-							?>
-						</div>
+						<footer class="nota__rodape">
+							<div class="nota__acoes">
+								<?php
+								get_template_part(
+									'template-parts/article',
+									'like',
+									array(
+										'compacto' => true,
+										'rotulo'   => $vc_numero > 0
+											/* translators: %d: o número da nota. */
+											? sprintf( __( 'gostar da nota #%d', 'viniciuscodes' ), $vc_numero )
+											: __( 'gostar desta nota', 'viniciuscodes' ),
+									)
+								);
+								?>
+							</div>
+
+							<?php if ( $vc_numero > 0 ) : ?>
+								<a class="nota__numero-link" href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'link da nota #%d', 'viniciuscodes' ), $vc_numero ) ); ?>">#<?php echo (int) $vc_numero; ?></a>
+							<?php endif; ?>
+						</footer>
 					</li>
 				<?php else : ?>
 					<?php

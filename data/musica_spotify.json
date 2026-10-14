@@ -1,430 +1,145 @@
 {
-  "anos": {
-    "2026": {
-      "rotulo": "2026",
-      "descricao": "as faixas, discos e vozes que mais me acompanharam até agora neste ano.",
-      "albuns": [
-        {
-          "id": "37oi5fAM46AtRr3bXNj8M3",
-          "nome": "memórias póstumas",
-          "artista": "jão",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/37oi5fAM46AtRr3bXNj8M3"
-        },
-        {
-          "id": "2LeCiUHBSmUMyrclDEEBly",
-          "nome": "pirata",
-          "artista": "jão",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27376086200d394250d6eef8adf",
-          "ano": "2021",
-          "spotify_url": "https://open.spotify.com/album/2LeCiUHBSmUMyrclDEEBly"
-        },
-        {
-          "id": "7L8pAdd8pxyiYZZermboxa",
-          "nome": "i am pabllo (live)",
-          "artista": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27302e12519600ee1d537f70c45",
-          "ano": "2022",
-          "spotify_url": "https://open.spotify.com/album/7L8pAdd8pxyiYZZermboxa"
-        },
-        {
-          "id": "2PRDU8Oeb9f0lpgSjbaJXE",
-          "nome": "coisas naturais",
-          "artista": "marina sena",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b2737ae4d78852e406eff2f4eef6",
-          "ano": "2025",
-          "spotify_url": "https://open.spotify.com/album/2PRDU8Oeb9f0lpgSjbaJXE"
-        },
-        {
-          "id": "766kQKYQvONQk339t5payy",
-          "nome": "locket",
-          "artista": "madison beer",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273391ad22354ea2e90c54f6b14",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/766kQKYQvONQk339t5payy"
-        }
-      ],
-      "artistas": [
-        {
-          "id": "59FrDXDVJz0EKqYg39dnT2",
-          "nome": "jão",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebe4b5c3d3af19c3d107f29c69",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/59FrDXDVJz0EKqYg39dnT2"
-        },
-        {
-          "id": "7FNnA9vBm6EKceENgCGRMb",
-          "nome": "anitta",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebc971a5b58d274b9ae7c467af",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/7FNnA9vBm6EKceENgCGRMb"
-        },
-        {
-          "id": "0nFdWpwl7h6fp3ADRyG14L",
-          "nome": "marina sena",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5eba1f1da49af37bc62284c9cc9",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/0nFdWpwl7h6fp3ADRyG14L"
-        },
-        {
-          "id": "6tzRZ39aZlNqlUzQlkuhDV",
-          "nome": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5eb3b4f066cf542935f22c858d9",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/6tzRZ39aZlNqlUzQlkuhDV"
-        },
-        {
-          "id": "2O6q06oNcmOIPg1qidSU3C",
-          "nome": "liniker",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5eb00e66ab8530670d1758a32fd",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/2O6q06oNcmOIPg1qidSU3C"
-        }
-      ],
-      "musicas": [
-        {
-          "id": "2jGD8X5FhO9PJvJhYw9jSs",
-          "nome": "eu sempre volto",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/2jGD8X5FhO9PJvJhYw9jSs"
-        },
-        {
-          "id": "1jBmw9hizoiIpxqFy8hNS2",
-          "nome": "por você",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/1jBmw9hizoiIpxqFy8hNS2"
-        },
-        {
-          "id": "4Rphxy5MoU5bf50GQYIDN4",
-          "nome": "literatura",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/4Rphxy5MoU5bf50GQYIDN4"
-        },
-        {
-          "id": "2BRYHmPbc5BUffYcAtRhv8",
-          "nome": "o amor",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/2BRYHmPbc5BUffYcAtRhv8"
-        },
-        {
-          "id": "3HBIHTgDPLk0qKa4qTqeEl",
-          "nome": "jabuticabeira",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/3HBIHTgDPLk0qKa4qTqeEl"
-        }
-      ],
-      "podcasts": [
-        {
-          "nome": "raciocínio clínico",
-          "descricao": "discussões de casos médicos, condutas e raciocínio diagnóstico.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        },
-        {
-          "nome": "ted talks daily",
-          "descricao": "ideias diárias sobre inovação, comportamento e sociedade.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        }
-      ]
-    },
-    "2025": {
-      "rotulo": "2025",
-      "descricao": "a trilha sonora de 2025: pop brasileiro, lançamentos marcantes e repetecos.",
-      "albuns": [
-        {
-          "id": "37oi5fAM46AtRr3bXNj8M3",
-          "nome": "memórias póstumas",
-          "artista": "jão",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/37oi5fAM46AtRr3bXNj8M3"
-        },
-        {
-          "id": "7taQQZWIVcnHK6spr9N21l",
-          "nome": "batidão tropical vol. 2",
-          "artista": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273eb3be2aa722f8170d5b8c80e",
-          "ano": "2024",
-          "spotify_url": "https://open.spotify.com/album/7taQQZWIVcnHK6spr9N21l"
-        },
-        {
-          "id": "2PRDU8Oeb9f0lpgSjbaJXE",
-          "nome": "coisas naturais",
-          "artista": "marina sena",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b2737ae4d78852e406eff2f4eef6",
-          "ano": "2025",
-          "spotify_url": "https://open.spotify.com/album/2PRDU8Oeb9f0lpgSjbaJXE"
-        },
-        {
-          "id": "3ZN01xzenGMhWHdC5kfAe9",
-          "nome": "this music may contain hope.",
-          "artista": "raye",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27397c0928704e5a2bd8d4c5b90",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/3ZN01xzenGMhWHdC5kfAe9"
-        },
-        {
-          "id": "766kQKYQvONQk339t5payy",
-          "nome": "locket",
-          "artista": "madison beer",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273391ad22354ea2e90c54f6b14",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/766kQKYQvONQk339t5payy"
-        }
-      ],
-      "artistas": [
-        {
-          "id": "59FrDXDVJz0EKqYg39dnT2",
-          "nome": "jão",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebe4b5c3d3af19c3d107f29c69",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/59FrDXDVJz0EKqYg39dnT2"
-        },
-        {
-          "id": "6tzRZ39aZlNqlUzQlkuhDV",
-          "nome": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5eb3b4f066cf542935f22c858d9",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/6tzRZ39aZlNqlUzQlkuhDV"
-        },
-        {
-          "id": "1HY2Jd0NmPuamShAr6KMms",
-          "nome": "lady gaga",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebaadc18cac8d48124357c38e6",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/1HY2Jd0NmPuamShAr6KMms"
-        },
-        {
-          "id": "4JNo6Q5KdcRf1vtSX9mB0S",
-          "nome": "joão gomes",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebebb44b0c875cfa6a39d1b337",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/4JNo6Q5KdcRf1vtSX9mB0S"
-        },
-        {
-          "id": "7FNnA9vBm6EKceENgCGRMb",
-          "nome": "anitta",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebc971a5b58d274b9ae7c467af",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/7FNnA9vBm6EKceENgCGRMb"
-        }
-      ],
-      "musicas": [
-        {
-          "id": "3mzJgriFYY654vVhzwCepw",
-          "nome": "catedral",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/3mzJgriFYY654vVhzwCepw"
-        },
-        {
-          "id": "6PPB5jKQ257UqzP7tgmozP",
-          "nome": "aurora",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/6PPB5jKQ257UqzP7tgmozP"
-        },
-        {
-          "id": "7eYzn1CuiJK6VvUhf8zA6k",
-          "nome": "where is my husband!",
-          "artista": "raye",
-          "album": "this music may contain hope.",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27397c0928704e5a2bd8d4c5b90",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/7eYzn1CuiJK6VvUhf8zA6k"
-        },
-        {
-          "id": "1jBmw9hizoiIpxqFy8hNS2",
-          "nome": "por você",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/1jBmw9hizoiIpxqFy8hNS2"
-        },
-        {
-          "id": "4Rphxy5MoU5bf50GQYIDN4",
-          "nome": "literatura",
-          "artista": "jão",
-          "album": "memórias póstumas",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/4Rphxy5MoU5bf50GQYIDN4"
-        }
-      ],
-      "podcasts": [
-        {
-          "nome": "ted en español / ted talks",
-          "descricao": "pílulas de reflexão sobre ciência, tecnologia e humanidade.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        },
-        {
-          "nome": "braincast",
-          "descricao": "cultura digital, tendências, criatividade e comportamento.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        }
-      ]
-    },
-    "2024": {
-      "rotulo": "2024",
-      "descricao": "os ritmos tropicais, batidão, pop nacional e as playlists que não saíram do fone.",
-      "albuns": [
-        {
-          "id": "7taQQZWIVcnHK6spr9N21l",
-          "nome": "batidão tropical vol. 2",
-          "artista": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273eb3be2aa722f8170d5b8c80e",
-          "ano": "2024",
-          "spotify_url": "https://open.spotify.com/album/7taQQZWIVcnHK6spr9N21l"
-        },
-        {
-          "id": "39nlfd4MoNcVGgvx64Opnt",
-          "nome": "escândalo íntimo",
-          "artista": "luísa sonza",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b2734de4413f1a99df1caf84dbbd",
-          "ano": "2024",
-          "spotify_url": "https://open.spotify.com/album/39nlfd4MoNcVGgvx64Opnt"
-        },
-        {
-          "id": "3MN8yWquVuWoOM0DOLRXsf",
-          "nome": "supernova",
-          "artista": "jão",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27309db791ec9bc25a6b4151588",
-          "ano": "2024",
-          "spotify_url": "https://open.spotify.com/album/3MN8yWquVuWoOM0DOLRXsf"
-        },
-        {
-          "id": "37oi5fAM46AtRr3bXNj8M3",
-          "nome": "memórias póstumas",
-          "artista": "jão",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
-          "ano": "2026",
-          "spotify_url": "https://open.spotify.com/album/37oi5fAM46AtRr3bXNj8M3"
-        },
-        {
-          "id": "6z6VObudfoxrvGNC5MtiTY",
-          "nome": "funk generation",
-          "artista": "anitta",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273a607c19552e14515bcb79aad",
-          "ano": "2024",
-          "spotify_url": "https://open.spotify.com/album/6z6VObudfoxrvGNC5MtiTY"
-        }
-      ],
-      "artistas": [
-        {
-          "id": "6tzRZ39aZlNqlUzQlkuhDV",
-          "nome": "pabllo vittar",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5eb3b4f066cf542935f22c858d9",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/6tzRZ39aZlNqlUzQlkuhDV"
-        },
-        {
-          "id": "59FrDXDVJz0EKqYg39dnT2",
-          "nome": "jão",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebe4b5c3d3af19c3d107f29c69",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/59FrDXDVJz0EKqYg39dnT2"
-        },
-        {
-          "id": "7FNnA9vBm6EKceENgCGRMb",
-          "nome": "anitta",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebc971a5b58d274b9ae7c467af",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/7FNnA9vBm6EKceENgCGRMb"
-        },
-        {
-          "id": "4PzYKhC14sTJNEr0dzoo0d",
-          "nome": "luísa sonza",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebd6ee3bc21789280f618fb618",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/4PzYKhC14sTJNEr0dzoo0d"
-        },
-        {
-          "id": "1HY2Jd0NmPuamShAr6KMms",
-          "nome": "lady gaga",
-          "imagem": "https://i.scdn.co/image/ab6761610000e5ebaadc18cac8d48124357c38e6",
-          "generos": [],
-          "spotify_url": "https://open.spotify.com/artist/1HY2Jd0NmPuamShAr6KMms"
-        }
-      ],
-      "musicas": [
-        {
-          "id": "7FRNVA4gViHQxSo1hUqlqD",
-          "nome": "pra te esquecer",
-          "artista": "pabllo vittar",
-          "album": "batidão tropical vol. 2",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273eb3be2aa722f8170d5b8c80e",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/7FRNVA4gViHQxSo1hUqlqD"
-        },
-        {
-          "id": "4T8ox558vnY7tCdWvdOhan",
-          "nome": "ai que calor",
-          "artista": "pabllo vittar, duda beat",
-          "album": "batidão tropical vol. 2",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273eb3be2aa722f8170d5b8c80e",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/4T8ox558vnY7tCdWvdOhan"
-        },
-        {
-          "id": "4HxoWPjMudl0ZT7GSQG5Ax",
-          "nome": "lose ya breath",
-          "artista": "anitta",
-          "album": "funk generation",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273a607c19552e14515bcb79aad",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/4HxoWPjMudl0ZT7GSQG5Ax"
-        },
-        {
-          "id": "610qP5fEpQMv7gzyLipesZ",
-          "nome": "vira lata",
-          "artista": "joão gomes, pabllo vittar",
-          "album": "vira lata",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b27345e782f0ea436a4452c5a7be",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/610qP5fEpQMv7gzyLipesZ"
-        },
-        {
-          "id": "52kROkm8RbJsYLM5taByIP",
-          "nome": "grip",
-          "artista": "anitta",
-          "album": "funk generation",
-          "imagem": "https://i.scdn.co/image/ab67616d0000b273a607c19552e14515bcb79aad",
-          "preview_url": null,
-          "spotify_url": "https://open.spotify.com/track/52kROkm8RbJsYLM5taByIP"
-        }
-      ],
-      "podcasts": [
-        {
-          "nome": "mamilos",
-          "descricao": "jornalismo de peito aberto e conversas aprofundadas sobre dilemas da sociedade.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        },
-        {
-          "nome": "café da manhã",
-          "descricao": "resumo diário das principais notícias da folha de s.paulo.",
-          "link": "https://open.spotify.com/genre/podcasts"
-        }
-      ]
-    }
+  "ano_ativo": "2026",
+  "dados": {
+    "rotulo": "2026",
+    "descricao": "as faixas, discos e vozes que mais me acompanharam até agora neste ano.",
+    "albuns": [
+      {
+        "id": "37oi5fAM46AtRr3bXNj8M3",
+        "nome": "memórias póstumas",
+        "artista": "jão",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "ano": "2026",
+        "spotify_url": "https://open.spotify.com/album/37oi5fAM46AtRr3bXNj8M3"
+      },
+      {
+        "id": "2LeCiUHBSmUMyrclDEEBly",
+        "nome": "pirata",
+        "artista": "jão",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27376086200d394250d6eef8adf",
+        "ano": "2021",
+        "spotify_url": "https://open.spotify.com/album/2LeCiUHBSmUMyrclDEEBly"
+      },
+      {
+        "id": "7L8pAdd8pxyiYZZermboxa",
+        "nome": "i am pabllo (live)",
+        "artista": "pabllo vittar",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27302e12519600ee1d537f70c45",
+        "ano": "2022",
+        "spotify_url": "https://open.spotify.com/album/7L8pAdd8pxyiYZZermboxa"
+      },
+      {
+        "id": "2PRDU8Oeb9f0lpgSjbaJXE",
+        "nome": "coisas naturais",
+        "artista": "marina sena",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b2737ae4d78852e406eff2f4eef6",
+        "ano": "2025",
+        "spotify_url": "https://open.spotify.com/album/2PRDU8Oeb9f0lpgSjbaJXE"
+      },
+      {
+        "id": "766kQKYQvONQk339t5payy",
+        "nome": "locket",
+        "artista": "madison beer",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b273391ad22354ea2e90c54f6b14",
+        "ano": "2026",
+        "spotify_url": "https://open.spotify.com/album/766kQKYQvONQk339t5payy"
+      }
+    ],
+    "artistas": [
+      {
+        "id": "59FrDXDVJz0EKqYg39dnT2",
+        "nome": "jão",
+        "imagem": "https://i.scdn.co/image/ab6761610000e5ebe4b5c3d3af19c3d107f29c69",
+        "generos": [],
+        "spotify_url": "https://open.spotify.com/artist/59FrDXDVJz0EKqYg39dnT2"
+      },
+      {
+        "id": "7FNnA9vBm6EKceENgCGRMb",
+        "nome": "anitta",
+        "imagem": "https://i.scdn.co/image/ab6761610000e5ebc971a5b58d274b9ae7c467af",
+        "generos": [],
+        "spotify_url": "https://open.spotify.com/artist/7FNnA9vBm6EKceENgCGRMb"
+      },
+      {
+        "id": "0nFdWpwl7h6fp3ADRyG14L",
+        "nome": "marina sena",
+        "imagem": "https://i.scdn.co/image/ab6761610000e5eba1f1da49af37bc62284c9cc9",
+        "generos": [],
+        "spotify_url": "https://open.spotify.com/artist/0nFdWpwl7h6fp3ADRyG14L"
+      },
+      {
+        "id": "6tzRZ39aZlNqlUzQlkuhDV",
+        "nome": "pabllo vittar",
+        "imagem": "https://i.scdn.co/image/ab6761610000e5eb3b4f066cf542935f22c858d9",
+        "generos": [],
+        "spotify_url": "https://open.spotify.com/artist/6tzRZ39aZlNqlUzQlkuhDV"
+      },
+      {
+        "id": "2O6q06oNcmOIPg1qidSU3C",
+        "nome": "liniker",
+        "imagem": "https://i.scdn.co/image/ab6761610000e5eb00e66ab8530670d1758a32fd",
+        "generos": [],
+        "spotify_url": "https://open.spotify.com/artist/2O6q06oNcmOIPg1qidSU3C"
+      }
+    ],
+    "musicas": [
+      {
+        "id": "2jGD8X5FhO9PJvJhYw9jSs",
+        "nome": "eu sempre volto",
+        "artista": "jão",
+        "album": "memórias póstumas",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "preview_url": "https://p.scdn.co/mp3-preview/583944bf1a5ed6c201ede9f397549a9dead16088",
+        "spotify_url": "https://open.spotify.com/track/2jGD8X5FhO9PJvJhYw9jSs"
+      },
+      {
+        "id": "1jBmw9hizoiIpxqFy8hNS2",
+        "nome": "por você",
+        "artista": "jão",
+        "album": "memórias póstumas",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "preview_url": "https://p.scdn.co/mp3-preview/a0b4b0a6205e7da57962bc1b3abf4a636ae13869",
+        "spotify_url": "https://open.spotify.com/track/1jBmw9hizoiIpxqFy8hNS2"
+      },
+      {
+        "id": "4Rphxy5MoU5bf50GQYIDN4",
+        "nome": "literatura",
+        "artista": "jão",
+        "album": "memórias póstumas",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "preview_url": "https://p.scdn.co/mp3-preview/f55e923a3288c22fbb1ef9031779461e5e9a4654",
+        "spotify_url": "https://open.spotify.com/track/4Rphxy5MoU5bf50GQYIDN4"
+      },
+      {
+        "id": "2BRYHmPbc5BUffYcAtRhv8",
+        "nome": "o amor",
+        "artista": "jão",
+        "album": "memórias póstumas",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "preview_url": "https://p.scdn.co/mp3-preview/94ae2090f5d8f98f8869f92d383dc32adda78b12",
+        "spotify_url": "https://open.spotify.com/track/2BRYHmPbc5BUffYcAtRhv8"
+      },
+      {
+        "id": "3HBIHTgDPLk0qKa4qTqeEl",
+        "nome": "jabuticabeira",
+        "artista": "jão",
+        "album": "memórias póstumas",
+        "imagem": "https://i.scdn.co/image/ab67616d0000b27326110f06ccf587b0a465f873",
+        "preview_url": "https://p.scdn.co/mp3-preview/c3497daca6ddd2ae84b9188b3b22c7d1cc3c9d52",
+        "spotify_url": "https://open.spotify.com/track/3HBIHTgDPLk0qKa4qTqeEl"
+      }
+    ],
+    "podcasts": [
+      {
+        "nome": "raciocínio clínico",
+        "descricao": "discussões de casos médicos, condutas e raciocínio diagnóstico.",
+        "link": "https://open.spotify.com/genre/podcasts"
+      },
+      {
+        "nome": "ted talks daily",
+        "descricao": "ideias diárias sobre inovação, comportamento e sociedade.",
+        "link": "https://open.spotify.com/genre/podcasts"
+      }
+    ]
   }
 }
