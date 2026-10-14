@@ -558,6 +558,7 @@ function vc_navegacao(): array {
 		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
 		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
 		array( 'label' => 'música',              'href' => '/musica/',      'icone' => 'music' ),
+		array( 'label' => 'canais',              'href' => '/canais/',      'icone' => 'tv' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
 		array( 'label' => 'changelog',           'href' => '/changelog/',   'icone' => 'history' ),
