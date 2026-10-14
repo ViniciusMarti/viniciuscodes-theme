@@ -1,9 +1,9 @@
 <?php
 /**
- * A página inicial: apresentação editorial e fluxo contínuo de textos & notas.
+ * A página inicial: apresentação editorial e fluxo contínuo de publicações (textos e notas).
  *
- * Uma única coluna vertical, contínua, tipográfica, respirada e sem foco em datas cronológicas.
- * A exploração temática completa fica a cargo da barra lateral permanente.
+ * Uma única linha do tempo cronológica com microformatos IndieWeb para notas
+ * e destaques editoriais para artigos longos.
  *
  * @package ViniciusCodes
  */
@@ -17,12 +17,112 @@ if ( is_home() ) {
 	get_template_part( 'template-parts/apresentacao' );
 }
 
-$vc_temas_da_home = is_home() ? vc_temas_ordenados() : array();
+$vc_post_type_nota = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
 ?>
 
-<?php if ( ! empty( $vc_temas_da_home ) ) : ?>
+<section class="section" id="fluxo">
+	<h2 class="section-title"><?php esc_html_e( 'recentes', 'viniciuscodes' ); ?></h2>
+
+	<?php if ( have_posts() ) : ?>
+		<ul class="post-list">
+			<?php
+			while ( have_posts() ) :
+				the_post();
+
+				$vc_id   = (int) get_the_ID();
+				$vc_tipo = get_post_type( $vc_id );
+
+				if ( $vc_post_type_nota === $vc_tipo ) :
+					$vc_numero = function_exists( 'vc_nota_numero' ) ? vc_nota_numero( $vc_id ) : 0;
+					$vc_autor  = (string) get_the_author();
+					$vc_tempo  = function_exists( 'vc_nota_tempo_relativo' ) ? vc_nota_tempo_relativo( $vc_id ) : get_the_date();
+					$vc_slugs  = function_exists( 'vc_nota_slugs_de_tema' ) ? vc_nota_slugs_de_tema( $vc_id ) : '';
+					?>
+					<li id="nota-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( $vc_slugs ); ?>">
+						<p class="post-item__meta">
+							<?php if ( $vc_numero > 0 ) : ?>
+								<a class="vc-nota-numero" href="<?php the_permalink(); ?>">#<?php echo (int) $vc_numero; ?></a>
+							<?php endif; ?>
+
+							<a class="u-url" href="<?php the_permalink(); ?>">
+								<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i', $vc_id ) ); ?>"><?php echo esc_html( $vc_tempo ); ?></time>
+							</a>
+
+							<?php if ( '' !== $vc_autor ) : ?>
+								<span class="p-author h-card post-item__meta__part">
+									<a class="u-url p-name" rel="author" href="<?php echo esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ); ?>"><?php echo esc_html( $vc_autor ); ?></a>
+								</span>
+							<?php endif; ?>
+						</p>
+
+						<div class="e-content prose nota__conteudo">
+							<?php the_content(); ?>
+						</div>
+
+						<div class="nota__acoes">
+							<?php
+							get_template_part(
+								'template-parts/article',
+								'like',
+								array(
+									'compacto' => true,
+									'rotulo'   => $vc_numero > 0
+										/* translators: %d: o número da nota. */
+										? sprintf( __( 'gostar da nota #%d', 'viniciuscodes' ), $vc_numero )
+										: __( 'gostar desta nota', 'viniciuscodes' ),
+								)
+							);
+							?>
+						</div>
+					</li>
+				<?php else : ?>
+					<?php
+					$vc_temas = function_exists( 'vc_temas_do_post' ) ? vc_temas_do_post( $vc_id ) : array();
+					$vc_slugs = array();
+					foreach ( $vc_temas as $vc_t ) {
+						$vc_slugs[] = $vc_t['slug'];
+					}
+					?>
+					<li id="post-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--editorial h-entry' ); ?> data-temas="<?php echo esc_attr( implode( ' ', $vc_slugs ) ); ?>">
+						<p class="post-item__meta">
+							<?php if ( ! empty( $vc_temas ) ) : ?>
+								<?php $vc_tema_principal = reset( $vc_temas ); ?>
+								<span class="post-item__meta__part">
+									<a href="<?php echo esc_url( '/tema/' . $vc_tema_principal['slug'] . '/' ); ?>">
+										<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( $vc_tema_principal['icone'], 15 ); ?></span>
+										<span><?php echo esc_html( mb_strtolower( (string) $vc_tema_principal['nome'], 'UTF-8' ) ); ?></span>
+									</a>
+								</span>
+							<?php endif; ?>
+
+							<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>"><?php echo esc_html( function_exists( 'vc_data_curta' ) ? vc_data_curta( $vc_id ) : get_the_date( 'd/m/Y', $vc_id ) ); ?></time>
+						</p>
+
+						<h2 class="post-item__title p-name">
+							<a class="u-url" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+						</h2>
+					</li>
+				<?php endif; ?>
+				<?php
+			endwhile;
+			?>
+		</ul>
+	<?php else : ?>
+		<p class="empty"><?php esc_html_e( 'nada por aqui ainda.', 'viniciuscodes' ); ?></p>
+	<?php endif; ?>
+
+	<div class="section__foot" style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+		<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>"><?php esc_html_e( 'ver todos os textos →', 'viniciuscodes' ); ?></a>
+		<a href="<?php echo esc_url( home_url( '/notas/' ) ); ?>"><?php esc_html_e( 'ver todas as notas →', 'viniciuscodes' ); ?></a>
+	</div>
+</section>
+
+<?php
+$vc_temas_da_home = is_home() ? vc_temas_ordenados() : array();
+if ( ! empty( $vc_temas_da_home ) ) :
+	?>
 	<section class="section" id="temas">
-		<h2 class="section-title">temas</h2>
+		<h2 class="section-title"><?php esc_html_e( 'temas', 'viniciuscodes' ); ?></h2>
 
 		<ul class="grid">
 			<?php foreach ( $vc_temas_da_home as $vc_tema ) : ?>
@@ -37,46 +137,6 @@ $vc_temas_da_home = is_home() ? vc_temas_ordenados() : array();
 		</ul>
 	</section>
 <?php endif; ?>
-
-<section class="section" id="textos">
-	<h2 class="section-title">textos</h2>
-
-	<?php if ( have_posts() ) : ?>
-		<ul class="post-list post-list--editorial">
-			<?php
-			while ( have_posts() ) :
-				the_post();
-
-				$vc_id    = (int) get_the_ID();
-				$vc_temas = vc_temas_do_post( $vc_id );
-				?>
-				<li class="post-item post-item--editorial">
-					<?php if ( ! empty( $vc_temas ) ) : ?>
-						<?php $vc_tema_principal = reset( $vc_temas ); ?>
-						<span class="post-item__theme">
-							<a href="<?php echo esc_url( '/tema/' . $vc_tema_principal['slug'] . '/' ); ?>">
-								<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( $vc_tema_principal['icone'], 15 ); ?></span>
-								<span><?php echo esc_html( mb_strtolower( (string) $vc_tema_principal['nome'], 'UTF-8' ) ); ?></span>
-							</a>
-						</span>
-					<?php endif; ?>
-
-					<h2 class="post-item__title">
-						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-					</h2>
-				</li>
-				<?php
-			endwhile;
-			?>
-		</ul>
-	<?php else : ?>
-		<p class="empty">nada por aqui ainda.</p>
-	<?php endif; ?>
-
-	<p class="section__foot">
-		<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>">ver todo o arquivo de publicações →</a>
-	</p>
-</section>
 
 <?php
 get_footer();

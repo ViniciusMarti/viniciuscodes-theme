@@ -70,10 +70,8 @@ wp_enqueue_style(
  * fica sem ícone — a pílula continua inteira, e nenhum nome é adivinhado.
  */
 $vc_tipos = array(
-	'livro'  => array( 'rotulo' => 'livros',  'singular' => 'livro',  'ordem' => 1, 'icone' => 'book' ),
-	'filme'  => array( 'rotulo' => 'filmes',  'singular' => 'filme',  'ordem' => 2, 'icone' => 'film' ),
-	'serie'  => array( 'rotulo' => 'séries',  'singular' => 'série',  'ordem' => 3, 'icone' => 'tv' ),
-	'teatro' => array( 'rotulo' => 'teatro',  'singular' => 'teatro', 'ordem' => 4, 'icone' => 'drama' ),
+	'livro' => array( 'rotulo' => 'livros', 'singular' => 'livro', 'ordem' => 1, 'icone' => 'book' ),
+	'filme' => array( 'rotulo' => 'filmes', 'singular' => 'filme', 'ordem' => 2, 'icone' => 'film' ),
 );
 
 $vc_normalizar_tipo = static function ( string $t ): string {
@@ -83,11 +81,6 @@ $vc_normalizar_tipo = static function ( string $t ): string {
 		case 'filme':
 		case 'filmes':
 			return 'filme';
-		case 'serie':
-		case 'series':
-			return 'serie';
-		case 'teatro':
-			return 'teatro';
 		case 'livro':
 		case 'livros':
 			return 'livro';
@@ -570,6 +563,22 @@ while ( have_posts() ) :
 
 										<?php if ( '' !== $vc_resumo ) : ?>
 											<p class="acervo__livro-resumo"><?php echo esc_html( $vc_resumo ); ?></p>
+										<?php endif; ?>
+
+										<?php
+										$vc_pagina  = (int) ( $vc_o['campos']['pagina'] ?? ( $vc_o['campos']['página'] ?? 0 ) );
+										$vc_paginas = (int) ( $vc_o['campos']['paginas'] ?? ( $vc_o['campos']['páginas'] ?? ( $vc_o['campos']['total'] ?? 0 ) ) );
+										if ( $vc_pagina > 0 && $vc_paginas > 0 ) :
+											$vc_pct = min( 100, max( 0, (int) round( ( $vc_pagina / $vc_paginas ) * 100 ) ) );
+											?>
+											<div class="acervo__livro-progresso" role="progressbar" aria-valuenow="<?php echo esc_attr( (string) $vc_pct ); ?>" aria-valuemin="0" aria-valuemax="100" aria-label="<?php echo esc_attr( sprintf( __( 'progresso de leitura: %d%%', 'viniciuscodes' ), $vc_pct ) ); ?>">
+												<div class="acervo__livro-barra">
+													<div class="acervo__livro-barra-preenchimento" style="width: <?php echo esc_attr( (string) $vc_pct ); ?>%;"></div>
+												</div>
+												<span class="acervo__livro-progresso-rotulo">
+													<?php printf( esc_html__( 'página %1$d de %2$d (%3$d%%)', 'viniciuscodes' ), $vc_pagina, $vc_paginas, $vc_pct ); ?>
+												</span>
+											</div>
 										<?php endif; ?>
 
 										<?php if ( '' !== $vc_amazon || '' !== $vc_resenha ) : ?>

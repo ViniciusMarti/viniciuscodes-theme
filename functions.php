@@ -580,8 +580,10 @@ function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'notas',               'href' => '/notas/',       'icone' => 'square-pen' ),
+		array( 'label' => 'vídeos',              'href' => '/videos/',      'icone' => 'film' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'acervo',              'href' => '/acervo/',      'icone' => 'library-big' ),
+		array( 'label' => 'música',              'href' => '/musica/',      'icone' => 'music' ),
 		array( 'label' => 'blogs que eu leio',   'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
 		array( 'label' => 'changelog',           'href' => '/changelog/',   'icone' => 'history' ),
@@ -752,6 +754,7 @@ function vc_icone_da_url( string $url ): string {
 		'/videos/'    => 'film',
 		'/sobre/'     => 'user-round',
 		'/acervo/'    => 'library-big',
+		'/musica/'    => 'music',
 		'/blogroll/'  => 'handshake',
 		'/manifesto/' => 'scroll-text',
 		'/changelog/' => 'history',
@@ -807,6 +810,7 @@ function vc_contexto_da_url( string $url ): string {
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
 		'/acervo/'    => 'o que eu li e assisti: livros, filmes, séries e peças, com a data de cada um',
+		'/musica/'    => 'os álbuns, artistas, músicas e podcasts mais ouvidos por ano via spotify',
 		'/blogroll/'  => 'cada um com o feed para assinar',
 		'/manifesto/' => 'por que este site existe e como ele se organiza',
 		'/changelog/' => 'o histórico de mudanças e evolução deste site',
@@ -867,7 +871,7 @@ function vc_itens_do_menu( string $local ): array {
 	$do_painel     = wp_get_nav_menu_items( $local );
 	$itens         = array();
 
-	$desativados = array( '/videos/', '/colofao/' );
+	$desativados = array( '/colofao/' );
 
 	if ( is_array( $do_painel ) && $do_painel ) {
 		foreach ( $do_painel as $item ) {
@@ -1526,7 +1530,8 @@ add_action(
 			return;
 		}
 
-		$consulta->set( 'posts_per_page', 8 );
+		$consulta->set( 'post_type', array( 'post', defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) );
+		$consulta->set( 'posts_per_page', 12 );
 	}
 );
 
@@ -2277,3 +2282,8 @@ require_once get_theme_file_path( 'inc/notas-feed.php' );
  * painel.
  */
 require_once get_theme_file_path( 'inc/acervo-admin.php' );
+
+/* -------------------------------------------------------------------------
+   VÍDEOS DO CANAL @VINICIUSCODES
+   ------------------------------------------------------------------------- */
+require_once get_theme_file_path( 'inc/cpt-videos.php' );

@@ -193,7 +193,7 @@ function vc_nota_slugs_de_tema( $vc_post = null ) {
  * (`1.0.42`) continua intocada por este recurso.
  */
 function vc_notas_assets() {
-	if ( ! is_singular( VC_NOTA ) && ! is_post_type_archive( VC_NOTA ) ) {
+	if ( ! is_singular( VC_NOTA ) && ! is_post_type_archive( VC_NOTA ) && ! is_home() ) {
 		return;
 	}
 
