@@ -26,9 +26,10 @@
 $vc_opcoes = wp_parse_args(
 	$args ?? array(),
 	array(
-		'mostrar_meta'  => true,
-		'mostrar_temas' => true,
-		'vazio'         => 'nada por aqui ainda.',
+		'mostrar_meta'   => true,
+		'mostrar_temas'  => true,
+		'mostrar_resumo' => true,
+		'vazio'          => 'nada por aqui ainda.',
 	)
 );
 

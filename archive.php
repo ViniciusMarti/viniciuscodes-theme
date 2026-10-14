@@ -77,7 +77,8 @@ get_template_part(
 	'template-parts/lista-de-textos',
 	null,
 	array(
-		'mostrar_temas' => ! is_category(),
+		'mostrar_temas'  => ! is_category(),
+		'mostrar_resumo' => true,
 	)
 );
 
