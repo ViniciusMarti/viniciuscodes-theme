@@ -32,7 +32,6 @@ $vc_temas = vc_temas_ordenados( true );
 					<?php echo $vc_item['contexto'] ? 'aria-label="' . esc_attr( $vc_item['label'] . ' — ' . $vc_item['contexto'] ) . '"' : ''; ?>
 					<?php echo $vc_item['atual'] ? 'aria-current="page"' : ''; ?>
 				>
-					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( $vc_item['icone'], 18 ); ?></span>
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_item['label'], 'UTF-8' ) ); ?></span>
 				</a>
 			<?php endforeach; ?>
@@ -47,7 +46,6 @@ $vc_temas = vc_temas_ordenados( true );
 					href="<?php echo esc_url( $vc_href ); ?>"
 					<?php echo $vc_esta( $vc_href ) ? 'aria-current="page"' : ''; ?>
 				>
-					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 18 ); ?></span>
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></span>
 					<span class="navlink__count"><?php echo (int) $vc_tema->count; ?></span>
 				</a>
