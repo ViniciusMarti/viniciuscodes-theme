@@ -111,7 +111,7 @@
   margin: 0;
 }
 
-@media (min-width: 580px) {
+@media (min-width: 1060px) {
   .canais__lista {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.85rem;
@@ -121,6 +121,7 @@
 /* Card no estilo Flat Soft Wash */
 .canal-card {
   margin: 0;
+  min-width: 0;
 }
 
 .canal-card__link {
@@ -128,6 +129,7 @@
   align-items: center;
   gap: 0.85rem;
   padding: 0.8rem 1rem;
+  min-width: 0;
   background: var(--paper-alt, rgba(0, 0, 0, 0.03));
   border-radius: var(--radius);
   text-decoration: none;
