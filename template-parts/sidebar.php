@@ -47,7 +47,6 @@ $vc_temas = vc_temas_ordenados( true );
 					<?php echo $vc_esta( $vc_href ) ? 'aria-current="page"' : ''; ?>
 				>
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></span>
-					<span class="navlink__count"><?php echo (int) $vc_tema->count; ?></span>
 				</a>
 			<?php endforeach; ?>
 		</nav>
