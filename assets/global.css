@@ -778,6 +778,26 @@ hr {
   gap: 1.75rem;
 }
 
+.sidebar__group {
+  padding: 1.15rem 1.25rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  border-radius: var(--radius);
+  transition: background 0.2s ease;
+}
+
+.sidebar__group:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='dark'] .sidebar__group {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .sidebar__group:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
 .sidebar__label {
   margin: 0 0 0.6rem;
   /* 12px floor: anything smaller is hard to read on a phone. */
@@ -4115,7 +4135,7 @@ a.link-externo:focus-visible .link-externo__icone {
 		max-height: none;
 		overflow-y: visible;
 		z-index: 10;
-		padding-top: 1.5rem;
+		padding: 1.5rem 1rem 2rem;
 		/*
 		   A barra agora e integrada e continua com a pagina: fundo transparente
 		   e sem divisoria vertical rigida, posicionada abaixo da linha do cabecalho.
