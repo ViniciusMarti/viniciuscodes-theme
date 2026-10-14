@@ -2890,12 +2890,42 @@ blockquote p:last-child,
   gap: 1.5rem;
 }
 
-/* A circle. `object-fit` keeps the crop honest: the frame is square and the
-   photo fills it, so nothing is distorted. */
-.hero__photo {
+/* Fundo orgânico colorido (blob) atrás da foto de perfil */
+.hero__photo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem;
   flex: 0 0 auto;
-  width: 180px;
-  height: 180px;
+}
+
+.hero__photo-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(var(--green-rgb), 0.28) 0%, rgba(223, 169, 110, 0.32) 100%);
+  border-radius: 62% 38% 70% 30% / 45% 61% 39% 55%;
+  z-index: 0;
+  transition: border-radius 0.4s ease, transform 0.4s ease;
+  filter: blur(0.5px);
+}
+
+.hero__photo-wrap:hover::before {
+  border-radius: 40% 60% 35% 65% / 60% 30% 70% 40%;
+  transform: rotate(3deg) scale(1.03);
+}
+
+[data-theme='dark'] .hero__photo-wrap::before {
+  background: linear-gradient(135deg, rgba(var(--green-rgb), 0.22) 0%, rgba(223, 169, 110, 0.18) 100%);
+}
+
+.hero__photo {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 175px;
+  height: 175px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -2905,13 +2935,11 @@ blockquote p:last-child,
   min-width: 0;
 }
 
-/* On a narrow screen the circle shrinks: at 180px it would take most of the
-   width of a phone, and the greeting and the heading are what the reader
-   came for. */
+/* On a narrow screen the circle shrinks */
 @media (max-width: 640px) {
   .hero__photo {
-    width: 140px;
-    height: 140px;
+    width: 135px;
+    height: 135px;
   }
 }
 

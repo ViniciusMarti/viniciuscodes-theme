@@ -29,19 +29,21 @@ $vc_retrato_id = attachment_url_to_postid( vc_midia( 'vinicius-profile.webp' ) )
 ?>
 <section class="hero">
 	<div class="hero__intro">
-		<?php
-		if ( $vc_retrato_id ) {
-			echo wp_get_attachment_image(
-				$vc_retrato_id,
-				'medium',
-				false,
-				array(
-					'class' => 'hero__photo',
-					'alt'   => 'Vinicius Oliveira, sorrindo, ao ar livre',
-				)
-			);
-		}
-		?>
+		<?php if ( $vc_retrato_id ) : ?>
+			<div class="hero__photo-wrap">
+				<?php
+				echo wp_get_attachment_image(
+					$vc_retrato_id,
+					'medium',
+					false,
+					array(
+						'class' => 'hero__photo',
+						'alt'   => 'Vinicius Oliveira, sorrindo, ao ar livre',
+					)
+				);
+				?>
+			</div>
+		<?php endif; ?>
 
 		<div class="hero__text">
 			<h1 class="hero__title">escrevo sobre tecnologia, viagens e AuDHD.</h1>
