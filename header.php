@@ -183,14 +183,6 @@ $vc_imagem = vc_imagem_social( $vc_id );
 ?>
 <header class="masthead">
 	<a class="masthead__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-		<img
-			src="<?php echo esc_url( vc_midia( 'vinicius-profile.webp' ) ); ?>"
-			alt=""
-			width="28"
-			height="28"
-			loading="eager"
-			decoding="async"
-		/>
 		<span>@viniciuscodes</span>
 	</a>
 
