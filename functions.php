@@ -571,7 +571,6 @@ function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'microblog',           'href' => '/microblog/',   'icone' => 'square-pen' ),
-		array( 'label' => 'vídeos',              'href' => '/videos/',      'icone' => 'play' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
 		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
@@ -2815,37 +2814,21 @@ require_once get_theme_file_path( 'inc/notas-admin.php' );
 require_once get_theme_file_path( 'inc/notas-feed.php' );
 
 /* -------------------------------------------------------------------------
-   O ACERVO NO PAINEL
+   REDIRECIONAMENTOS DE ROTAS PODADAS (301 PERMANENTE)
    ------------------------------------------------------------------------- */
-/*
- * A tela que edita os livros, filmes, séries e teatro — a lista que a página
- * `/acervo/` publica.
- *
- * O ARQUIVO É CARREGADO AQUI, e não só dentro do admin, porque `admin_menu` e
- * `admin_post_*` são GANCHOS: quem quer ser chamado por eles precisa estar
- * carregado antes de eles acontecerem. Um `require` que só rodasse em tela de
- * painel chegaria tarde, e o menu não existiria.
- *
- * Nada aqui roda no site: o arquivo só define funções e registra ganchos de
- * painel.
- */
-require_once get_theme_file_path( 'inc/acervo-admin.php' );
-
-/* -------------------------------------------------------------------------
-   VÍDEOS DO CANAL @VINICIUSCODES
-   ------------------------------------------------------------------------- */
-require_once get_theme_file_path( 'inc/cpt-videos.php' );
-
-/* -------------------------------------------------------------------------
-   REDIRECIONAMENTO DO ACERVO
-   ------------------------------------------------------------------------- */
-/**
- * Redireciona /acervo/ para a nova página de livros /livros/ (301 permanente).
- */
 add_action(
 	'template_redirect',
 	static function () {
-		if ( is_page( 'acervo' ) || ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#^/acervo/?(\?.*)?$#i', (string) $_SERVER['REQUEST_URI'] ) ) ) {
+		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
+
+		// Redireciona /videos/ ou /video/<slug> para /microblog/
+		if ( preg_match( '#^/videos?(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/microblog/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /acervo/ para /livros/
+		if ( is_page( 'acervo' ) || preg_match( '#^/acervo/?(\?.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/livros/' ), 301 );
 			exit;
 		}
