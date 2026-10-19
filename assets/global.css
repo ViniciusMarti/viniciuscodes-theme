@@ -445,7 +445,7 @@ hr {
 .masthead__brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   /*
     A marca NÃO encolhe, e isto passou a importar quando o campo de busca entrou
     na fileira.
@@ -462,49 +462,14 @@ hr {
   flex-shrink: 0;
   /* Keeps the brand a real touch target on phones. */
   min-height: 44px;
-  color: var(--ink);
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 1.15rem;
   white-space: nowrap;
-  text-decoration: none;
-}
-
-/*
-  Traço de margem (caderno de notas / editorial).
-  Em repouso mede 14px na cor discreta da linha (--line-strong). No hover/foco
-  ele se expande suavemente para 26px e assume o tom --green do tema.
-*/
-.masthead__brand::before {
-  content: '';
-  display: inline-block;
-  width: 14px;
-  height: 1.5px;
-  background: var(--line-strong);
-  transition: width 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.2s ease;
-}
-
-.masthead__brand span {
-  transition: color 0.2s ease;
 }
 
 .masthead__brand:hover {
   text-decoration: none;
-}
-
-.masthead__brand:hover::before,
-.masthead__brand:focus-visible::before {
-  width: 26px;
-  background: var(--green);
-}
-
-.masthead__brand:hover,
-.masthead__brand:focus-visible,
-.masthead__brand:hover span,
-.masthead__brand:focus-visible span {
-  color: var(--green);
 }
 
 /*
