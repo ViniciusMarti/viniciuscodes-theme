@@ -22,7 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VC_VERSAO', '1791744180000' );
+$vc_style_path = __DIR__ . '/style.css';
+define( 'VC_VERSAO', file_exists( $vc_style_path ) ? (string) filemtime( $vc_style_path ) : '1791744180000' );
 
 /* -------------------------------------------------------------------------
    RECURSOS DO TEMA
@@ -53,7 +54,22 @@ add_action(
 		 * foi exatamente o problema que a versão Astro levou tempo para resolver.
 		 */
 		add_theme_support( 'editor-styles' );
-		add_editor_style( 'assets/global.css' );
+		add_editor_style( array( 'assets/global.css', 'assets/editor-style.css' ) );
+	}
+);
+
+/**
+ * Força o carregamento do editor-style.css no iframe e no canvas do Gutenberg
+ */
+add_action(
+	'enqueue_block_editor_assets',
+	static function () {
+		wp_enqueue_style(
+			'vc-editor-headings',
+			get_theme_file_uri( 'assets/editor-style.css' ),
+			array( 'wp-edit-blocks' ),
+			VC_VERSAO
+		);
 	}
 );
 
@@ -83,6 +99,10 @@ add_action(
 		 * primeira pintura.
 		 */
 		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
+
+		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+			wp_enqueue_script( 'comment-reply' );
+		}
 
 		if ( is_home() || is_post_type_archive( 'nota' ) || is_page_template( 'page-templates/lista-de-posts.php' ) ) {
 			wp_enqueue_script( 'vc-feed-infinito', get_theme_file_uri( 'assets/feed-infinito.js' ), array( 'vc-site' ), VC_VERSAO, true );
@@ -552,7 +572,7 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
 function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
-		array( 'label' => 'notas',               'href' => '/notas/',       'icone' => 'square-pen' ),
+		array( 'label' => 'microblog',           'href' => '/microblog/',   'icone' => 'square-pen' ),
 		array( 'label' => 'vídeos',              'href' => '/videos/',      'icone' => 'play' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
@@ -725,6 +745,7 @@ add_action(
 function vc_icone_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'newspaper',
+		'/microblog/' => 'square-pen',
 		'/notas/'     => 'square-pen',
 		'/videos/'    => 'play',
 		'/sobre/'     => 'user-round',
@@ -783,6 +804,7 @@ function vc_icone_da_url( string $url ): string {
 function vc_contexto_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'a lista de todos os textos, do mais novo para o mais antigo',
+		'/microblog/' => 'os textos curtos, sem título, na ordem em que saem',
 		'/notas/'     => 'os textos curtos, sem título, na ordem em que saem',
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
@@ -2062,6 +2084,547 @@ add_filter(
 );
 
 /**
+ * Simplifica as colunas da tela de comentários (edit-comments.php),
+ * removendo colunas técnicas de plugins (como Comment-Type e Protocol)
+ * para dar espaço de leitura ao texto do comentário.
+ *
+ * @param array<string, string> $columns
+ * @return array<string, string>
+ */
+add_filter(
+	'manage_edit-comments_columns',
+	static function ( array $columns ): array {
+		unset( $columns['comment_type'], $columns['comment-type'], $columns['protocol'], $columns['response_protocol'] );
+
+		// Também garante remoção caso o plugin use o rótulo exato "Comment-Type" ou "Protocol"
+		foreach ( $columns as $key => $label ) {
+			$clean_label = strtolower( trim( wp_strip_all_tags( (string) $label ) ) );
+			if ( in_array( $clean_label, array( 'comment-type', 'protocol', 'tipo de comentário', 'protocolo' ), true ) ) {
+				unset( $columns[ $key ] );
+			}
+		}
+
+		return $columns;
+	},
+	999
+);
+
+/**
+ * Agrupa comentários, respostas e tréplicas em fios de conversa (threads)
+ * na tela de Comentários do WP Admin (edit-comments.php), para que o comentário
+ * raiz venha primeiro e suas respostas/tréplicas apareçam logo abaixo, em ordem
+ * cronológica da conversa, com recuo visual de nível.
+ *
+ * @param WP_Comment[] $comments
+ * @return WP_Comment[]
+ */
+add_filter(
+	'the_comments',
+	static function ( array $comments, WP_Comment_Query $query ): array {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return $comments;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-comments' !== $screen->id ) {
+			return $comments;
+		}
+
+		// Não reordenar se for uma consulta apenas de contagem ou IDs
+		if ( ! empty( $query->query_vars['count'] ) || 'ids' === $query->query_vars['fields'] ) {
+			return $comments;
+		}
+
+		// Evita loop infinito ao buscar pais/filhos faltantes na página atual
+		static $reorganizando = false;
+		if ( $reorganizando || empty( $comments ) ) {
+			return $comments;
+		}
+		$reorganizando = true;
+
+		// Mapa de comentários indexado por ID
+		$by_id = array();
+		foreach ( $comments as $c ) {
+			if ( $c instanceof WP_Comment ) {
+				$by_id[ (int) $c->comment_ID ] = $c;
+			}
+		}
+
+		// 1. Garantir que se uma resposta está na página, o ancestral (pai/avô) também esteja
+		foreach ( array_values( $by_id ) as $c ) {
+			$parent_id = (int) $c->comment_parent;
+			$guard     = 0;
+			while ( $parent_id > 0 && $guard < 10 ) {
+				if ( ! isset( $by_id[ $parent_id ] ) ) {
+					$parent_obj = get_comment( $parent_id );
+					if ( $parent_obj instanceof WP_Comment ) {
+						$by_id[ $parent_id ] = $parent_obj;
+						$parent_id           = (int) $parent_obj->comment_parent;
+					} else {
+						break;
+					}
+				} else {
+					$parent_id = (int) $by_id[ $parent_id ]->comment_parent;
+				}
+				$guard++;
+			}
+		}
+
+		// 2. Buscar também respostas/tréplicas filhas dos comentários presentes para não quebrar a conversa
+		$post_ids = array();
+		foreach ( $by_id as $c ) {
+			$post_ids[ (int) $c->comment_post_ID ] = true;
+		}
+		if ( ! empty( $post_ids ) ) {
+			$status_atual = isset( $_REQUEST['comment_status'] ) ? sanitize_key( wp_unslash( $_REQUEST['comment_status'] ) ) : 'all';
+			if ( ! in_array( $status_atual, array( 'spam', 'trash' ), true ) ) {
+				$extras = get_comments(
+					array(
+						'post__in' => array_keys( $post_ids ),
+						'status'   => array( 'approve', 'hold' ),
+						'orderby'  => 'comment_date_gmt',
+						'order'    => 'ASC',
+						'number'   => 200,
+					)
+				);
+				foreach ( $extras as $ex ) {
+					if ( $ex instanceof WP_Comment && ! isset( $by_id[ (int) $ex->comment_ID ] ) ) {
+						// Só inclui se pertencer a alguma árvore já listada na página
+						$pid   = (int) $ex->comment_parent;
+						$check = 0;
+						while ( $pid > 0 && $check < 10 ) {
+							if ( isset( $by_id[ $pid ] ) ) {
+								$by_id[ (int) $ex->comment_ID ] = $ex;
+								break;
+							}
+							$p_obj = get_comment( $pid );
+							$pid   = ( $p_obj instanceof WP_Comment ) ? (int) $p_obj->comment_parent : 0;
+							$check++;
+						}
+					}
+				}
+			}
+		}
+
+		// 3. Construir árvore de pais -> filhos
+		$children_map = array();
+		$roots        = array();
+
+		foreach ( $by_id as $id => $c ) {
+			$pid = (int) $c->comment_parent;
+			if ( $pid > 0 && isset( $by_id[ $pid ] ) && $pid !== $id ) {
+				$children_map[ $pid ][] = $c;
+			} else {
+				$roots[] = $c;
+			}
+		}
+
+		// Função auxiliar para descobrir a data mais recente dentro de uma conversa (thread)
+		$get_thread_latest_time = static function ( WP_Comment $node ) use ( &$get_thread_latest_time, &$children_map ): int {
+			$latest = strtotime( $node->comment_date_gmt ?: $node->comment_date ) ?: 0;
+			$id     = (int) $node->comment_ID;
+			if ( ! empty( $children_map[ $id ] ) ) {
+				foreach ( $children_map[ $id ] as $child ) {
+					$child_time = $get_thread_latest_time( $child );
+					if ( $child_time > $latest ) {
+						$latest = $child_time;
+					}
+				}
+			}
+			return $latest;
+		};
+
+		// Ordenar as conversas (raízes) pela atividade mais recente (descendente)
+		usort(
+			$roots,
+			static function ( WP_Comment $a, WP_Comment $b ) use ( $get_thread_latest_time ): int {
+				return $get_thread_latest_time( $b ) <=> $get_thread_latest_time( $a );
+			}
+		);
+
+		// Ordenar respostas dentro de cada conversa em ordem cronológica (ascendente: pergunta -> resposta -> tréplica)
+		foreach ( $children_map as $pid => &$list ) {
+			usort(
+				$list,
+				static function ( WP_Comment $a, WP_Comment $b ): int {
+					$ta = strtotime( $a->comment_date_gmt ?: $a->comment_date ) ?: 0;
+					$tb = strtotime( $b->comment_date_gmt ?: $b->comment_date ) ?: 0;
+					return $ta <=> $tb;
+				}
+			);
+		}
+		unset( $list );
+
+		// 4. Achatar a árvore em lista sequencial guardando metadados de profundidade para o CSS/JS
+		$ordered     = array();
+		$thread_meta = array();
+
+		$flatten = static function ( WP_Comment $node, int $depth, int $root_id ) use ( &$flatten, &$children_map, &$ordered, &$thread_meta ): void {
+			$id       = (int) $node->comment_ID;
+			$has_kids = ! empty( $children_map[ $id ] );
+
+			$ordered[]           = $node;
+			$thread_meta[ $id ] = array(
+				'depth'    => min( $depth, 4 ),
+				'root_id'  => $root_id,
+				'has_kids' => $has_kids,
+				'is_me'    => ( (int) $node->user_id > 0 && (int) $node->user_id === get_current_user_id() )
+					|| ( stripos( (string) $node->comment_author_email, 'vinicius' ) !== false )
+					|| ( strtolower( (string) $node->comment_author ) === 'viniciuscodes' ),
+			);
+
+			if ( $has_kids ) {
+				foreach ( $children_map[ $id ] as $child ) {
+					$flatten( $child, $depth + 1, $root_id );
+				}
+			}
+		};
+
+		foreach ( $roots as $root ) {
+			$flatten( $root, 0, (int) $root->comment_ID );
+		}
+
+		$GLOBALS['vc_admin_comment_threads'] = $thread_meta;
+		$reorganizando                       = false;
+
+		return $ordered;
+	},
+	10,
+	2
+);
+
+/**
+ * Melhora o layout, agrupamento em threads e legibilidade da página de Comentários (edit-comments.php).
+ */
+add_action(
+	'admin_head-edit-comments.php',
+	static function () {
+		?>
+		<style id="vc-admin-comments-layout">
+			/* 1. Espaçamento geral da tabela e alinhamento */
+			.wp-list-table.comments {
+				border-radius: 10px;
+				overflow: hidden;
+				border: 1px solid #cbd5e1;
+				box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+				border-collapse: separate;
+				border-spacing: 0;
+			}
+			#the-comment-list td,
+			#the-comment-list th {
+				padding-top: 16px !important;
+				padding-bottom: 16px !important;
+				vertical-align: top;
+				border-bottom: 1px solid #e2e8f0;
+			}
+
+			/* Separador mais forte no início de uma nova conversa (raiz) */
+			#the-comment-list tr.vc-thread-root > td,
+			#the-comment-list tr.vc-thread-root > th {
+				border-top: 2px solid #cbd5e1 !important;
+			}
+			#the-comment-list tr.vc-thread-root:first-child > td,
+			#the-comment-list tr.vc-thread-root:first-child > th {
+				border-top: none !important;
+			}
+
+			/* Se o comentário raiz tem respostas abaixo, a linha divisória inferior fica sutil para unir o bloco */
+			#the-comment-list tr.vc-has-replies > td,
+			#the-comment-list tr.vc-has-replies > th {
+				border-bottom: 1px dashed #e2e8f0 !important;
+			}
+
+			/* 2. Estilo das RESPOSTAS e TRÉPLICAS (fios de conversa aninhados) */
+			#the-comment-list tr.vc-thread-reply {
+				background-color: #f8fafc !important;
+			}
+			#the-comment-list tr.vc-thread-reply.vc-comment-mine {
+				background-color: #f0fdf4 !important; /* Verde super suave para as suas respostas */
+			}
+			#the-comment-list tr.vc-thread-reply > td,
+			#the-comment-list tr.vc-thread-reply > th {
+				padding-top: 12px !important;
+				padding-bottom: 12px !important;
+			}
+
+			/* Recuo visual progressivo nas respostas (Autor e Comentário) */
+			#the-comment-list tr.vc-depth-1 td.column-author {
+				padding-left: 24px !important;
+			}
+			#the-comment-list tr.vc-depth-2 td.column-author {
+				padding-left: 38px !important;
+			}
+			#the-comment-list tr.vc-depth-3 td.column-author,
+			#the-comment-list tr.vc-depth-4 td.column-author {
+				padding-left: 50px !important;
+			}
+
+			#the-comment-list tr.vc-depth-1 td.column-comment {
+				padding-left: 24px !important;
+				position: relative;
+			}
+			#the-comment-list tr.vc-depth-2 td.column-comment {
+				padding-left: 42px !important;
+				position: relative;
+			}
+			#the-comment-list tr.vc-depth-3 td.column-comment,
+			#the-comment-list tr.vc-depth-4 td.column-comment {
+				padding-left: 58px !important;
+				position: relative;
+			}
+
+			/* Linha conectora vertical de thread no comentário filho */
+			#the-comment-list tr.vc-thread-reply td.column-comment::before {
+				content: "";
+				position: absolute;
+				left: 10px;
+				top: 0;
+				bottom: 0;
+				width: 2px;
+				background: #cbd5e1;
+			}
+			#the-comment-list tr.vc-thread-reply.vc-comment-mine td.column-comment::before {
+				background: #86efac;
+			}
+			#the-comment-list tr.vc-depth-2 td.column-comment::before {
+				left: 26px;
+			}
+			#the-comment-list tr.vc-depth-3 td.column-comment::before,
+			#the-comment-list tr.vc-depth-4 td.column-comment::before {
+				left: 42px;
+			}
+
+			/* Selo (badge) de "↳ sua resposta" ou "↳ tréplica" */
+			.vc-thread-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				font-size: 11px;
+				font-weight: 600;
+				text-transform: lowercase;
+				padding: 2px 8px;
+				border-radius: 999px;
+				margin-bottom: 6px;
+				background: #e2e8f0;
+				color: #475569;
+			}
+			.vc-comment-mine .vc-thread-badge {
+				background: #dcfce7;
+				color: #166534;
+			}
+
+			/* Nas respostas da mesma conversa, suaviza a coluna "Em resposta para" para evitar repetição visual */
+			#the-comment-list tr.vc-thread-reply td.column-response .response-links {
+				opacity: 0.35;
+				transition: opacity 0.2s ease;
+			}
+			#the-comment-list tr.vc-thread-reply:hover td.column-response .response-links {
+				opacity: 0.9;
+			}
+
+			/* 3. Coluna do Autor mais limpa e organizada */
+			.wp-list-table.comments .column-author {
+				width: 230px !important;
+			}
+			#the-comment-list .column-author strong {
+				display: block;
+				font-size: 14px;
+				color: #0f172a;
+				margin-bottom: 3px;
+			}
+			#the-comment-list .column-author img.avatar {
+				border-radius: 50%;
+				margin-right: 10px;
+				margin-top: 2px;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+			}
+			#the-comment-list tr.vc-thread-reply .column-author img.avatar {
+				width: 26px;
+				height: 26px;
+			}
+			#the-comment-list .column-author a {
+				color: #475569;
+				text-decoration: none;
+				word-break: break-all;
+			}
+			#the-comment-list .column-author a:hover {
+				color: #2d5a3e;
+				text-decoration: underline;
+			}
+
+			/* 4. Encurta IPs gigantescos (especialmente IPv6) */
+			#the-comment-list .column-author .comment-author-ip,
+			#the-comment-list .column-author a[href*="edit-comments.php?s="] {
+				display: inline-block;
+				font-size: 11px !important;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+				color: #94a3b8 !important;
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-radius: 4px;
+				padding: 1px 6px;
+				margin-top: 4px;
+				max-width: 135px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				vertical-align: middle;
+				transition: max-width 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+			}
+			#the-comment-list .column-author a[href*="edit-comments.php?s="]:hover {
+				color: #334155 !important;
+				border-color: #cbd5e1;
+				max-width: 320px;
+				z-index: 10;
+				position: relative;
+			}
+
+			/* 5. Tipografia confortável para o texto do comentário */
+			#the-comment-list .column-comment p {
+				font-size: 14.5px !important;
+				line-height: 1.65 !important;
+				color: #1e293b !important;
+				max-width: 72ch;
+				margin: 4px 0 8px 0 !important;
+			}
+
+			/* Esconde o "Em resposta a Fulano." padrão do WP quando nosso badge de thread já está ativo */
+			#the-comment-list tr.vc-thread-reply .column-comment .submitted-on {
+				font-size: 12px;
+				color: #64748b;
+			}
+
+			/* 6. Destaque claro para comentários PENDENTES de moderação */
+			#the-comment-list tr.unapproved {
+				background-color: #fffbeb !important;
+			}
+			#the-comment-list tr.unapproved th.check-column {
+				border-left: 4px solid #f59e0b !important;
+			}
+
+			/* 7. Ações rápidas (Aprovar | Responder | Spam | Lixeira) sempre visíveis */
+			#the-comment-list .row-actions {
+				position: static !important;
+				left: auto !important;
+				visibility: visible !important;
+				opacity: 0.75;
+				margin-top: 8px !important;
+				padding-top: 6px;
+				border-top: 1px dashed rgba(148, 163, 184, 0.35);
+				font-size: 12.5px;
+				transition: opacity 0.15s ease;
+			}
+			#the-comment-list tr:hover .row-actions {
+				opacity: 1;
+			}
+			#the-comment-list .row-actions span a {
+				font-weight: 500;
+				text-decoration: none;
+			}
+			#the-comment-list .row-actions .approve a {
+				color: #15803d !important;
+				font-weight: 600;
+			}
+			#the-comment-list .row-actions .unapprove a {
+				color: #b45309 !important;
+			}
+			#the-comment-list .row-actions .spam a,
+			#the-comment-list .row-actions .trash a {
+				color: #dc2626 !important;
+			}
+
+			/* 8. Colunas "Em resposta para" e "Enviado em" mais enxutas */
+			.wp-list-table.comments .column-response {
+				width: 210px !important;
+			}
+			.wp-list-table.comments .column-date {
+				width: 145px !important;
+				font-size: 12.5px;
+				color: #64748b;
+			}
+			#the-comment-list .column-response .response-links a.comments-edit-item-link {
+				font-weight: 600;
+				font-size: 13.5px;
+				color: #1e293b;
+				line-height: 1.4;
+				display: inline-block;
+				margin-bottom: 4px;
+			}
+			#the-comment-list .column-response .response-links a.comments-view-item-link {
+				font-size: 12px;
+				color: #64748b;
+			}
+		</style>
+		<?php
+	}
+);
+
+/**
+ * Aplica as classes de conversa (thread, profundidade, selo de resposta/tréplica)
+ * nas linhas da tabela de comentários do WP Admin.
+ */
+add_action(
+	'admin_footer-edit-comments.php',
+	static function () {
+		$thread_meta = $GLOBALS['vc_admin_comment_threads'] ?? array();
+		if ( empty( $thread_meta ) ) {
+			return;
+		}
+		?>
+		<script id="vc-admin-comments-threads-js">
+		(function() {
+			const meta = <?php echo wp_json_encode( $thread_meta ); ?>;
+			Object.keys(meta).forEach(function(id) {
+				const row = document.getElementById('comment-' + id);
+				if (!row) return;
+
+				const info = meta[id];
+				if (info.depth === 0) {
+					row.classList.add('vc-thread-root');
+				} else {
+					row.classList.add('vc-thread-reply', 'vc-depth-' + info.depth);
+				}
+
+				if (info.has_kids) {
+					row.classList.add('vc-has-replies');
+				}
+				if (info.is_me) {
+					row.classList.add('vc-comment-mine');
+				}
+
+				// Adiciona um selo claro de "↳ sua resposta" ou "↳ tréplica" no topo do comentário filho
+				if (info.depth > 0) {
+					const commentCell = row.querySelector('td.column-comment');
+					if (commentCell && !commentCell.querySelector('.vc-thread-badge')) {
+						const badge = document.createElement('div');
+						badge.className = 'vc-thread-badge';
+						if (info.is_me) {
+							badge.textContent = info.depth === 1 ? '↳ sua resposta' : '↳ sua réplica';
+						} else {
+							badge.textContent = info.depth === 1 ? '↳ resposta' : '↳ tréplica';
+						}
+
+						// Se houver o parágrafo padrão "Em resposta a Fulano.", incorpora o nome no badge
+						const submittedOn = commentCell.querySelector('.submitted-on');
+						if (submittedOn) {
+							const parentLink = submittedOn.querySelector('a');
+							if (parentLink && parentLink.textContent) {
+								badge.textContent += ' para ' + parentLink.textContent.trim();
+								submittedOn.style.display = 'none';
+							}
+						}
+
+						commentCell.insertBefore(badge, commentCell.firstChild);
+					}
+				}
+			});
+		})();
+		</script>
+		<?php
+	}
+);
+
+/**
  * Ajusta visualmente o painel e o editor de blocos:
  * - Caixa de temas/categorias com altura confortável, sem rolagem apertada
  * - Rótulos e itens em minúsculas (lowercase), sem atrito visual
@@ -2117,6 +2680,49 @@ add_action(
 				font-style: italic !important;
 				color: #4b5563 !important;
 			}
+
+			/* Hierarquia tipográfica clara no editor de blocos (Gutenberg) */
+			.editor-styles-wrapper .wp-block-post-title,
+			.editor-styles-wrapper h1.editor-post-title__input {
+				font-size: clamp(2rem, 4.4vw, 2.9rem) !important;
+				font-weight: 700 !important;
+				line-height: 1.15 !important;
+				margin-bottom: 1rem !important;
+			}
+
+			.editor-styles-wrapper h2,
+			.editor-styles-wrapper h2.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h2 {
+				font-size: 1.6rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 2.2em !important;
+				margin-bottom: 0.6em !important;
+			}
+
+			.editor-styles-wrapper h3,
+			.editor-styles-wrapper h3.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h3 {
+				font-size: 1.3rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 2.2em !important;
+				margin-bottom: 0.6em !important;
+			}
+
+			.editor-styles-wrapper h4,
+			.editor-styles-wrapper h4.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h4 {
+				font-size: 1.1rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 1.8em !important;
+				margin-bottom: 0.5em !important;
+			}
+
 		</style>
 		<?php
 	}
@@ -2179,41 +2785,6 @@ add_filter(
 	10,
 	3
 );
-
-/* -------------------------------------------------------------------------
-   CURTIDAS ANÔNIMAS (BRINDE / FEEDBACK SIMPLES)
-   ------------------------------------------------------------------------- */
-add_action(
-	'rest_api_init',
-	static function (): void {
-		register_rest_route(
-			'vinicius/v1',
-			'/curtir/(?P<id>\d+)',
-			array(
-				'methods'             => 'POST',
-				'callback'            => static function ( WP_REST_Request $request ) {
-					$post_id = (int) $request->get_param( 'id' );
-					if ( ! $post_id || 'publish' !== get_post_status( $post_id ) ) {
-						return new WP_Error( 'post_invalido', 'Post não encontrado', array( 'status' => 404 ) );
-					}
-
-					$curtidas = (int) get_post_meta( $post_id, '_vc_curtidas', true );
-					$curtidas++;
-					update_post_meta( $post_id, '_vc_curtidas', $curtidas );
-
-					return rest_ensure_response(
-						array(
-							'sucesso'  => true,
-							'curtidas' => $curtidas,
-						)
-					);
-				},
-				'permission_callback' => '__return_true',
-			)
-		);
-	}
-);
-
 
 /* -------------------------------------------------------------------------
 

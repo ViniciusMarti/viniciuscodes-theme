@@ -34,8 +34,8 @@
 <footer class="colophon">
 	<div class="colophon__inner">
 		<div class="colophon__badges">
-			<a class="colophon__badge" href="https://entreblogs.com.br" target="_blank" rel="noopener noreferrer" title="Entreblogs — Comunidade de blogagem coletiva" aria-label="Entreblogs — Comunidade de blogagem coletiva (abre em nova aba)">
-				<img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi0Bbck0NgwO4Lq0vPdvH7Qi8VU72pCgJKgNeqaoBzQBbOGDBAzzkTS0PlRop4L-HhgjGj36W2w0079R704GQabAYigZZmgGf5QexmFN0IqM0uLzmrhyphenhyphenRRMXCFSKJDxDX5ZuRLHtsazL7YKALC3kMAo0t5bQhddiRUrOl_xb6aRojyb8oWIZ-0fU0olmxMJ/w400-h141/GIF%20Selo%202.0.gif" alt="Entreblogs — Comunidade de blogagem coletiva" width="135" height="48" loading="lazy" decoding="async" />
+			<a class="colophon__badge colophon__badge--text" href="https://entreblogs.com.br" target="_blank" rel="noopener noreferrer" title="Entreblogs ? Comunidade de blogagem coletiva" aria-label="Entreblogs ? Comunidade de blogagem coletiva (abre em nova aba)">
+				<span>entreblogs</span>
 			</a>
 
 			<a class="colophon__badge colophon__badge--not-by-ai" href="https://notbyai.fyi" target="_blank" rel="noopener noreferrer" title="Written by Human, Not By AI" aria-label="Written by Human, Not By AI (abre em nova aba)">

@@ -47,8 +47,6 @@ $vc_whats  = 'https://wa.me/?text=' . rawurlencode( $vc_titulo . "\n" . $vc_url 
 	<p class="post-share__label" id="post-share-label">compartilhar</p>
 
 	<div class="post-share__actions">
-		<?php get_template_part( 'template-parts/article', 'like' ); ?>
-
 		<button type="button" class="post-share__btn post-share__btn--primary" data-share-native hidden>
 			<?php echo vc_icone( 'share-2', 16 ); ?>
 			compartilhar
