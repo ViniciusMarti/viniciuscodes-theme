@@ -39,7 +39,7 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 ?>
 <header class="term-header">
 	<h1 class="term-header__name">
-		<?php echo esc_html( $vc_objeto instanceof WP_Post_Type ? $vc_objeto->labels->name : __( 'Notas', 'viniciuscodes' ) ); ?>
+		<?php echo esc_html( $vc_objeto instanceof WP_Post_Type ? $vc_objeto->labels->name : __( 'microblog', 'viniciuscodes' ) ); ?>
 	</h1>
 
 	<p class="term-header__desc">
@@ -110,12 +110,11 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 	$vc_total_paginas = (int) ( $GLOBALS['wp_query']->max_num_pages ?? 1 );
 	$vc_pagina_atual  = max( 1, (int) get_query_var( 'paged' ) );
 	?>
-	<div class="feed-paginacao-wrap" data-infinite-scroll-container>
+	<div class="feed-paginacao-wrap">
 		<?php if ( $vc_total_paginas > 1 ) : ?>
-			<div class="feed-paginacao" data-feed-nav>
+			<div class="feed-paginacao">
 				<?php vc_paginacao( $vc_total_paginas, $vc_pagina_atual ); ?>
 			</div>
-			<div class="feed-sentinela" data-feed-sentinel style="height: 1px;"></div>
 		<?php endif; ?>
 	</div>
 <?php else : ?>

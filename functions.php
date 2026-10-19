@@ -104,9 +104,7 @@ add_action(
 			wp_enqueue_script( 'comment-reply' );
 		}
 
-		if ( is_home() || is_post_type_archive( 'nota' ) || is_page_template( 'page-templates/lista-de-posts.php' ) ) {
-			wp_enqueue_script( 'vc-feed-infinito', get_theme_file_uri( 'assets/feed-infinito.js' ), array( 'vc-site' ), VC_VERSAO, true );
-		}
+
 	}
 );
 

@@ -85,12 +85,11 @@ $vc_textos = new WP_Query(
 		?>
 	</div>
 
-	<div class="feed-paginacao-wrap" data-infinite-scroll-container>
+	<div class="feed-paginacao-wrap">
 		<?php if ( $vc_textos->max_num_pages > 1 ) : ?>
-			<div class="feed-paginacao" data-feed-nav>
+			<div class="feed-paginacao">
 				<?php vc_paginacao( (int) $vc_textos->max_num_pages, $vc_pagina, home_url( '/posts/page/%#%/' ) ); ?>
 			</div>
-			<div class="feed-sentinela" data-feed-sentinel style="height: 1px;"></div>
 		<?php endif; ?>
 	</div>
 </article>
