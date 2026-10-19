@@ -1660,15 +1660,7 @@ blockquote p:last-child,
   opacity: 0.85;
 }
 
-.vc-video-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--paper-alt);
-  color: var(--ink-mute);
-}
+
 
 .wp-block-post-date {
   font-size: 0.82rem;
@@ -1693,9 +1685,7 @@ blockquote p:last-child,
   color: var(--green);
 }
 
-.vc-videos-pagination {
-  margin-top: 2.5rem;
-}
+
 
 /* Embed de vídeo nativo (16:9) */
 .wp-block-embed.is-type-video {
@@ -3268,41 +3258,6 @@ blockquote p:last-child,
   color: var(--on-accent);
 }
 
-.post-like__btn {
-  transition: all 0.2s ease;
-}
-
-.post-like__btn svg {
-  color: #e05252;
-  transition: transform 0.2s ease;
-}
-
-.post-like__btn:hover svg {
-  transform: scale(1.15);
-}
-
-.post-like__btn--liked {
-  background: #fdf2f2 !important;
-  border-color: #f8b4b4 !important;
-  color: #c81e1e !important;
-}
-
-.post-like__btn--liked svg {
-  fill: #e05252;
-  stroke: #e05252;
-}
-
-[data-theme='dark'] .post-like__btn--liked {
-  background: rgba(224, 82, 82, 0.15) !important;
-  border-color: rgba(224, 82, 82, 0.4) !important;
-  color: #fca5a5 !important;
-}
-
-.post-like__count {
-  font-size: 0.8rem;
-  opacity: 0.85;
-}
-
 /*
   Green, because it is a confirmation and not a caption. `min-height` keeps
   the line reserved, so the footer does not jump when the message appears.
@@ -3355,69 +3310,86 @@ blockquote p:last-child,
 }
 
 .post-comments__list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.post-comment {
-  padding: 1.25rem;
-  background: var(--paper-alt);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.post-comment .children {
-  list-style: none;
-  padding-left: 1.5rem;
-  margin-top: 1.25rem;
-  border-left: 2px solid var(--line);
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 2.5rem !important;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
+/* Comentário individual (Root ou filho) */
+.post-comment {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent;
+}
+
+.post-comment__body {
+  padding: 1.15rem 1.35rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.post-comment:hover > .post-comment__body {
+  border-color: var(--line-strong);
+}
+
+/* Destaque sutil para respostas do próprio autor do blog */
+.post-comment.bypostauthor > .post-comment__body {
+  border-left: 3px solid var(--green);
+  background: color-mix(in srgb, var(--green) 3%, var(--paper-alt));
+}
+
+/* Selo de autor */
+.post-comment__badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: lowercase;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+}
+
+/* Cabeçalho do comentário */
 .post-comment__meta {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.65rem;
   font-size: 0.85rem;
-}
-
-/*
-   O avatar de quem comentou ou reagiu. Redondo e pequeno:
-   ele acompanha a linha do nome, não compete com o texto.
-*/
-.post-comment__avatar {
-  display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.post-comment__avatar img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  display: block;
 }
 
 .post-comment__author {
   color: var(--ink);
   font-weight: 600;
+  font-size: 0.92rem;
 }
 
 .post-comment__author a {
   color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--line-strong);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.post-comment__author a:hover {
+  color: var(--green);
+  border-bottom-style: solid;
 }
 
 .post-comment__dot {
   color: var(--ink-mute);
+  font-size: 0.75rem;
 }
 
 .post-comment__date {
@@ -3425,50 +3397,99 @@ blockquote p:last-child,
   font-size: 0.8rem;
 }
 
-/*
-   O verbo da interação: "curtiu", "republicou", "mencionou".
-   Vem da federação, e sem ele o leitor vê só um nome e um vazio.
-   Mesma cor e mesmo corpo da data, porque é a mesma camada de informação.
-*/
-.post-comment__verbo {
-  color: var(--ink-mute);
-  font-size: 0.8rem;
+.post-comment__date a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-comment__date a:hover {
+  text-decoration: underline;
 }
 
 .post-comment__moderation {
   margin: 0.4rem 0 0.8rem;
   font-size: 0.82rem;
   color: var(--green);
+  font-style: italic;
 }
 
+/* Conteúdo da mensagem */
 .post-comment__content {
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--ink);
 }
 
 .post-comment__content p {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.65rem;
 }
 
 .post-comment__content p:last-child {
   margin-bottom: 0;
 }
 
+/* Botão de Responder (réplica / tréplica) */
 .post-comment__reply {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
 }
 
-.post-comment__reply a {
-  display: inline-block;
+.post-comment__reply a,
+.post-comment .comment-reply-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--green);
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
   text-decoration: none;
+  transition: all 0.15s ease;
 }
 
-.post-comment__reply a:hover {
-  text-decoration: underline;
+.post-comment__reply a:hover,
+.post-comment .comment-reply-link:hover {
+  color: var(--green);
+  border-color: var(--green);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+}
+
+/* Réplicas e Tréplicas (Filhos aninhados com linhas conectoras) */
+.post-comment .children,
+ol.children {
+  list-style: none !important;
+  margin: 0.85rem 0 0 0.75rem !important;
+  padding: 0 0 0 1.25rem !important;
+  border-left: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+}
+
+/* Responsividade de aninhamento para celular */
+@media (max-width: 600px) {
+  .post-comment .children,
+  ol.children {
+    margin-left: 0.35rem !important;
+    padding-left: 0.85rem !important;
+  }
+  .post-comment__body {
+    padding: 0.95rem 1.05rem;
+  }
+}
+
+/* Quando o formulário de resposta estiver ativo abaixo de um comentário */
+.post-comment .comment-respond {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: var(--paper);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
 }
 
 .post-comments__empty,
