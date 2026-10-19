@@ -574,8 +574,6 @@ function vc_navegacao(): array {
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
 		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
-		array( 'label' => 'música',              'href' => '/musica/',      'icone' => 'music' ),
-		array( 'label' => 'canais',              'href' => '/canais/',      'icone' => 'tv' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
 		array( 'label' => 'changelog',           'href' => '/changelog/',   'icone' => 'history' ),
@@ -2824,6 +2822,18 @@ add_action(
 		// Redireciona /videos/ ou /video/<slug> para /microblog/
 		if ( preg_match( '#^/videos?(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/microblog/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /canais/ ou /youtube/ para /blogroll/
+		if ( preg_match( '#^/(canais|youtube)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/blogroll/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /musica/ para /
+		if ( preg_match( '#^/musica(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/' ), 301 );
 			exit;
 		}
 
