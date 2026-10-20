@@ -109,34 +109,13 @@ add_action(
 );
 
 /*
- * A folha de fontes do tema sai da página, mas fica na fila.
- *
- * `assets/fonts.css` declara quatro `@font-face`, e o `header.php` chegava a
- * pré-carregar o arquivo maior. Com `--font-sans` apontando para a pilha do
- * sistema, as duas coisas viram peso morto: os arquivos ficam no disco, inertes,
- * porque nada mais os nomeia.
- *
- * TIRAR COM `wp_dequeue_style()` NÃO FUNCIONA AQUI, e o erro foi medido: o
- * `global.css` e o `filtros.css` declaram `vc-fontes` como
- * dependência, e o WordPress não imprime folha cuja dependência não está na
- * fila. O resultado foi a página inteira sem CSS — `body` em Times New Roman e o
- * herói ocupando 1249px. Dependência em WordPress não é só ordem.
- *
- * Filtrando a TAG, a fila fica intacta e só o `<link>` não é impresso: o arquivo
- * nunca chega a ser pedido pelo navegador.
+ * Blindagem contra fonte de terceiro externa (Google Fonts, Adobe, Typekit).
+ * Todas as fontes são autohospedadas em assets/fonts/ para máxima privacidade,
+ * zero requisições adicionais de terceiros e sem bloqueio de renderização.
  */
 add_filter(
 	'style_loader_tag',
 	static function ( $tag, $handle ) {
-		if ( 'vc-fontes' === $handle ) {
-			return '';
-		}
-
-		/*
-		 * Blindagem contra fonte de terceiro. Hoje não existe nenhuma — medido:
-		 * zero pedido para `fonts.googleapis.com`, `gstatic`, `typekit` ou `adobe`.
-		 * Fica aqui para que continue assim no dia em que um plugin entrar.
-		 */
 		return preg_match( '#fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|use\.adobe\.com#i', (string) $tag ) ? '' : $tag;
 	},
 	10,

@@ -135,17 +135,11 @@
   --content-max: 620px;
 
   /*
-    One family for the whole site, and it is the reader's own.
-
-    Headings are distinguished by weight and size, never by a second typeface:
-    switching families mid-page makes the eye re-learn letterforms, which is the
-    visual noise this removes.
-
-    The system stack costs zero requests and never swaps, so there is no second
-    paint and no layout shift coming from fonts. The four `.woff2` and
-    `fonts.css` stay on disk, inert: nothing names them any more.
+    Atkinson Hyperlegible Next — Autohospedada localmente em assets/fonts/.
+    Foco total em acessibilidade cognitiva e conforto de leitura AuDHD.
+    Fallback gracioso para a pilha do sistema operacional.
   */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 
   --radius: 10px;
   --radius-sm: 6px;
