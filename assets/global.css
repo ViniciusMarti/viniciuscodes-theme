@@ -1039,14 +1039,16 @@ hr {
   padding: 0.25rem 0.2rem;
   cursor: pointer;
   user-select: none;
-  list-style: none;
+  list-style: none !important;
   border-radius: var(--radius);
   transition: color 0.15s ease;
   line-height: 1.4;
 }
 
-.archive-tree__summary::-webkit-details-marker {
-  display: none;
+.archive-tree__summary::-webkit-details-marker,
+.archive-tree__summary::marker {
+  display: none !important;
+  content: '';
 }
 
 .archive-tree__zippy {
