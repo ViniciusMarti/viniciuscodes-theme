@@ -572,7 +572,6 @@ function vc_navegacao(): array {
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
-		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
 		array( 'label' => 'feed RSS',            'href' => '/feed-rss/',    'icone' => 'rss' ),
 	);
@@ -2797,8 +2796,8 @@ add_action(
 			exit;
 		}
 
-		// Redireciona páginas de catálogo/acervo/changelog extintas para /posts/
-		if ( preg_match( '#^/(livros|filmes|acervo|changelog)(/.*)?$#i', $uri ) ) {
+		// Redireciona páginas de catálogo/acervo/changelog/manifesto extintas para /posts/
+		if ( preg_match( '#^/(livros|filmes|acervo|changelog|manifesto)(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/posts/' ), 301 );
 			exit;
 		}
