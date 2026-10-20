@@ -84,6 +84,50 @@ $vc_temas = vc_temas_ordenados( true );
 			</a>
 		</section>
 		<?php endif; ?>
+
+		<?php
+		$vc_arquivo_posts = vc_arquivo_agrupado();
+		if ( ! empty( $vc_arquivo_posts ) ) :
+		?>
+		<section class="sidebar__group sidebar__archive" aria-labelledby="barra-grupo-arquivo">
+			<p class="sidebar__label" id="barra-grupo-arquivo">arquivo de posts</p>
+			<div class="sidebar__archive-tree">
+				<?php foreach ( $vc_arquivo_posts as $vc_ano => $vc_dados_ano ) : ?>
+					<details class="archive-tree__year">
+						<summary class="archive-tree__summary">
+							<span class="archive-tree__zippy" aria-hidden="true">►</span>
+							<a href="<?php echo esc_url( get_year_link( (int) $vc_ano ) ); ?>" class="archive-tree__link archive-tree__link--year" onclick="event.stopPropagation();">
+								<?php echo esc_html( $vc_ano ); ?>
+							</a>
+							<span class="archive-tree__count">(<?php echo (int) $vc_dados_ano['total']; ?>)</span>
+						</summary>
+						<div class="archive-tree__months">
+							<?php foreach ( $vc_dados_ano['meses'] as $vc_mes => $vc_dados_mes ) : ?>
+								<details class="archive-tree__month">
+									<summary class="archive-tree__summary archive-tree__summary--month">
+										<span class="archive-tree__zippy" aria-hidden="true">►</span>
+										<a href="<?php echo esc_url( $vc_dados_mes['link'] ); ?>" class="archive-tree__link archive-tree__link--month" onclick="event.stopPropagation();">
+											<?php echo esc_html( $vc_dados_mes['nome'] ); ?>
+										</a>
+										<span class="archive-tree__count">(<?php echo (int) $vc_dados_mes['total']; ?>)</span>
+									</summary>
+									<ul class="archive-tree__posts">
+										<?php foreach ( $vc_dados_mes['posts'] as $vc_post_item ) : ?>
+											<li class="archive-tree__post-item">
+												<a href="<?php echo esc_url( $vc_post_item['url'] ); ?>" class="archive-tree__post-link" <?php echo $vc_esta( (string) wp_parse_url( $vc_post_item['url'], PHP_URL_PATH ) ) ? 'aria-current="page"' : ''; ?>>
+													<?php echo esc_html( $vc_post_item['titulo'] ); ?>
+												</a>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</details>
+							<?php endforeach; ?>
+						</div>
+					</details>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php endif; ?>
 	</div>
 
 	<?php

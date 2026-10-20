@@ -1018,6 +1018,125 @@ hr {
   transform: translate(2px, -2px);
 }
 
+/* ---------- sidebar archive tree (arquivo retrátil de posts) ---------- */
+.sidebar__archive-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.archive-tree__year,
+.archive-tree__month {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-tree__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.2rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  border-radius: var(--radius);
+  transition: color 0.15s ease;
+  line-height: 1.4;
+}
+
+.archive-tree__summary::-webkit-details-marker {
+  display: none;
+}
+
+.archive-tree__zippy {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--ink-mute);
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+  width: 12px;
+  text-align: center;
+}
+
+details[open] > .archive-tree__summary > .archive-tree__zippy {
+  transform: rotate(90deg);
+  color: var(--green);
+}
+
+.archive-tree__link {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.archive-tree__link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.archive-tree__link--month {
+  font-weight: 500;
+  font-size: 0.84rem;
+}
+
+.archive-tree__count {
+  font-size: 0.76rem;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.15rem;
+}
+
+.archive-tree__months {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1.1rem;
+  margin-top: 0.2rem;
+  border-left: 1px dashed var(--line);
+  margin-left: 0.4rem;
+}
+
+.archive-tree__summary--month {
+  padding-block: 0.15rem;
+}
+
+.archive-tree__posts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-left: 1rem;
+  margin: 0.35rem 0 0.5rem 0.4rem;
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+
+.archive-tree__post-item {
+  margin: 0;
+  padding: 0;
+  line-height: 1.35;
+}
+
+.archive-tree__post-link {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 0.15rem 0;
+  transition: color 0.15s ease;
+}
+
+.archive-tree__post-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.archive-tree__post-link[aria-current='page'] {
+  color: var(--green);
+  font-weight: 600;
+}
+
 .sidebar__temas-trigger {
   display: flex;
   align-items: center;

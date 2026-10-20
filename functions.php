@@ -785,6 +785,76 @@ function vc_blogroll_aleatorios( int $qtd = 4 ): array {
 	return array_slice( $blogs, 0, $qtd );
 }
 
+/**
+ * Retorna os posts agrupados por Ano e Mês para o arquivo retrátil da barra lateral.
+ *
+ * @return array<string, array{total: int, meses: array<string, array{nome: string, link: string, total: int, posts: array<int, array{id: int, titulo: string, url: string}>}>}>
+ */
+function vc_arquivo_agrupado(): array {
+	static $arquivo = null;
+	if ( null !== $arquivo ) {
+		return $arquivo;
+	}
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'post',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+
+	$meses_nomes = array(
+		'01' => 'jan.',
+		'02' => 'fev.',
+		'03' => 'mar.',
+		'04' => 'abr.',
+		'05' => 'mai.',
+		'06' => 'jun.',
+		'07' => 'jul.',
+		'08' => 'ago.',
+		'09' => 'set.',
+		'10' => 'out.',
+		'11' => 'nov.',
+		'12' => 'dez.',
+	);
+
+	$arquivo = array();
+
+	foreach ( $posts as $p ) {
+		$ano = get_the_date( 'Y', $p );
+		$mes = get_the_date( 'm', $p );
+
+		if ( ! isset( $arquivo[ $ano ] ) ) {
+			$arquivo[ $ano ] = array(
+				'total' => 0,
+				'meses' => array(),
+			);
+		}
+
+		if ( ! isset( $arquivo[ $ano ]['meses'][ $mes ] ) ) {
+			$arquivo[ $ano ]['meses'][ $mes ] = array(
+				'nome'  => $meses_nomes[ $mes ] ?? $mes,
+				'link'  => get_month_link( (int) $ano, (int) $mes ),
+				'total' => 0,
+				'posts' => array(),
+			);
+		}
+
+		$arquivo[ $ano ]['total']++;
+		$arquivo[ $ano ]['meses'][ $mes ]['total']++;
+		$arquivo[ $ano ]['meses'][ $mes ]['posts'][] = array(
+			'id'     => $p->ID,
+			'titulo' => get_the_title( $p ),
+			'url'    => get_permalink( $p ),
+		);
+	}
+
+	return $arquivo;
+}
+
 /* -------------------------------------------------------------------------
    A IMAGEM DE DESTAQUE
    ------------------------------------------------------------------------- */
