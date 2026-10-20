@@ -571,11 +571,8 @@ function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
-		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
-		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
-		array( 'label' => 'changelog',           'href' => '/changelog/',   'icone' => 'history' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
 		array( 'label' => 'feed RSS',            'href' => '/feed-rss/',    'icone' => 'rss' ),
 	);
@@ -2788,8 +2785,14 @@ add_action(
 	static function () {
 		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
 
-		// Redireciona notas, microblog ou vídeos para a home/posts
+		// Redireciona notas, microblog ou vídeos para /posts/
 		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/posts/' ), 301 );
+			exit;
+		}
+
+		// Redireciona páginas de catálogo/acervo/changelog extintas para /posts/
+		if ( preg_match( '#^/(livros|filmes|acervo|changelog)(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/posts/' ), 301 );
 			exit;
 		}
@@ -2803,12 +2806,6 @@ add_action(
 		// Redireciona /musica/ para /
 		if ( preg_match( '#^/musica(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/' ), 301 );
-			exit;
-		}
-
-		// Redireciona /acervo/ para /livros/
-		if ( is_page( 'acervo' ) || preg_match( '#^/acervo/?(\?.*)?$#i', $uri ) ) {
-			wp_safe_redirect( home_url( '/livros/' ), 301 );
 			exit;
 		}
 	}
