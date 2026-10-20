@@ -374,7 +374,12 @@ function vc_imagem_social( int $post_id = 0 ): string {
 		}
 	}
 
-	return vc_midia( 'og-default.jpg' );
+	$midia = vc_midia( 'og-default.jpg' );
+	if ( ! empty( $midia ) ) {
+		return $midia;
+	}
+
+	return get_theme_file_uri( 'assets/images/og-default.jpg' );
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
