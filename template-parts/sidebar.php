@@ -53,6 +53,37 @@ $vc_temas = vc_temas_ordenados( true );
 				</a>
 			<?php endforeach; ?>
 		</nav>
+
+		<?php
+		$vc_blogs_indicados = vc_blogroll_aleatorios( 4 );
+		if ( ! empty( $vc_blogs_indicados ) ) :
+		?>
+		<section class="sidebar__group" aria-labelledby="barra-grupo-leia-tambem">
+			<p class="sidebar__label" id="barra-grupo-leia-tambem">leia também</p>
+			<div class="sidebar__blogroll-list">
+				<?php foreach ( $vc_blogs_indicados as $vc_blog ) : ?>
+					<?php
+					$vc_fav_arquivo = $vc_blog['favicon'] ?? ( $vc_blog['dominio'] . '.png' );
+					$vc_favicon_src = get_theme_file_uri( "assets/favicons/{$vc_fav_arquivo}" );
+					?>
+					<a
+						class="navlink navlink--blogroll"
+						href="<?php echo esc_url( $vc_blog['url'] ); ?>"
+						target="_blank"
+						rel="noopener noreferrer"
+						title="<?php echo esc_attr( $vc_blog['nome'] . ' — ' . $vc_blog['dominio'] ); ?>"
+					>
+						<img class="navlink__favicon" src="<?php echo esc_url( $vc_favicon_src ); ?>" alt="" width="16" height="16" loading="lazy" decoding="async">
+						<span class="navlink__blogroll-nome"><?php echo esc_html( $vc_blog['nome'] ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+			<a class="navlink navlink--more" href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>" <?php echo $vc_esta( '/blogroll/' ) ? 'aria-current="page"' : ''; ?>>
+				<span>veja mais</span>
+				<span class="navlink__more-icon" aria-hidden="true"><?php echo vc_icone( 'arrow-up-right', 14 ); ?></span>
+			</a>
+		</section>
+		<?php endif; ?>
 	</div>
 
 	<?php
