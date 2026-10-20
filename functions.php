@@ -2785,6 +2785,12 @@ add_action(
 	static function () {
 		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
 
+		// Redireciona categoria órfã /tema/54/ para /tema/weeknotes/
+		if ( preg_match( '#^/tema/54(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/tema/weeknotes/' ), 301 );
+			exit;
+		}
+
 		// Redireciona notas, microblog ou vídeos para /posts/
 		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/posts/' ), 301 );
