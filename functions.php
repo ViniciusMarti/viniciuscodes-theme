@@ -1805,7 +1805,7 @@ add_filter(
 	'document_title_parts',
 	static function ( array $partes ): array {
 		if ( is_front_page() || is_home() ) {
-			return array( 'title' => 'Vinicius Oliveira — @viniciuscodes' );
+			return array( 'title' => '@viniciuscodes' );
 		}
 
 		$partes['site'] = '@viniciuscodes';
