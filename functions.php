@@ -570,7 +570,6 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
 function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
-		array( 'label' => 'microblog',           'href' => '/microblog/',   'icone' => 'square-pen' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'livros',              'href' => '/livros/',      'icone' => 'book' ),
 		array( 'label' => 'filmes',              'href' => '/filmes/',      'icone' => 'film' ),
@@ -2782,36 +2781,6 @@ add_filter(
 );
 
 /* -------------------------------------------------------------------------
-
-   AS NOTAS
-
-   ------------------------------------------------------------------------- */
-
-/*
-
- * O post curto, sem título, que vive em `/notas/`.
-
- * Três arquivos, três responsabilidades: o registro do post type, o admin
-
- * (publicação rápida e a lista enxuta) e o feed próprio.
-
- *
-
- * A ORDEM importa: o `cpt-notas.php` define a constante `VC_NOTA`, que os
-
- * outros dois usam. Cada um deles também requer o anterior sozinho, então a
-
- * ordem aqui é conveniência, não dependência.
-
- */
-
-require_once get_theme_file_path( 'inc/cpt-notas.php' );
-
-require_once get_theme_file_path( 'inc/notas-admin.php' );
-
-require_once get_theme_file_path( 'inc/notas-feed.php' );
-
-/* -------------------------------------------------------------------------
    REDIRECIONAMENTOS DE ROTAS PODADAS (301 PERMANENTE)
    ------------------------------------------------------------------------- */
 add_action(
@@ -2819,9 +2788,9 @@ add_action(
 	static function () {
 		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
 
-		// Redireciona /videos/ ou /video/<slug> para /microblog/
-		if ( preg_match( '#^/videos?(/.*)?$#i', $uri ) ) {
-			wp_safe_redirect( home_url( '/microblog/' ), 301 );
+		// Redireciona notas, microblog ou vídeos para a home/posts
+		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/posts/' ), 301 );
 			exit;
 		}
 
