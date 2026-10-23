@@ -44,37 +44,6 @@ function vc_notas_menu_rapido() {
 	);
 }
 add_action( 'admin_menu', 'vc_notas_menu_rapido' );
-/**
- * Carrega a folha e o script DA TELA, e só dela.
- *
- * O `hook` é montado como `notas_page_vc-nota-rapida`: o WordPress forma esse
- * nome juntando o `post_type` do menu pai com o `slug` da página. É o que faz o
- * CSS sair apenas aqui, em vez de pesar em todas as telas do painel.
- */
-function vc_notas_recursos_rapidos( string $hook ) {
-	if ( 'notas_page_vc-nota-rapida' !== $hook ) {
-		return;
-	}
-
-	$base = get_template_directory();
-	$uri  = get_template_directory_uri();
-
-	wp_enqueue_style(
-		'vc-nota-rapida',
-		$uri . '/assets/nota-rapida.css',
-		array(),
-		(string) filemtime( $base . '/assets/nota-rapida.css' )
-	);
-
-	wp_enqueue_script(
-		'vc-nota-rapida',
-		$uri . '/assets/nota-rapida.js',
-		array(),
-		(string) filemtime( $base . '/assets/nota-rapida.js' ),
-		true
-	);
-}
-add_action( 'admin_enqueue_scripts', 'vc_notas_recursos_rapidos' );
 
 /**
  * A caixa de status: um campo, os temas, e dois botões.
@@ -88,96 +57,75 @@ function vc_notas_tela_rapida() {
 	if ( ! current_user_can( 'edit_posts' ) ) {
 		wp_die( esc_html__( 'Você não tem permissão para publicar notas.', 'viniciuscodes' ) );
 	}
+
+	$vc_temas = get_terms(
+		array(
+			'taxonomy'   => 'category',
+			'hide_empty' => false,
+		)
+	);
 	?>
 	<div class="wrap vc-nota-rapida">
-		<h1 class="vc-nr__titulo"><?php esc_html_e( 'Publicação rápida', 'viniciuscodes' ); ?></h1>
+		<h1><?php esc_html_e( 'Publicação rápida', 'viniciuscodes' ); ?></h1>
 
-		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="vc-nr__form">
+		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="vc_nota_publicar" />
 			<input type="hidden" name="vc_redirect" value="<?php echo esc_url( admin_url( 'edit.php?post_type=' . VC_NOTA . '&page=vc-nota-rapida' ) ); ?>" />
 			<?php wp_nonce_field( 'vc_nota_publicar' ); ?>
 
-			<?php
-			/*
-			 * A CAIXA E A BARRA ANDAM JUNTAS, e o `data-vc-nr` é o que as liga: o
-			 * script procura a barra pelo ancestral comum. Sem esse embrulho, dois
-			 * campos na mesma tela exigiriam dois IDs e um mapa de qual botão mexe
-			 * em qual caixa.
-			 *
-			 * O `<textarea>` NÃO TEM `required`, e continua sem: uma nota pode ser
-			 * só uma imagem, e o `required` do navegador barraria o envio antes de
-			 * a checagem do servidor opinar. A regra de verdade — "tem texto ou tem
-			 * imagem" — mora no tratador, onde não depende do navegador.
-			 */
-			?>
-			<div class="vc-nr" data-vc-nr>
-				<div class="vc-nr__barra" role="toolbar" aria-label="<?php echo esc_attr__( 'Formatação', 'viniciuscodes' ); ?>">
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="negrito" aria-label="<?php echo esc_attr__( 'Negrito', 'viniciuscodes' ); ?>"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h6.5a4 4 0 0 1 0 8H7z"/><path d="M7 12h7.5a4 4 0 0 1 0 8H7z"/></svg></button>
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="italico" aria-label="<?php echo esc_attr__( 'Itálico', 'viniciuscodes' ); ?>"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 4h-8"/><path d="M13 20H5"/><path d="m15 4-6 16"/></svg></button>
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="riscado" aria-label="<?php echo esc_attr__( 'Riscado', 'viniciuscodes' ); ?>"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h15"/><path d="M17 7.5A3.6 3.6 0 0 0 13.4 5h-2.2A3.2 3.2 0 0 0 10 11.2"/><path d="M7 16.5A3.6 3.6 0 0 0 10.6 19h2.2a3.2 3.2 0 0 0 1.2-6.2"/></svg></button>
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="codigo" aria-label="<?php echo esc_attr__( 'Código', 'viniciuscodes' ); ?>"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg></button>
-					<span class="vc-nr__vao"></span>
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="link" aria-label="<?php echo esc_attr__( 'Link', 'viniciuscodes' ); ?>">
-						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
-					</button>
-					<button type="button" class="vc-nr__bt" data-vc-nr-acao="limpar" aria-label="<?php echo esc_attr__( 'Tirar a formatação', 'viniciuscodes' ); ?>">
-						<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16"/><path d="M10 7 8 19"/><path d="m14 13 6 6"/><path d="m20 13-6 6"/></svg>
-					</button>
-				</div>
-
+			<p>
 				<label class="screen-reader-text" for="vc-nota-conteudo"><?php esc_html_e( 'O que você quer dizer', 'viniciuscodes' ); ?></label>
-				<textarea id="vc-nota-conteudo" name="vc_nota_conteudo" rows="6" class="vc-nr__caixa" placeholder="<?php echo esc_attr__( 'o que você quer dizer…', 'viniciuscodes' ); ?>"></textarea>
-
-				<p class="vc-nr__dica" data-vc-nr-dica>
-					<?php esc_html_e( 'Enter duas vezes separa parágrafos. Endereço colado vira link sozinho.', 'viniciuscodes' ); ?>
-				</p>
-			</div>
-
-			<?php
-			/*
-			 * O CAMPO DE ARQUIVO NATIVO VAI ESCONDIDO, e não é capricho: no celular
-			 * ele sai como uma caixa cinza com "Escolher arquivo / Nenhum arquivo
-			 * escolhido", sem área de toque confortável e sem dizer o que aconteceu
-			 * depois. Aqui quem aparece é a etiqueta, grande e inteira clicável, e o
-			 * script escreve o nome do arquivo ao lado — a única confirmação que a
-			 * pessoa tem antes de publicar.
-			 */
-			?>
-			<div class="vc-nr__imagem" data-vc-nr-imagem>
-				<input type="file" id="vc-nota-imagem" name="vc_nota_imagem" accept="image/*" class="vc-nr__arquivo" />
-				<label for="vc-nota-imagem" class="vc-nr__escolher">
-					<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L7 20"/></svg>
-					<span><?php esc_html_e( 'adicionar imagem', 'viniciuscodes' ); ?></span>
-				</label>
-				<span class="vc-nr__nome" data-vc-nr-nome></span>
-			</div>
-
-			<p class="vc-nr__nota">
-				<?php esc_html_e( 'A imagem entra no corpo da nota, depois do texto. Pode ser só a imagem, sem texto. Uma por nota: mais do que isso pede o editor completo.', 'viniciuscodes' ); ?>
+				<?php
+				/*
+				 * SEM `required`, e isso é proposital: uma nota pode ser só uma
+				 * imagem, e o `required` do navegador barraria o envio dela antes de
+				 * a checagem do servidor opinar. A regra de verdade é "tem texto ou
+				 * tem imagem", e ela vive no tratador abaixo, onde não depende do
+				 * navegador de quem escreve.
+				 */
+				?>
+				<textarea id="vc-nota-conteudo" name="vc_nota_conteudo" rows="6" class="large-text" placeholder="<?php echo esc_attr__( 'o que você quer dizer…', 'viniciuscodes' ); ?>"></textarea>
 			</p>
 
-			<?php
-			/*
-			 * A BARRA FICA FIXA NO RODAPÉ NO CELULAR, por CSS. Numa nota longa, o
-			 * botão de publicar ficava a uma rolagem inteira de distância de onde a
-			 * pessoa está olhando. Fixa, ela acompanha.
-			 */
-			?>
-			<div class="vc-nr__acoes">
-				<button type="submit" name="vc_nota_status" value="publish" class="vc-nr__publicar">
+			<p>
+				<label class="vc-nota-rapida__rotulo" for="vc-nota-imagem"><?php esc_html_e( 'Imagem (opcional)', 'viniciuscodes' ); ?></label>
+				<input type="file" id="vc-nota-imagem" name="vc_nota_imagem" accept="image/*" />
+			</p>
+
+			<p class="description">
+				<?php esc_html_e( 'Sem título: a nota é identificada pela data. Uma linha em branco vira parágrafo, e um endereço colado vira link.', 'viniciuscodes' ); ?>
+				<br />
+				<?php esc_html_e( 'A imagem entra no corpo da nota, depois do texto, então ela aparece na linha do tempo, no feed e na página. Pode ser só a imagem, sem texto. Uma por nota — mais do que isso pede o editor completo.', 'viniciuscodes' ); ?>
+			</p>
+
+			<?php if ( ! is_wp_error( $vc_temas ) && $vc_temas ) : ?>
+				<fieldset class="vc-nota-rapida__temas">
+					<legend class="vc-nota-rapida__rotulo"><?php esc_html_e( 'Temas', 'viniciuscodes' ); ?></legend>
+					<?php foreach ( $vc_temas as $vc_tema ) : ?>
+						<label class="vc-nota-rapida__tema">
+							<input type="checkbox" name="vc_nota_temas[]" value="<?php echo esc_attr( (string) $vc_tema->term_id ); ?>" />
+							<?php echo esc_html( $vc_tema->name ); ?>
+						</label>
+					<?php endforeach; ?>
+				</fieldset>
+			<?php endif; ?>
+
+			<p class="vc-nota-rapida__acoes">
+				<button type="submit" name="vc_nota_status" value="publish" class="button button-primary button-large">
 					<?php esc_html_e( 'publicar', 'viniciuscodes' ); ?>
 				</button>
-				<button type="submit" name="vc_nota_status" value="draft" class="vc-nr__rascunho">
-					<?php esc_html_e( 'rascunho', 'viniciuscodes' ); ?>
+				<button type="submit" name="vc_nota_status" value="draft" class="button button-secondary">
+					<?php esc_html_e( 'salvar rascunho', 'viniciuscodes' ); ?>
 				</button>
-				<a class="vc-nr__completo" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . VC_NOTA ) ); ?>">
-					<?php esc_html_e( 'editor completo', 'viniciuscodes' ); ?>
+				<a class="vc-nota-rapida__completo" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=' . VC_NOTA ) ); ?>">
+					<?php esc_html_e( 'abrir o editor completo', 'viniciuscodes' ); ?>
 				</a>
-			</div>
+			</p>
 		</form>
 	</div>
 	<?php
 }
+
 /**
  * O corpo de uma nota como BLOCOS, e não como texto clássico.
  *
@@ -215,77 +163,6 @@ function vc_notas_tela_rapida() {
  * @param int    $imagem ID do anexo, ou 0.
  * @return string Conteúdo pronto para o `post_content`.
  */
-/**
- * Converte os atalhos de escrita em HTML.
- *
- * A ORDEM DAS TROCAS É O QUE FAZ A FUNÇÃO FUNCIONAR. Cada regra é aplicada sobre
- * o resultado da anterior, então uma marcação pode estragar a seguinte se entrar
- * na hora errada:
- *
- * - CRASE VEM PRIMEIRO, e o conteúdo dela é protegido com um marcador. Sem isso,
- *   `**assim**` dentro de um trecho de código viraria negrito.
- * - LINK ANTES DE ÊNFASE, senão o `*` de um endereço com asterisco seria lido
- *   como itálico.
- * - NEGRITO ANTES DE ITÁLICO, porque `**` é dois asteriscos: se o itálico viesse
- *   primeiro, ele casaria com o primeiro par e sobraria um asterisco solto.
- * - ENDEREÇO SOLTO POR ÚLTIMO, porque `make_clickable()` não deve ter chance de
- *   entrar no meio de uma tag que acabou de ser montada.
- *
- * O TEXTO NÃO É ESCAPADO AQUI, e é de propósito: esta tela já aceitava HTML antes
- * desta mudança, e quem escreve aqui é quem publica. Quem não tem
- * `unfiltered_html` passa pelo kses do `wp_insert_post()` de qualquer forma. A
- * diferença é que agora existe um caminho curto para negrito e link, não que o
- * caminho longo tenha sido fechado.
- *
- * @param string $texto O que foi digitado.
- * @return string O mesmo texto, com os atalhos convertidos.
- */
-function vc_nota_formatar( string $texto ) : string {
-	$t = $texto;
-
-	/* Crase: guarda o miolo para as outras regras não o alcançarem. */
-	$guardados = array();
-
-	$t = preg_replace_callback(
-		'/`([^`]+)`/',
-		static function ( array $m ) use ( &$guardados ) : string {
-			$chave                = "\x1A" . count( $guardados ) . "\x1A";
-			$guardados[ $chave ]  = '<code>' . $m[1] . '</code>';
-			return $chave;
-		},
-		$t
-	);
-
-	/* [texto](endereço) */
-	$t = preg_replace_callback(
-		'/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/',
-		static function ( array $m ) : string {
-			return '<a href="' . esc_url( $m[2] ) . '">' . $m[1] . '</a>';
-		},
-		$t
-	);
-
-	/* **negrito** antes de *itálico*, pela razão explicada acima. */
-	$t = preg_replace( '/\*\*(?!\s)([^*\n]+?)(?<!\s)\*\*/', '<strong>$1</strong>', $t );
-
-	/* *itálico*, sem casar com o que sobrou de um negrito. */
-	$t = preg_replace( '/(?<!\*)\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\*)/', '<em>$1</em>', $t );
-
-	/* ~~riscado~~ */
-	$t = preg_replace( '/~~(?!\s)([^~\n]+?)(?<!\s)~~/', '<s>$1</s>', $t );
-
-	/* Endereço solto vira link, como a tela sempre prometeu. */
-	if ( function_exists( 'make_clickable' ) ) {
-		$t = make_clickable( $t );
-	}
-
-	/* Devolve o código guardado. */
-	if ( $guardados ) {
-		$t = strtr( $t, $guardados );
-	}
-
-	return $t;
-}
 function vc_nota_em_blocos( string $texto, int $imagem = 0 ) : string {
 	$blocos = '';
 
@@ -298,14 +175,6 @@ function vc_nota_em_blocos( string $texto, int $imagem = 0 ) : string {
 			if ( '' === $paragrafo ) {
 				continue;
 			}
-
-			/*
-			 * A FORMATAÇÃO VEM ANTES DO `<br>`: os atalhos são procurados no
-			 * parágrafo como ele foi digitado. Depois da troca de quebra de linha,
-			 * um `*` no fim de uma linha já seria adjacente a um `<br>` e as
-			 * regras de ênfase poderiam casar através dele.
-			 */
-			$paragrafo = vc_nota_formatar( $paragrafo );
 
 			$paragrafo = str_replace( array( "\r\n", "\r", "\n" ), '<br>', $paragrafo );
 
@@ -501,15 +370,17 @@ function vc_notas_publicar_rapida() {
 			'post_content'   => $vc_conteudo,
 			'post_author'    => get_current_user_id(),
 			/*
-			 * `comment_status` ABERTO: a nota recebe comentário de quem lê aqui,
-			 * além da resposta que chega do fediverso por Webmention. É o padrão do
-			 * site, e está escrito aqui para quem lê esta tela não precisar ir
-			 * atrás da regra — o painel de discussão do editor fecha caso a caso.
+			 * `comment_status` fechado: nota não recebe comentário. O filtro
+			 * `vc_notas_fechar_comentarios()`, no `cpt-notas.php`, força isto de
+			 * qualquer forma — está escrito aqui também para quem lê esta tela
+			 * não precisar ir atrás da regra.
 			 *
 			 * `ping_status` fica como veio de propósito: fechá-lo é o caminho
-			 * mais curto para atrapalhar a recepção de Webmention.
+			 * mais curto para atrapalhar a recepção de Webmention, que é um
+			 * recurso do site. Comentário local e webmention são coisas
+			 * diferentes.
 			 */
-			'comment_status' => 'open',
+			'comment_status' => 'closed',
 			'ping_status'    => 'open',
 		),
 		true
@@ -520,7 +391,13 @@ function vc_notas_publicar_rapida() {
 		exit;
 	}
 
-	/* Os temas saíram com a tela nova: ela não os envia mais. */
+	if ( ! empty( $_POST['vc_nota_temas'] ) && taxonomy_exists( 'category' ) ) {
+		$vc_termos = array_filter( array_map( 'absint', (array) wp_unslash( $_POST['vc_nota_temas'] ) ) );
+
+		if ( $vc_termos ) {
+			wp_set_object_terms( $vc_id, $vc_termos, 'category' );
+		}
+	}
 
 	/*
 	 * A IMAGEM É AMARRADA À NOTA DEPOIS QUE ELA EXISTE: `media_handle_upload()`
@@ -582,16 +459,16 @@ function vc_notas_avisos() {
 		 * mensagem diz o que dá para fazer agora, em vez de só anunciar o problema.
 		 */
 		$vc_classe = 'notice-warning';
-		$vc_texto  = __( 'A nota foi gravada, mas a imagem não subiu: arquivo grande demais ou formato não aceito. Dá para acrescentar pelo editor completo.', 'viniciuscodes' );
+		$vc_texto  = __( 'A nota foi gravada, mas a imagem não subiu — arquivo grande demais ou formato não aceito. Dá para acrescentar pelo editor completo.', 'viniciuscodes' );
 	} elseif ( 'publicada' === $vc_ok ) {
 		$vc_classe = 'notice-success';
-		$vc_texto  = __( 'Nota publicada, ela já está em /notas/ e no feed.', 'viniciuscodes' );
+		$vc_texto  = __( 'Nota publicada — ela já está em /notas/ e no feed.', 'viniciuscodes' );
 	} elseif ( 'rascunho' === $vc_ok ) {
 		$vc_classe = 'notice-info';
 		$vc_texto  = __( 'Rascunho salvo.', 'viniciuscodes' );
 	} elseif ( 'vazio' === $vc_erro ) {
 		$vc_classe = 'notice-error';
-		$vc_texto  = __( 'A nota estava vazia: não havia o que publicar.', 'viniciuscodes' );
+		$vc_texto  = __( 'A nota estava vazia — não havia o que publicar.', 'viniciuscodes' );
 	} else {
 		$vc_classe = 'notice-error';
 		$vc_texto  = __( 'Não deu para gravar a nota. Tente de novo pelo editor.', 'viniciuscodes' );

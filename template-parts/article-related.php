@@ -36,13 +36,14 @@ if ( empty( $vc_relacionadas ) ) {
 					<span class="related__meta">
 						<?php
 						/*
-						 * O MOTIVO VEM SOZINHO, e a data saiu. Aqui a pergunta do leitor é "por
-						 * que este texto está sendo sugerido?", e quem responde é o tema em
-						 * comum. A data não responde isso, e a lista de sugestões não está
-						 * em ordem cronológica: ela não informava nem ordenava.
+						 * O MOTIVO VEM ANTES DA DATA. Aqui a pergunta do leitor é "por
+						 * que esta nota está sendo sugerida?", e quem responde é o tema
+						 * em comum — a data não responde nada disso. Ela continua na
+						 * linha, mas depois, para não abrir o metadado.
 						 */
 						?>
 						<span class="related__motivo">no mesmo tema: <?php echo esc_html( $vc_item['tema'] ); ?></span>
+						<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_post ) ); ?>"><?php echo esc_html( vc_data_curta( $vc_post->ID ) ); ?></time>
 					</span>
 				</a>
 			</li>

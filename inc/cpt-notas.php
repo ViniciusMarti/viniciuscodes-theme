@@ -22,17 +22,13 @@
  * gerado em `wp_insert_post_data` (abaixo) e NÃO APARECE NO CORPO DO SITE: na
  * linha do tempo e na página da nota, quem identifica é a data.
  *
- * O QUE SOBRA DELE, E ONDE ELE NÃO PODE APARECER. O título aparece em quatro
- * lugares, e os quatro são metadados: `<title>`, `og:title`, `og:image:alt` e
- * `twitter:title`. Um `<title>` não pode ser vazio, e era o rótulo interno que o
- * preenchia. Isso resolvia o campo e criava outro problema: é essa linha que
- * aparece na aba, na prévia de link E NO RESULTADO DE BUSCA, e a nota chegava ao
- * Google como data, não como o que ela diz.
- *
- * QUEM PREENCHE ESSES QUATRO CAMPOS AGORA É O TEXTO DA NOTA, cortado em fronteira
- * de palavra por `vc_titulo_da_nota()`. Nenhum deles é lido por parser de
- * microformato: o `h-entry` continua sem `p-name`, e é isso que impede a data de
- * ser lida como o título da nota.
+ * O QUE SOBRA DELE, E POR QUE ISSO ESTÁ CERTO. Medido no site depois de subir:
+ * o título aparece em quatro lugares, e os quatro são metadados — `<title>`,
+ * `og:title`, `og:image:alt` e `twitter:title`. Um `<title>` não pode ser
+ * vazio, e o texto da nota já vai em `og:description`, que é o campo que
+ * importa numa prévia de rede social. Nenhum dos quatro é lido por parser de
+ * microformato: o `h-entry` continua sem `p-name`, e é isso que impede a data
+ * de ser lida como o título da nota.
  *
  * Isso também é o que faz o plugin ActivityPub federar a nota como `Note`.
  * `Transformer\Post::get_type()` responde `Note` quando o post type não
@@ -56,13 +52,13 @@ defined( 'ABSPATH' ) || exit;
 const VC_NOTA = 'nota';
 
 /**
- * Versão da estrutura de URLs das notas.
+ * Versão da estrutura de URLs das notas/microblog.
  *
  * Subir este número força um flush das regras de rewrite na próxima ida ao
- * admin. É o que evita o 404 de `/notas/` sem ninguém precisar lembrar de
+ * admin. É o que evita o 404 de `/microblog/` sem ninguém precisar lembrar de
  * abrir "Configurações → Links permanentes" depois de subir os arquivos.
  */
-const VC_NOTA_VERSAO = '1';
+const VC_NOTA_VERSAO = '2';
 
 /**
  * A opção que guarda o PRÓXIMO número de nota a ser usado.
@@ -93,20 +89,20 @@ function vc_notas_registrar() {
 		VC_NOTA,
 		array(
 			'labels'                => array(
-				'name'               => __( 'Notas', 'viniciuscodes' ),
-				'singular_name'      => __( 'Nota', 'viniciuscodes' ),
-				'menu_name'          => __( 'Notas', 'viniciuscodes' ),
+				'name'               => __( 'microblog', 'viniciuscodes' ),
+				'singular_name'      => __( 'microblog', 'viniciuscodes' ),
+				'menu_name'          => __( 'microblog', 'viniciuscodes' ),
 				'add_new'            => __( 'Nova nota', 'viniciuscodes' ),
 				'add_new_item'       => __( 'Nova nota', 'viniciuscodes' ),
 				'edit_item'          => __( 'Editar nota', 'viniciuscodes' ),
 				'new_item'           => __( 'Nova nota', 'viniciuscodes' ),
 				'view_item'          => __( 'Ver nota', 'viniciuscodes' ),
-				'view_items'         => __( 'Ver notas', 'viniciuscodes' ),
-				'search_items'       => __( 'Buscar notas', 'viniciuscodes' ),
+				'view_items'         => __( 'Ver microblog', 'viniciuscodes' ),
+				'search_items'       => __( 'Buscar no microblog', 'viniciuscodes' ),
 				'not_found'          => __( 'Nenhuma nota encontrada.', 'viniciuscodes' ),
 				'not_found_in_trash' => __( 'Nenhuma nota na lixeira.', 'viniciuscodes' ),
 				'all_items'          => __( 'Todas as notas', 'viniciuscodes' ),
-				'archives'           => __( 'Arquivo de notas', 'viniciuscodes' ),
+				'archives'           => __( 'Arquivo do microblog', 'viniciuscodes' ),
 				'item_published'     => __( 'Nota publicada.', 'viniciuscodes' ),
 				'item_updated'       => __( 'Nota atualizada.', 'viniciuscodes' ),
 				'items_list'         => __( 'Lista de notas', 'viniciuscodes' ),
@@ -122,18 +118,18 @@ function vc_notas_registrar() {
 			'show_in_nav_menus'     => false,
 			'show_in_admin_bar'     => true,
 			'show_in_rest'          => true,
-			'rest_base'             => 'notas',
+			'rest_base'             => 'microblog',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
 
 			'menu_position'         => 6,
 			'menu_icon'             => 'dashicons-format-status',
 			'hierarchical'          => false,
 
-			// `/notas/` para a linha do tempo e `/notas/<slug>/` para cada
+			// `/microblog/` para a linha do tempo e `/microblog/<slug>/` para cada
 			// nota. `with_front => false` tira o prefixo do blog da URL.
-			'has_archive'           => 'notas',
+			'has_archive'           => 'microblog',
 			'rewrite'               => array(
-				'slug'       => 'notas',
+				'slug'       => 'microblog',
 				'with_front' => false,
 			),
 			'query_var'             => true,
@@ -151,7 +147,7 @@ function vc_notas_registrar() {
 			 * de discussão. `revisions` está porque uma nota errada é uma nota
 			 * que precisa voltar atrás, e o custo é uma linha por edição.
 			 */
-			'supports'              => array( 'editor', 'author', 'revisions', 'comments' ),
+			'supports'              => array( 'editor', 'author', 'revisions' ),
 
 			// A nota entra na categoria (que o site chama de tema) e na
 			// etiqueta. Sem isto, `/tema/marketing/` ficaria só com os textos.
@@ -223,7 +219,7 @@ function vc_notas_titulo_automatico( $dados, $postarr ) {
 
 	$dados['post_title'] = sprintf(
 		/* translators: %s: data e hora da nota, ex.: "4 de outubro de 2026, 14:30". */
-		__( 'Nota: %s', 'viniciuscodes' ),
+		__( 'Nota — %s', 'viniciuscodes' ),
 		mysql2date( 'j \d\e F \d\e Y, H:i', $vc_quando )
 	);
 
@@ -240,47 +236,6 @@ function vc_notas_titulo_automatico( $dados, $postarr ) {
 	return $dados;
 }
 add_filter( 'wp_insert_post_data', 'vc_notas_titulo_automatico', 10, 2 );
-
-/**
- * O começo do texto da nota, para o título que o buscador lê.
- *
- * A NOTA NÃO TEM TÍTULO, e o `<title>` não pode ser vazio. Até aqui o que
- * preenchia esse campo era o rótulo interno ("Nota: 5 de outubro de 2026"), e isso
- * resolvia o campo criando outro problema: é essa linha que aparece na aba, na
- * prévia de link e NO RESULTADO DE BUSCA. Quem encontrasse a nota no Google leria
- * uma data, não o que ela diz.
- *
- * O TEXTO DA PRÓPRIA NOTA É O TÍTULO NATURAL DELA. O corte é em fronteira de
- * palavra, e o limite é menor do que o de um título comum porque o
- * ` · @viniciuscodes` ainda entra depois.
- *
- * ISTO NÃO MUDA O QUE SAI PARA O FEDIVERSO. O tipo federado é decidido pelo
- * `supports` do post type, que continua sem `title`, e o `h-entry` continua sem
- * `p-name`. O que muda é só o texto dos campos de metadado.
- *
- * @param int $vc_id     ID da nota.
- * @param int $vc_limite Caracteres antes do corte.
- */
-function vc_titulo_da_nota( int $vc_id, int $vc_limite = 48 ): string {
-	$vc_texto = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( (string) get_post_field( 'post_content', $vc_id ) ) ) );
-
-	if ( '' === $vc_texto ) {
-		return __( 'nota', 'viniciuscodes' );
-	}
-
-	if ( mb_strlen( $vc_texto, 'UTF-8' ) <= $vc_limite ) {
-		return $vc_texto;
-	}
-
-	$vc_corte  = mb_substr( $vc_texto, 0, $vc_limite, 'UTF-8' );
-	$vc_espaco = mb_strrpos( $vc_corte, ' ', 0, 'UTF-8' );
-
-	if ( false !== $vc_espaco && $vc_espaco > 0 ) {
-		$vc_corte = mb_substr( $vc_corte, 0, $vc_espaco, 'UTF-8' );
-	}
-
-	return rtrim( $vc_corte, ' ,.;:!?' ) . '…';
-}
 
 /**
  * Fediverso: ActivityPub e Webmention.
@@ -394,38 +349,56 @@ function vc_nota_numero( $vc_post = null ) {
 	return (int) get_post_meta( $vc_post->ID, VC_NOTA_META_NUMERO, true );
 }
 
-/*
- * AS NOTAS RECEBEM COMENTÁRIO, e aqui havia um filtro que fechava isso na porta
- * de entrada (`vc_notas_fechar_comentarios`, em `wp_insert_post_data`).
+/**
+ * Nota nasce com os comentários fechados.
  *
- * O MOTIVO DELE ERA DE PRODUTO, E MUDOU. A nota nasceu sem comentário, e a
- * conversa dela era só a resposta que chegava do fediverso por Webmention. Agora
- * o site quer as duas: a resposta de quem lê aqui e a de quem responde lá.
+ * `supports` sem `comments` esconde a caixa no editor, mas não impede um
+ * `wp_insert_post()` de gravar `comment_status = 'open'` — que é o padrão do
+ * site. Este filtro fecha na porta de entrada, então nem o editor, nem a REST
+ * API, nem um script criam uma nota aberta a comentário.
  *
- * O FILTRO NÃO PODIA FICAR. Ele forçava `closed` em TODA gravação, então nem o
- * editor conseguiria fechar uma nota específica — a escolha seria desfeita no
- * instante de salvar. Sem ele, quem decide é o WordPress e o editor: a nota nasce
- * com o padrão do site (`open`, ver `default_comment_status`) e o painel de
- * discussão permite fechar caso a caso.
+ * O `ping_status` fica de fora DE PROPÓSITO: fechá-lo é o caminho mais curto
+ * para atrapalhar a recepção de Webmention, que é um recurso do site.
+ * Comentário local e webmention são coisas diferentes, e só o primeiro foi
+ * desligado.
  *
- * O `ping_status` CONTINUA ABERTO, e isso não mudou: fechá-lo é o caminho mais
- * curto para atrapalhar a recepção de Webmention, que é o outro lado da conversa.
+ * @param array $dados   Os dados que vão para o banco.
+ * @param array $postarr O post como veio do formulário.
+ * @return array Os dados, com o comentário fechado.
  */
+function vc_notas_fechar_comentarios( $dados, $postarr ) {
+	if ( VC_NOTA !== ( $dados['post_type'] ?? '' ) ) {
+		return $dados;
+	}
 
-/*
- * E AQUI ESTAVA O SEGUNDO GUARDA, que era o que de fato fechava a porta.
+	$dados['comment_status'] = 'closed';
+
+	return $dados;
+}
+add_filter( 'wp_insert_post_data', 'vc_notas_fechar_comentarios', 20, 2 );
+
+/**
+ * E que continue fechada — inclusive nas notas que já existiam.
  *
- * O FILTRO DE GRAVAÇÃO NÃO BASTAVA. Ele só agia no momento de salvar, então
- * uma nota publicada antes daquela regra continuaria com
- * `comment_status = 'open'` no banco e o formulário voltaria a aparecer. Este
- * filtro respondia por todas: forçava `false` em `comments_open`, que é o que o
- * tema consulta para desenhar a caixa.
+ * O filtro acima só age na gravação, então uma nota publicada antes desta regra
+ * continuaria com `comment_status = 'open'` no banco e o formulário de
+ * comentário voltaria a aparecer. `comments_open` é o que o tema consulta para
+ * desenhar (ou não) a caixa, e é aqui que a regra vale para todas.
  *
- * OS DOIS SAÍRAM JUNTOS, e precisavam sair juntos: tirar só o de gravação
- * deixaria as notas que já existiam sem formulário, e o defeito pareceria de
- * cache. Agora quem responde é o `comment_status` de cada nota, e o painel de
- * discussão do editor fecha caso a caso.
+ * Uma consequência que vale saber: com os comentários fechados, o
+ * `comments_template()` do tema só desenha a lista se JÁ existirem comentários.
+ * É exatamente o que se quer das respostas do Fediverso — ActivityPub e
+ * Webmention as gravam como comentário, então elas continuam aparecendo. O que
+ * deixou de existir é o formulário para escrever uma nova.
+ *
+ * @param bool $aberto  Se os comentários estão abertos.
+ * @param int  $post_id O post em questão.
+ * @return bool Falso para nota, o valor original para todo o resto.
  */
+function vc_notas_comentarios_fechados( $aberto, $post_id ) {
+	return ( VC_NOTA === get_post_type( $post_id ) ) ? false : $aberto;
+}
+add_filter( 'comments_open', 'vc_notas_comentarios_fechados', 10, 2 );
 
 /**
  * Flush de rewrite, uma vez por versão.
@@ -449,3 +422,19 @@ function vc_notas_flush_pendente() {
 	update_option( 'vc_notas_rewrite_versao', VC_NOTA_VERSAO );
 }
 add_action( 'init', 'vc_notas_flush_pendente', 20 );
+
+/**
+ * Redirecionamento permanente (301) de URLs legadas /notas/ para /microblog/.
+ *
+ * Garante que quem acessar links antigos, RSS feeds ou favoritos não encontre 404.
+ */
+function vc_notas_redirecionar_legado() {
+	$uri = $_SERVER['REQUEST_URI'] ?? '';
+	if ( preg_match( '#^/notas(/.*)?$#i', $uri, $matches ) ) {
+		$sufixo = $matches[1] ?? '/';
+		wp_safe_redirect( home_url( '/microblog' . $sufixo ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'vc_notas_redirecionar_legado', 1 );
+

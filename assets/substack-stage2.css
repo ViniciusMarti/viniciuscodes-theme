@@ -1,0 +1,627 @@
+/* ==========================================================================
+   SISTEMA DE DESIGN, TOKENS DE CORES E ESCALA TIPOGRÁFICA UNIVERSAL
+   Tema: Substack / Editorial Minimalista
+   Fonte: Atkinson Hyperlegible Next (100% Self-Hosted)
+   ========================================================================== */
+
+:root {
+  /* Tokens de Cores - Modo Claro */
+  --color-bg: #ffffff;
+  --color-surface: #f9f9f8;
+  --color-border: #eeeeee;
+  --color-text: #242424;
+  --color-meta: #737373;
+  --color-accent: #478c67;
+  --color-accent-text: #356e4f;
+  --color-code-bg: rgba(127, 127, 127, 0.08);
+  --color-code-inline: rgba(127, 127, 127, 0.12);
+
+  /* Escala Harmônica de Tipografia (Desktop) */
+  --text-xs: 0.75rem;    /* 12px - Contadores e badges */
+  --text-sm: 0.875rem;   /* 14px - Metas, datas, menus, legendas, footer */
+  --text-base: 1.125rem; /* 18px - Corpo de texto, resumos, parágrafos */
+  --text-lg: 1.35rem;    /* 21.6px - Subtítulos h3 */
+  --text-xl: 1.65rem;    /* 26.4px - Títulos no feed e subtítulos h2 */
+  --text-2xl: 2.4rem;    /* 38.4px - Título principal do artigo (h1) */
+}
+
+/* Tokens de Cores - Modo Escuro (Nativo do Sistema ou via seletor) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #141715;
+    --color-surface: #1c201d;
+    --color-border: #282e2a;
+    --color-text: #e6e9e7;
+    --color-meta: #939a95;
+    --color-accent: #7ec29d;
+    --color-accent-text: #7ec29d;
+    --color-code-bg: rgba(255, 255, 255, 0.06);
+    --color-code-inline: rgba(255, 255, 255, 0.10);
+  }
+}
+
+html[data-theme="dark"], body.theme-dark {
+  --color-bg: #141715;
+  --color-surface: #1c201d;
+  --color-border: #282e2a;
+  --color-text: #e6e9e7;
+  --color-meta: #939a95;
+  --color-accent: #7ec29d;
+  --color-accent-text: #7ec29d;
+  --color-code-bg: rgba(255, 255, 255, 0.06);
+  --color-code-inline: rgba(255, 255, 255, 0.10);
+}
+
+@media (max-width: 650px) {
+  :root {
+    --text-base: 1.0625rem;
+    --text-xl: 1.45rem;
+    --text-2xl: 2.0rem;
+  }
+}
+
+/* Base Global */
+html, body {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  font-family: 'Atkinson Hyperlegible Next', -apple-system, sans-serif !important;
+}
+
+/* Ocultar elementos legados da sidebar */
+.sidebar, .sidebar-backdrop, .sidebar-toggle, .section-title, .hero {
+  display: none !important;
+}
+
+/* Container Centralizado Unificado */
+.layout {
+  display: block !important;
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  padding: 0 1.25rem !important;
+}
+
+.content {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 2.5rem 0 !important;
+}
+
+.content__inner {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+/* -------------------------------------------------------------------------
+   FEED DA HOME
+   ------------------------------------------------------------------------- */
+.substack-feed__item {
+  padding: 2.2rem 0 !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.substack-feed__meta {
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: var(--color-meta) !important;
+  margin-bottom: 0.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.substack-feed__title {
+  font-size: var(--text-xl) !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 0 0.6rem 0 !important;
+}
+
+.substack-feed__title a {
+  color: var(--color-text) !important;
+  text-decoration: none !important;
+}
+
+.substack-feed__item:hover .substack-feed__title a {
+  color: var(--color-accent) !important;
+}
+
+.substack-feed__excerpt {
+  font-size: var(--text-base) !important;
+  line-height: 1.75 !important;
+  color: var(--color-meta) !important;
+  margin: 0 0 0.8rem 0 !important;
+}
+
+.substack-feed__footer {
+  font-size: var(--text-sm) !important;
+  color: var(--color-meta) !important;
+}
+
+/* -------------------------------------------------------------------------
+   PÁGINA DO ARTIGO (single.php) E PÁGINAS (page.php)
+   ------------------------------------------------------------------------- */
+.article__header {
+  margin-top: 1rem !important;
+  margin-bottom: 2.2rem !important;
+}
+
+.article__title {
+  font-size: var(--text-2xl) !important;
+  line-height: 1.18 !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  margin: 0 0 1rem 0 !important;
+  color: var(--color-text) !important;
+}
+
+.article__meta {
+  font-size: var(--text-sm) !important;
+  color: var(--color-meta) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  margin-bottom: 2.5rem !important;
+  padding-bottom: 1.2rem !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.prose {
+  font-size: var(--text-base) !important;
+  line-height: 1.8 !important;
+  color: var(--color-text) !important;
+}
+
+.prose p {
+  margin: 1.6rem 0 !important;
+}
+
+.prose h2 {
+  font-size: var(--text-xl) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  margin: 3rem 0 1.2rem 0 !important;
+  line-height: 1.3 !important;
+  color: var(--color-text) !important;
+}
+
+.prose h3 {
+  font-size: var(--text-lg) !important;
+  font-weight: 700 !important;
+  margin: 2.4rem 0 0.8rem 0 !important;
+  color: var(--color-text) !important;
+}
+
+.prose a {
+  color: var(--color-accent-text) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+.prose blockquote {
+  margin: 2.2rem 0 !important;
+  padding-left: 1.5rem !important;
+  border-left: 3px solid var(--color-accent) !important;
+  font-style: italic !important;
+  color: var(--color-text) !important;
+}
+
+.prose ul, .prose ol {
+  margin: 1.5rem 0 !important;
+  padding-left: 1.5rem !important;
+}
+
+.prose li {
+  margin-bottom: 0.6rem !important;
+}
+
+/* Código em bloco e inline */
+.prose code, code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.9em !important;
+  background: var(--color-code-inline) !important;
+  padding: 3px 6px !important;
+  border-radius: 4px !important;
+}
+
+.prose pre, pre {
+  background: var(--color-code-bg) !important;
+  padding: 1.2rem !important;
+  border-radius: 6px !important;
+  overflow-x: auto !important;
+  font-size: 0.9em !important;
+}
+
+.prose pre code {
+  background: none !important;
+  padding: 0 !important;
+}
+
+/* Imagens e Legendas */
+figure, .wp-block-image {
+  margin: 2.6rem 0 !important;
+  text-align: center !important;
+}
+
+figure img, .wp-block-image img {
+  border-radius: 6px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+figcaption, .wp-element-caption {
+  font-size: var(--text-sm) !important;
+  color: var(--color-meta) !important;
+  line-height: 1.5 !important;
+  margin-top: 0.85rem !important;
+  padding: 0 1rem !important;
+  text-align: center !important;
+}
+
+/* Rodapé do Artigo */
+.article__footer {
+  margin-top: 4rem !important;
+  padding-top: 2rem !important;
+  border-top: 1px solid var(--color-border) !important;
+}
+
+.article__end-themes {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-top: 2rem !important;
+}
+
+.article__end-theme-link {
+  font-size: var(--text-sm) !important;
+  color: var(--color-meta) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px !important;
+  padding: 3px 10px !important;
+  text-decoration: none !important;
+}
+
+.article__end-theme-link:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+}
+
+.article__back {
+  margin-top: 3rem !important;
+  text-align: center !important;
+  font-size: var(--text-sm) !important;
+}
+
+.article__back a {
+  color: var(--color-meta) !important;
+  text-decoration: none !important;
+}
+
+.article__back a:hover {
+  color: var(--color-accent) !important;
+}
+/* Aliases retrocompatíveis para o sistema */
+:root {
+  --borda: var(--color-border);
+  --fundo: var(--color-bg);
+  --cor-texto: var(--color-text);
+  --cor-meta: var(--color-meta);
+}
+html[data-theme=dark], body.theme-dark {
+  --borda: var(--color-border);
+  --fundo: var(--color-bg);
+  --cor-texto: var(--color-text);
+  --cor-meta: var(--color-meta);
+}
+
+/* Header & Topics Bar styling */
+.masthead--substack {
+  border-bottom: 1px solid var(--color-border) !important;
+  background-color: var(--color-bg) !important;
+}
+.topics-bar {
+  border-bottom: 1px solid var(--color-border) !important;
+  background-color: var(--color-bg) !important;
+}
+.topics-dropdown-btn {
+  border-color: var(--color-border) !important;
+  color: var(--color-meta) !important;
+}
+.topics-dropdown-btn:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+}
+.topics-dropdown-menu {
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+}
+.topics-dropdown-menu a {
+  color: var(--color-text) !important;
+}
+.topics-dropdown-menu a:hover {
+  background-color: rgba(127, 127, 127, 0.08) !important;
+  color: var(--color-accent) !important;
+}
+.btn-rss-pill {
+  background-color: var(--color-accent) !important;
+  color: #ffffff !important;
+}
+.btn-rss-pill:hover {
+  opacity: 0.9 !important;
+}
+
+/* Links & Metas globais */
+a {
+  color: inherit;
+}
+.masthead__nav a:hover,
+.topics-bar a:hover,
+.colophon a:hover {
+  color: var(--color-accent) !important;
+}
+
+/* Ocultar qualquer sumario remanescente (TOC) */
+.toc-container,
+nav.toc-container,
+.prose .toc-container {
+  display: none !important;
+}
+
+/* Footer Social Icons & Compact Alignment */
+.colophon {
+  border-top: 1px solid var(--color-border) !important;
+  background-color: var(--color-bg) !important;
+}
+.footer-social-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  color: var(--color-meta) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+.footer-social-icon:hover {
+  color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  transform: translateY(-2px);
+}
+.footer-social-icon svg {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+/* Correção de Espaçamento e Grid de Galerias */
+.wp-block-gallery,
+figure.wp-block-gallery,
+.prose .wp-block-gallery {
+  margin-top: 1.75rem !important;
+  margin-bottom: 2rem !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+/* Os itens/figuras INTERNAS da galeria NÃO devem herdar margem vertical de figure isolada */
+.wp-block-gallery figure,
+.wp-block-gallery .wp-block-image,
+.wp-block-gallery figure.wp-block-image {
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: 1 1 calc(50% - 12px) !important;
+  min-width: 200px !important;
+}
+
+.wp-block-gallery figure img,
+.wp-block-gallery .wp-block-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+
+/* Paragrafos da Descricao do Tema */
+.term-header__desc p{
+  margin: 0 0 1.25rem 0 !important;
+  line-height: 1.75 !important;
+  font-size: var(--text-base) !important;
+  color: var(--color-text) !important;
+}
+.term-header__desc p:last-child {
+  margin-bottom: 0 !important;
+}
+.term-header__desc strong {
+  font-weight: 700 !important;
+  color: var(--color-text) !important;
+}
+
+/* Remover barra de progresso de leitura */
+.reading-progress-bar,
+#reading-progress-bar {
+  display: none !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+/* ===========================================================
+   FIXES DE LAYOUT - PAGINAS ESTATICAS (SOBRE, CONTATO, ETC.)
+   =========================================================== */
+
+/* Avatar Redondo de Perfil */
+.prose .wp-block-image.is-style-rounded,
+.wp-block-image.is-style-rounded {
+  display: flex !important;
+  justify-content: center !important;
+  margin: 0 auto 1.75rem auto !important;
+}
+.prose .wp-block-image.is-style-rounded img,
+.wp-block-image.is-style-rounded img {
+  width: 130px !important;
+  height: 130px !important;
+  border-radius: 9999px !important;
+  object-fit: cover !important;
+  border: 3px solid var(--color-border) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+}
+
+/* Separadores nas Páginas */
+.prose .wp-block-separator,
+.prose hr {
+  margin: 2.5rem 0 !important;
+  border: 0 !important;
+  border-top: 1px solid var(--color-border) !important;
+  height: 1px !important;
+  background: none !important;
+}
+.prose .wp-block-separator::after,
+.prose hr::after {
+  display: none !important;
+}
+.prose .wp-block-separator::before,
+.prose hr::before {
+  display: none !important;
+}
+
+/* Galeria de Fotos (3 Colunas responsivas) */
+.prose .wp-block-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+  margin: 2.5rem 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+@media (max-width: 650px) {
+  .prose .wp-block-gallery {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+.prose .wp-block-gallery figure,
+.prose .wp-block-gallery .wp-block-image {
+  margin: 0 !important;
+  padding: 0 !important;
+  aspect-ratio: 1 !important;
+  overflow: hidden !important;
+  border-radius: 6px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.prose .wp-block-gallery img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
+
+/* Botões Globais (.wp-block-buttons) */
+.prose .wp-block-buttons,
+.wp-block-buttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  margin-top: 2.5rem !important;
+  justify-content: flex-start !important;
+}
+
+.prose .wp-block-button__link,
+.wp-block-button__link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 22px !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+  border-radius: 20px !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.prose .is-style-fill .wp-block-button__link,
+.is-style-fill .wp-block-button__link {
+  background-color: var(--color-accent) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--color-accent) !important;
+}
+
+.prose .is-style-fill .wp-block-button__link:hover,
+.is-style-fill .wp-block-button__link:hover {
+  opacity: 0.9 !important;
+}
+
+.prose .is-style-outline .wp-block-button__link,
+.is-style-outline .wp-block-button__link,
+.prose .is-style-outline--2 .wp-block-button__link {
+  background-color: transparent !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+.prose .is-style-outline .wp-block-button__link-hover,
+.is-style-outline .wp-block-button__link-hover,
+.prose .is-style-outline--2 .wp-block-button__link:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+}
+
+/* Topics Bar - Linha Única e Scroll Horizontal */
+.topics-bar > div{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 16px !important;
+  white-space: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important; /* Firefox */
+}
+.topics-bar > div::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}
+.topics-dropdown-wrap {
+  flex-shrink: 0 !important;
+}
+.topics-bar a {
+  flex-shrink: 0 !important;
+}
+
+/* Rodapê Editorial Minimalista */
+.colophon {
+  border-top: 1px solid var(--color-border) !important;
+  background-color: var(--color-bg) !important;
+  margin-top: 4rem !important;
+}
+.colophon__inner {
+  max-width: 680px !important;
+  margin: 0 auto !important;
+  padding: 2.5rem 1.25rem 3rem 1.25rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+  text-align: center !important;
+}
+.colophon [aria-label="colofão"] {
+  display: none !important;
+}

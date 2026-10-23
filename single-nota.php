@@ -2,23 +2,20 @@
 /**
  * Uma nota sozinha: `/notas/nota-20261004-1430/`.
  *
- * A PÁGINA É O CARTÃO DA LISTA, EM TAMANHO DE PÁGINA.
+ * O `<h1>` É A DATA, e isso é o recurso, não uma limitação.
  *
- * O `<h1>` ERA A DATA, e a data era o cabeçalho inteiro: quem abria a nota lia
- * um carimbo de data em corpo de título antes de ler a nota que ele
- * apresentava. A identificação de uma nota é QUEM escreveu e QUANDO, na mesma
- * linha — e é assim que o cartão do arquivo já fazia.
+ * O WordPress gravou um título interno ("Nota — 4 de outubro de 2026, 14:30")
+ * para o RSS e para o banco. Mostrar esse título aqui seria deixar o
+ * mecanismo aparecer na tela: quem abre a nota quer ler a nota, e a
+ * identificação de uma nota é QUANDO ela foi escrita. A data que já era o
+ * título interno vira o cabeçalho, e o texto começa logo abaixo.
  *
- * O `<h1>` CONTINUA EXISTINDO, e agora carrega a linha de identidade do
- * cartão: avatar, nome e tempo relativo, com as mesmas classes. A página tem
- * de ter um título, e o título de uma nota é o que ela diz sobre si.
- *
- * A ESTRUTURA É A DO TEMA, e o cabeçalho é a exceção: `.article__header` e
- * `.prose` são as classes do `single.php`, mas `.article__title` aqui carrega o
- * `nota__cabecalho`, que é o desenho da linha de identidade do cartão. O
- * `template-parts/article-share.php` não é reusado porque ele publica o TÍTULO
- * do post no texto do compartilhamento (`data-title`), e o título de uma nota é
- * a própria linha de identidade.
+ * A ESTRUTURA É A DO TEMA. `.article`, `.article__header`, `.article__title`,
+ * `.article__meta` e `.prose` são as classes do `single.php`, com as mesmas
+ * regras de `global.css` — inclusive as de tema escuro. O que este arquivo não
+ * reusa é o `template-parts/article-share.php`, porque o bloco de
+ * compartilhamento do tema publica o TÍTULO do post no texto do
+ * compartilhamento (`data-title`), e aqui o título é um carimbo de data.
  *
  * MICROFORMATOS. `h-entry` no artigo, `e-content` no texto, `dt-published` na
  * data e `u-url` no link permanente. Sem `p-name`, pelo mesmo motivo do
@@ -45,50 +42,41 @@ while ( have_posts() ) :
 	?>
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'article article--nota h-entry' ); ?>>
 		<header class="article__header">
-			<?php
-			/*
-			 * O CABEÇALHO É O DO CARTÃO DA LISTA, com as mesmas classes e na mesma
-			 * ordem: avatar, nome do autor e tempo relativo. Quem chega pela lista
-			 * reconhece o que estava lendo; quem chega pelo permalink encontra a
-			 * mesma coisa.
-			 *
-			 * A DATA ABSOLUTA NÃO SUMIU: ela está no `datetime` e no `title` do tempo,
-			 * que é onde o cartão também a guarda. O que saiu foi o carimbo de data no
-			 * lugar do título, em corpo de 1.3rem, antes da nota que ele apresenta.
-			 */
-			$vc_numero = vc_nota_numero();
-			$vc_autor  = (string) get_the_author();
-			$vc_login  = (string) get_the_author_meta( 'user_login' );
-			$vc_avatar = vc_midia( 'vinicius-profile.webp' );
-			?>
-			<h1 class="article__title nota__cabecalho">
-				<?php if ( '' !== $vc_avatar ) : ?>
-					<img
-						class="nota__avatar"
-						src="<?php echo esc_url( $vc_avatar ); ?>"
-						alt=""
-						width="34"
-						height="34"
-						decoding="async"
-					/>
-				<?php endif; ?>
+			<h1 class="article__title">
+				<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>">
+					<?php echo esc_html( get_the_date( 'j \d\e F \d\e Y' ) ); ?>
+				</time>
+			</h1>
+
+			<div class="article__meta">
+				<?php
+				$vc_numero = vc_nota_numero();
+				$vc_autor  = (string) get_the_author();
+
+				if ( $vc_numero > 0 ) :
+					?>
+					<span class="article__meta__part vc-nota-numero">#<?php echo (int) $vc_numero; ?></span>
+					<span class="article__meta-sep" aria-hidden="true">·</span>
+					<?php
+				endif;
+
+				/*
+				 * O separador vem ANTES de cada item, e não depois do anterior:
+				 * assim, um item que não sai (o número de uma nota antiga sem
+				 * contador, o autor de uma nota sem autor) não deixa separador
+				 * pendurado nem separador duplicado.
+				 */
+				?>
+				<span class="article__meta__part"><?php echo esc_html( get_the_date( 'H:i' ) ); ?></span>
 
 				<?php if ( '' !== $vc_autor ) : ?>
-					<span class="p-author h-card nota__autor">
+					<span class="article__meta-sep" aria-hidden="true">·</span>
+
+					<span class="p-author h-card article__meta__part">
 						<a class="u-url p-name" rel="author" href="<?php echo esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ); ?>"><?php echo esc_html( $vc_autor ); ?></a>
 					</span>
 				<?php endif; ?>
-
-				<?php if ( '' !== $vc_login && $vc_login !== $vc_autor ) : ?>
-					<span class="nota__handle">@<?php echo esc_html( $vc_login ); ?></span>
-				<?php endif; ?>
-
-				<span class="nota__sep" aria-hidden="true">·</span>
-
-				<time class="dt-published nota__tempo" datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>" title="<?php echo esc_attr( get_the_date( 'j \d\e F \d\e Y, H:i' ) ); ?>">
-					<?php echo esc_html( vc_nota_tempo_relativo() ); ?>
-				</time>
-			</h1>
+			</div>
 		</header>
 
 		<div class="e-content prose">
@@ -153,18 +141,6 @@ while ( have_posts() ) :
 				'like',
 				array( 'rotulo' => __( 'gostar desta nota', 'viniciuscodes' ) )
 			);
-
-			/*
-			 * O NÚMERO FECHA A LINHA, como no cartão da lista. Na lista ele é um
-			 * link para a nota; aqui a nota já é esta página, então ele é um
-			 * `<span>`: o mesmo identificador, sem um link que recarregaria o que
-			 * a pessoa já está lendo.
-			 */
-			if ( $vc_numero > 0 ) :
-				?>
-				<span class="vc-nota-numero nota__numero">#<?php echo (int) $vc_numero; ?></span>
-				<?php
-			endif;
 			?>
 		</div>
 
@@ -189,7 +165,7 @@ while ( have_posts() ) :
 				<?php endif; ?>
 
 				<a class="notas-vizinhas__elo notas-vizinhas__arquivo" href="<?php echo esc_url( (string) get_post_type_archive_link( $vc_post_type ) ); ?>">
-					<?php esc_html_e( 'todas as notas', 'viniciuscodes' ); ?>
+					<?php esc_html_e( 'microblog', 'viniciuscodes' ); ?>
 				</a>
 
 				<?php if ( $vc_proxima instanceof WP_Post ) : ?>
@@ -203,24 +179,27 @@ while ( have_posts() ) :
 
 		<?php
 		/*
-		 * O BLOCO DE COMENTÁRIOS, COM AS DUAS CONVERSAS.
+		 * SÓ DESENHA O BLOCO DE COMENTÁRIOS QUANDO JÁ EXISTE CONVERSA.
 		 *
-		 * A CONDIÇÃO É A MESMA DO `single.php`: comentário aberto OU já existe
-		 * algum. Ela substitui um `have_comments()` que existia para o oposto — na
-		 * época as notas nasciam com o comentário fechado, e o bloco só devia
-		 * aparecer quando uma resposta do fediverso chegasse. Numa nota sem
-		 * conversa, a caixa anunciava uma conversa que não existia, com o aviso de
-		 * comentários encerrados.
+		 * Com os comentários fechados, o `comments_template()` do núcleo devia
+		 * sair sozinho antes de carregar o `comments.php`. Medido neste
+		 * WordPress (7.1.2): não sai. Numa nota recém-publicada — sem conversa
+		 * nenhuma — a página trazia o `<section id="comentarios">` inteiro, com
+		 * o título "conversa pública" e o aviso "os comentários estão
+		 * encerrados". Uma caixa que anuncia uma conversa que não existe é pior
+		 * que caixa nenhuma, e é justamente o que o pedido de "notas sem
+		 * comentário" queria longe daqui.
 		 *
-		 * AGORA A NOTA RECEBE COMENTÁRIO, e o formulário precisa aparecer mesmo sem
-		 * nenhum ainda: sem ele ninguém escreve o primeiro. As respostas que chegam
-		 * pelo ActivityPub e pelo Webmention continuam entrando no mesmo lugar — o
-		 * plugin as grava como comentário, e o `comments.php` desenha as duas do
-		 * mesmo jeito.
+		 * E POR QUE `have_comments()` E NÃO SIMPLESMENTE NÃO CHAMAR: as
+		 * respostas que chegam pelo ActivityPub e pelo Webmention são gravadas
+		 * como comentário. Enquanto elas não existirem, a nota não mostra nada;
+		 * quando existirem, a conversa aparece — sem formulário para escrever
+		 * uma nova, porque os comentários estão fechados para todo mundo, e é
+		 * o `comments.php` do tema que decide isso.
 		 */
-		if ( comments_open() || get_comments_number() ) :
+		if ( have_comments() ) {
 			comments_template();
-		endif;
+		}
 		?>
 	</article>
 	<?php

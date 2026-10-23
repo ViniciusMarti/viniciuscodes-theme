@@ -21,22 +21,7 @@ $vc_esta  = static function ( string $href ) use ( $vc_atual ): bool {
 $vc_temas = vc_temas_ordenados( true );
 ?>
 <aside class="sidebar" id="barra-lateral" aria-label="Menu principal">
-	<div class="sidebar__header">
-		<span class="sidebar__title">menu</span>
-		<button
-			type="button"
-			class="sidebar__close"
-			data-sidebar-close
-			aria-label="fechar menu"
-		>
-			<?php echo vc_icone( 'x', 20 ); ?>
-		</button>
-	</div>
-
 	<div class="sidebar__content">
-		<div class="sidebar__search">
-			<?php echo vc_formulario_de_busca( 'sidebar-search' ); ?>
-		</div>
 
 		<nav class="sidebar__group" aria-labelledby="barra-grupo-paginas">
 			<p class="sidebar__label" id="barra-grupo-paginas">páginas</p>
@@ -45,10 +30,10 @@ $vc_temas = vc_temas_ordenados( true );
 					class="navlink navlink--page"
 					href="<?php echo esc_url( $vc_item['href'] ); ?>"
 					<?php echo $vc_item['contexto'] ? 'title="' . esc_attr( $vc_item['contexto'] ) . '"' : ''; ?>
-					<?php echo $vc_item['contexto'] ? 'aria-label="' . esc_attr( $vc_item['label'] . ': ' . $vc_item['contexto'] ) . '"' : ''; ?>
+					<?php echo $vc_item['contexto'] ? 'aria-label="' . esc_attr( $vc_item['label'] . ' — ' . $vc_item['contexto'] ) . '"' : ''; ?>
 					<?php echo $vc_item['atual'] ? 'aria-current="page"' : ''; ?>
 				>
-					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( $vc_item['icone'], 18 ); ?></span>
+					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( $vc_item['icone'], 17 ); ?></span>
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_item['label'], 'UTF-8' ) ); ?></span>
 				</a>
 			<?php endforeach; ?>
@@ -57,17 +42,92 @@ $vc_temas = vc_temas_ordenados( true );
 		<nav class="sidebar__group" aria-labelledby="barra-grupo-temas">
 			<p class="sidebar__label" id="barra-grupo-temas">temas</p>
 			<?php foreach ( $vc_temas as $vc_tema ) : ?>
-				<?php $vc_href = vc_url_do_tema( $vc_tema->slug ); ?>
+				<?php $vc_href = '/tema/' . $vc_tema->slug . '/'; ?>
 				<a
 					class="navlink navlink--term"
 					href="<?php echo esc_url( $vc_href ); ?>"
 					<?php echo $vc_esta( $vc_href ) ? 'aria-current="page"' : ''; ?>
 				>
-					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 18 ); ?></span>
+					<span class="navlink__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 17 ); ?></span>
 					<span><?php echo esc_html( mb_strtolower( (string) $vc_tema->name, 'UTF-8' ) ); ?></span>
 				</a>
 			<?php endforeach; ?>
 		</nav>
+
+		<?php
+		$vc_blogs_indicados = vc_blogroll_aleatorios( 4 );
+		if ( ! empty( $vc_blogs_indicados ) ) :
+		?>
+		<section class="sidebar__group" aria-labelledby="barra-grupo-leia-tambem">
+			<p class="sidebar__label" id="barra-grupo-leia-tambem">leia também</p>
+			<div class="sidebar__blogroll-list">
+				<?php foreach ( $vc_blogs_indicados as $vc_blog ) : ?>
+					<?php
+					$vc_fav_arquivo = $vc_blog['favicon'] ?? ( $vc_blog['dominio'] . '.png' );
+					$vc_favicon_src = get_theme_file_uri( "assets/favicons/{$vc_fav_arquivo}" );
+					?>
+					<a
+						class="navlink navlink--blogroll"
+						href="<?php echo esc_url( $vc_blog['url'] ); ?>"
+						target="_blank"
+						rel="noopener noreferrer"
+						title="<?php echo esc_attr( $vc_blog['nome'] . ' — ' . $vc_blog['dominio'] ); ?>"
+					>
+						<img class="navlink__favicon" src="<?php echo esc_url( $vc_favicon_src ); ?>" alt="" width="16" height="16" loading="lazy" decoding="async">
+						<span class="navlink__blogroll-nome"><?php echo esc_html( $vc_blog['nome'] ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+			<a class="navlink navlink--more" href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>" <?php echo $vc_esta( '/blogroll/' ) ? 'aria-current="page"' : ''; ?>>
+				<span>veja mais</span>
+				<span class="navlink__more-icon" aria-hidden="true"><?php echo vc_icone( 'arrow-up-right', 14 ); ?></span>
+			</a>
+		</section>
+		<?php endif; ?>
+
+		<?php
+		$vc_arquivo_posts = vc_arquivo_agrupado();
+		if ( ! empty( $vc_arquivo_posts ) ) :
+		?>
+		<section class="sidebar__group sidebar__archive" aria-labelledby="barra-grupo-arquivo">
+			<p class="sidebar__label" id="barra-grupo-arquivo">arquivo de posts</p>
+			<div class="sidebar__archive-tree">
+				<?php foreach ( $vc_arquivo_posts as $vc_ano => $vc_dados_ano ) : ?>
+					<details class="archive-tree__year">
+						<summary class="archive-tree__summary">
+							<span class="archive-tree__zippy" aria-hidden="true">►</span>
+							<a href="<?php echo esc_url( get_year_link( (int) $vc_ano ) ); ?>" class="archive-tree__link archive-tree__link--year" onclick="event.stopPropagation();">
+								<?php echo esc_html( $vc_ano ); ?>
+							</a>
+							<span class="archive-tree__count">(<?php echo (int) $vc_dados_ano['total']; ?>)</span>
+						</summary>
+						<div class="archive-tree__months">
+							<?php foreach ( $vc_dados_ano['meses'] as $vc_mes => $vc_dados_mes ) : ?>
+								<details class="archive-tree__month">
+									<summary class="archive-tree__summary archive-tree__summary--month">
+										<span class="archive-tree__zippy" aria-hidden="true">►</span>
+										<a href="<?php echo esc_url( $vc_dados_mes['link'] ); ?>" class="archive-tree__link archive-tree__link--month" onclick="event.stopPropagation();">
+											<?php echo esc_html( $vc_dados_mes['nome'] ); ?>
+										</a>
+										<span class="archive-tree__count">(<?php echo (int) $vc_dados_mes['total']; ?>)</span>
+									</summary>
+									<ul class="archive-tree__posts">
+										<?php foreach ( $vc_dados_mes['posts'] as $vc_post_item ) : ?>
+											<li class="archive-tree__post-item">
+												<a href="<?php echo esc_url( $vc_post_item['url'] ); ?>" class="archive-tree__post-link" <?php echo $vc_esta( (string) wp_parse_url( $vc_post_item['url'], PHP_URL_PATH ) ) ? 'aria-current="page"' : ''; ?>>
+													<?php echo esc_html( $vc_post_item['titulo'] ); ?>
+												</a>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+								</details>
+							<?php endforeach; ?>
+						</div>
+					</details>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php endif; ?>
 	</div>
 
 	<?php

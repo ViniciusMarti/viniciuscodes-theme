@@ -35,6 +35,20 @@ require_once __DIR__ . '/cpt-notas.php';
  * endereço na mão ou copia de um leitor que normaliza a URL.
  */
 function vc_notas_rewrite_do_feed() {
+	// Regras para /microblog/feed/
+	add_rewrite_rule(
+		'^microblog/feed/(atom|rss|rss2|rdf)/?$',
+		'index.php?post_type=' . VC_NOTA . '&feed=$matches[1]',
+		'top'
+	);
+
+	add_rewrite_rule(
+		'^microblog/feed/?$',
+		'index.php?post_type=' . VC_NOTA . '&feed=rss2',
+		'top'
+	);
+
+	// Legado: /notas/feed/
 	add_rewrite_rule(
 		'^notas/feed/(atom|rss|rss2|rdf)/?$',
 		'index.php?post_type=' . VC_NOTA . '&feed=$matches[1]',
@@ -96,7 +110,7 @@ function vc_notas_link_do_feed() {
 
 	printf(
 		'<link rel="alternate" type="application/rss+xml" title="%s" href="%s" />' . "\n",
-		esc_attr( sprintf( '%s: %s', mb_strtolower( __( 'Notas', 'viniciuscodes' ), 'UTF-8' ), get_bloginfo( 'name' ) ) ),
+		esc_attr( sprintf( '%s — %s', __( 'Notas', 'viniciuscodes' ), get_bloginfo( 'name' ) ) ),
 		esc_url( $vc_url )
 	);
 }
@@ -193,7 +207,7 @@ function vc_nota_slugs_de_tema( $vc_post = null ) {
  * (`1.0.42`) continua intocada por este recurso.
  */
 function vc_notas_assets() {
-	if ( ! is_singular( VC_NOTA ) && ! is_post_type_archive( VC_NOTA ) && ! is_front_page() ) {
+	if ( ! is_singular( VC_NOTA ) && ! is_post_type_archive( VC_NOTA ) && ! is_home() ) {
 		return;
 	}
 

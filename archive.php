@@ -46,11 +46,11 @@ $vc_termo = ( $vc_termo instanceof WP_Term ) ? $vc_termo : null;
 $vc_tipo = 'arquivo';
 
 if ( $vc_termo instanceof WP_Term ) {
-	$vc_tipo = 'textos neste tema';
+	$vc_tipo = 'posts neste tema';
 } elseif ( is_author() ) {
 	$vc_tipo = 'textos deste autor';
 } elseif ( is_date() ) {
-	$vc_tipo = 'textos deste período';
+	$vc_tipo = 'posts deste período';
 }
 ?>
 <header class="term-header">
@@ -77,7 +77,8 @@ get_template_part(
 	'template-parts/lista-de-textos',
 	null,
 	array(
-		'mostrar_temas' => ! is_category(),
+		'mostrar_temas'  => ! is_category(),
+		'mostrar_resumo' => true,
 	)
 );
 

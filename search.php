@@ -116,10 +116,10 @@ $vc_assuntos = array_values(
 		<ul class="grid">
 			<?php foreach ( $vc_assuntos as $vc_tema ) : ?>
 				<li>
-					<a class="card" href="<?php echo esc_url( vc_url_do_tema( $vc_tema->slug ) ); ?>">
+					<a class="card" href="<?php echo esc_url( '/tema/' . $vc_tema->slug . '/' ); ?>">
 						<span class="card__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 24 ); ?></span>
 						<p class="card__title"><?php echo esc_html( $vc_tema->name ); ?></p>
-						<p class="card__meta"><?php echo esc_html( $vc_tema->count . ( 1 === $vc_tema->count ? ' texto' : ' textos' ) ); ?></p>
+						<p class="card__meta"><?php echo esc_html( $vc_tema->count . ( 1 === $vc_tema->count ? ' post' : ' posts' ) ); ?></p>
 					</a>
 				</li>
 			<?php endforeach; ?>

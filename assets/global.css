@@ -5,13 +5,13 @@
    ============================================================ */
 
 :root {
-  --paper: #faf9f5;
-  --paper-alt: #f2efe9;
+  --paper: #f8f6f0;
+  --paper-alt: #eee9dc;
   /* Off-white instead of #fff: a pure-white surface is the brightest thing
      on screen and causes glare for light-sensitive readers. */
-  --paper-card: #fcfbf7;
-  --line: #e4e2dc;
-  --line-strong: #d5d2c9;
+  --paper-card: #ffffff;
+  --line: #e2dbcc;
+  --line-strong: #d2c8b3;
 
   /* Boundaries of form controls carry meaning, so they must reach the 3:1
      non-text ratio. This one measures 3.86:1 on --paper and 3.92:1 on
@@ -19,10 +19,10 @@
      Decorative dividers keep using --line. */
   --field-border: #837e6d;
 
-  --ink: #1f2328;
+  --ink: #212521;
   /* 8.50:1 on --paper, 8.65:1 on --paper-card, 7.81:1 on --paper-alt
      (was #575d65 at 6.31/6.42/5.79 — AA but not AAA). */
-  --ink-soft: #444a51;
+  --ink-soft: #4a524a;
   /* 7.64:1 on --paper, 7.77:1 on --paper-card, 7.01:1 on --paper-alt
      (was #666d75 at 4.97/5.06/4.56, the weakest text in the light theme).
      The value already existed in the contrast block; it was promoted.
@@ -33,7 +33,7 @@
      by 0.01. Since the tightest surface is the one at 7.01, margin — if it is
      wanted — only comes from going DARKER: #464d54 measures 7.47:1 and
      #424950 measures 7.95:1. */
-  --ink-mute: #4a5158;
+  --ink-mute: #697368;
 
   /*
     The same hue, four points of lightness lower. #3b5e43 measured 6.95:1 on
@@ -42,13 +42,13 @@
     AAA on all three surfaces, with the hue intact (hsl 134 became hsl 138,
     which is imperceptible as colour).
   */
-  --green: #365740;
-  --green-deep: #2c4732;
-  --green-wash: #eef2ed;
+  --green: #2e593d;
+  --green-deep: #20422c;
+  --green-wash: #e8f0ea;
   /* --green as channels, so the prose underline can be a fraction of it:
      rgba(var(--green-rgb), 0.45). THIS MUST FOLLOW --green — it draws the
      link underline, and a stale value here shows the old green. */
-  --green-rgb: 54, 87, 64;
+  --green-rgb: 46, 89, 61;
 
   /*
     The second accent, and the only one besides the green.
@@ -67,7 +67,7 @@
   */
   /* 5.83:1 on --paper (was #8a5a2b at 5.11). Clay is a glyph, not body text,
      so AA was already enough; the darker step buys margin for free. */
-  --clay: #7f5227;
+  --clay: #94683c;
 
   /* Text placed on a saturated accent background. */
   --on-accent: #ffffff;
@@ -135,17 +135,11 @@
   --content-max: 620px;
 
   /*
-    One family for the whole site, and it is the reader's own.
-
-    Headings are distinguished by weight and size, never by a second typeface:
-    switching families mid-page makes the eye re-learn letterforms, which is the
-    visual noise this removes.
-
-    The system stack costs zero requests and never swaps, so there is no second
-    paint and no layout shift coming from fonts. The four `.woff2` and
-    `fonts.css` stay on disk, inert: nothing names them any more.
+    Atkinson Hyperlegible Next — Autohospedada localmente em assets/fonts/.
+    Foco total em acessibilidade cognitiva e conforto de leitura AuDHD.
+    Fallback gracioso para a pilha do sistema operacional.
   */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 
   --radius: 10px;
   --radius-sm: 6px;
@@ -156,36 +150,29 @@
 /* Dark palette. Driven by `data-theme` on <html>, set by the toggle script
    and restored from localStorage before paint to avoid a flash. */
 [data-theme='dark'] {
-  --paper: #16181a;
-  --paper-alt: #1c1f21;
-  --paper-card: #202325;
-  --line: #2e3335;
-  --line-strong: #3c4144;
+  --paper: #141715;
+  --paper-alt: #1a1e1b;
+  --paper-card: #202622;
+  --line: #2d3630;
+  --line-strong: #3b473f;
 
-  --field-border: #6b7272;
+  --field-border: #647067;
 
-  --ink: #e8e6e0;
-  /* 9.64:1 on --paper-card. This is what --ink-mute used to be: the two
-     levels swapped so both clear AAA instead of one sitting at 5.25:1. */
-  --ink-soft: #c6cbcb;
-  /* 7.02:1 on --paper-card and 7.91:1 on --paper (was #8f9696 at 5.25/5.91). */
-  --ink-mute: #a8aeae;
+  --ink: #eceee9;
+  --ink-soft: #b8c2b9;
+  --ink-mute: #8e9c90;
 
-  --green: #8fb996;
-  --green-deep: #a8cdae;
-  --green-wash: #232a25;
-  /* Clears 8.09:1 against --paper. */
-  --green-rgb: 143, 185, 150;
+  --green: #78be8c;
+  --green-deep: #95d4a6;
+  --green-wash: #1e2921;
+  --green-rgb: 120, 190, 140;
 
-  /* The page accent, lifted for a dark ground: 8.28:1 on --paper. */
-  --clay: #d9a86c;
+  --clay: #dfa96e;
 
-  --on-accent: #16181a;
-
-  /* See `--on-ink` in the light theme. */
-  --on-ink: #16181a;
-  --code-bg: #101214;
-  --code-ink: #e8e6e0;
+  --on-accent: #141715;
+  --on-ink: #141715;
+  --code-bg: #0f1210;
+  --code-ink: #eceee9;
 
   color-scheme: dark;
 }
@@ -785,14 +772,136 @@ hr {
   gap: 1.75rem;
 }
 
+.sidebar__group {
+  padding: 1.15rem 1.25rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  border-radius: var(--radius);
+  transition: background 0.2s ease;
+}
+
+.sidebar__group:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme='dark'] .sidebar__group {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .sidebar__group:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
 .sidebar__label {
-  margin: 0 0 0.6rem;
-  /* 12px floor: anything smaller is hard to read on a phone. */
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin: 0 0 0.85rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--ink-soft);
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+[data-theme='dark'] .sidebar__label {
+  background: rgba(255, 255, 255, 0.06);
   color: var(--ink-mute);
+}
+
+/* ---------- sidebar profile block ---------- */
+.sidebar__profile-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.sidebar__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--line);
+  flex-shrink: 0;
+}
+
+.sidebar__profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sidebar__profile-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.sidebar__profile-handle {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sidebar__profile-bio {
+  margin: 0 0 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.sidebar__social {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sidebar__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-soft);
+  background: rgba(0, 0, 0, 0.04);
+  transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+[data-theme='dark'] .sidebar__social-link {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-mute);
+}
+
+.sidebar__social-link:hover {
+  color: var(--green);
+  background: var(--green-wash);
+  transform: translateY(-1px);
+}
+
+/* ---------- sidebar search block ---------- */
+.sidebar__search-wrap {
+  padding: 0.6rem 0.75rem;
+}
+
+.sidebar__search-wrap .site-search-form {
+  min-height: 38px;
+  padding: 0 0.75rem;
+  background: transparent;
+  border: none;
+}
+
+.sidebar__search-wrap .site-search-form:focus-within {
+  outline: none;
 }
 
 .navlink {
@@ -848,7 +957,222 @@ hr {
   line-height: 1;
 }
 
-/* ---------- nav more (the disclosure that replaced /mais/) ---------- */
+/* ---------- nav more: temas extras recolhidos na sidebar ---------- */
+.sidebar__temas-extras {
+  margin-top: 0.35rem;
+}
+
+/* ---------- sidebar leia também (blogroll aleatório) ---------- */
+.sidebar__blogroll-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.navlink--blogroll {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.navlink__favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.navlink__blogroll-nome {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navlink--more {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--line);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-mute);
+  justify-content: space-between;
+}
+
+.navlink--more:hover {
+  color: var(--green);
+}
+
+.navlink__more-icon {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  transition: transform 0.15s ease;
+}
+
+.navlink--more:hover .navlink__more-icon {
+  transform: translate(2px, -2px);
+}
+
+/* ---------- sidebar archive tree (arquivo retrátil de posts) ---------- */
+.sidebar__archive-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+}
+
+.archive-tree__year,
+.archive-tree__month {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-tree__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.2rem;
+  cursor: pointer;
+  user-select: none;
+  list-style: none !important;
+  border-radius: var(--radius);
+  transition: color 0.15s ease;
+  line-height: 1.4;
+}
+
+.archive-tree__summary::-webkit-details-marker,
+.archive-tree__summary::marker {
+  display: none !important;
+  content: '';
+}
+
+.archive-tree__zippy {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--ink-mute);
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+  width: 12px;
+  text-align: center;
+}
+
+details[open] > .archive-tree__summary > .archive-tree__zippy {
+  transform: rotate(90deg);
+  color: var(--green);
+}
+
+.archive-tree__link {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.archive-tree__link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.archive-tree__link--month {
+  font-weight: 500;
+  font-size: 0.84rem;
+}
+
+.archive-tree__count {
+  font-size: 0.76rem;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.15rem;
+}
+
+.archive-tree__months {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1.1rem;
+  margin-top: 0.2rem;
+  border-left: 1px dashed var(--line);
+  margin-left: 0.4rem;
+}
+
+.archive-tree__summary--month {
+  padding-block: 0.15rem;
+}
+
+.archive-tree__posts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-left: 1rem;
+  margin: 0.35rem 0 0.5rem 0.4rem;
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+
+.archive-tree__post-item {
+  margin: 0;
+  padding: 0;
+  line-height: 1.35;
+}
+
+.archive-tree__post-link {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 0.15rem 0;
+  transition: color 0.15s ease;
+}
+
+.archive-tree__post-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.archive-tree__post-link[aria-current='page'] {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sidebar__temas-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-mute);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  border-radius: var(--radius);
+  transition: color 0.15s ease;
+}
+
+.sidebar__temas-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar__temas-trigger:hover {
+  color: var(--green);
+}
+
+.sidebar__temas-trigger-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar__temas-extras[open] .sidebar__temas-trigger-arrow {
+  transform: rotate(180deg);
+}
+
+.sidebar__temas-extras[open] .sidebar__temas-trigger {
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+.sidebar__temas-extras-list {
+  padding-left: 0;
+}
 
 /* ---------- content ---------- */
 
@@ -1367,6 +1691,7 @@ blockquote p:last-child,
 
 .prose .wp-block-button__link:hover {
   background: var(--green-deep);
+  color: var(--on-accent);
   text-decoration: none;
 }
 
@@ -1446,6 +1771,155 @@ blockquote p:last-child,
   .prose .wp-block-columns {
     flex-direction: column;
     gap: 1rem;
+  }
+}
+
+/* ---------- WordPress query / post template blocks (Gutenberg) ---------- */
+
+.wp-block-query {
+  margin: 1.5rem 0 2.5rem;
+}
+
+.wp-block-post-template {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wp-block-post-template.is-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+
+.wp-block-post-template.columns-3 {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.wp-block-post {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.wp-block-post-featured-image {
+  margin: 0 0 0.85rem;
+}
+
+.wp-block-post-featured-image a {
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--paper-alt);
+}
+
+.wp-block-post-featured-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.wp-block-post-featured-image a:hover img {
+  opacity: 0.85;
+}
+
+
+
+.wp-block-post-date {
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+  margin-bottom: 0.35rem;
+}
+
+.wp-block-post-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.wp-block-post-title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.wp-block-post-title a:hover {
+  color: var(--green);
+}
+
+
+
+/* Embed de vídeo nativo (16:9) */
+.wp-block-embed.is-type-video {
+  margin: 1.5rem 0 2rem;
+}
+
+.wp-block-embed.is-type-video .wp-block-embed__wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.wp-block-embed.is-type-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Navegação entre vídeos */
+.article-nav {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.article-nav__col {
+  flex: 1;
+}
+
+.article-nav__col--next {
+  text-align: right;
+}
+
+.article-nav__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  margin: 0 0 0.25rem;
+}
+
+.article-nav__link {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 600px) {
+  .wp-block-post-template.is-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .article-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .article-nav__col--next {
+    text-align: left;
   }
 }
 
@@ -2254,6 +2728,61 @@ blockquote p:last-child,
   text-underline-offset: 0.18em;
 }
 
+.post-item__excerpt {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- scroll infinito da home & fade-in ---------- */
+
+@keyframes vcFadeInItem {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-item--animado {
+  animation: vcFadeInItem 0.4s ease forwards;
+}
+
+.feed-carregando {
+  text-align: center;
+  padding: 1.5rem 0;
+  color: var(--ink-mute);
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.feed-carregando::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: vcRotacionar 0.6s linear infinite;
+}
+
+@keyframes vcRotacionar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ---------- cards / grids ---------- */
 
 /*
@@ -2517,12 +3046,35 @@ blockquote p:last-child,
   gap: 1.5rem;
 }
 
-/* A circle. `object-fit` keeps the crop honest: the frame is square and the
-   photo fills it, so nothing is distorted. */
-.hero__photo {
+/* Fundo sutil na cor verde atrás da foto de perfil (estático, sem animações) */
+.hero__photo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem;
   flex: 0 0 auto;
-  width: 180px;
-  height: 180px;
+}
+
+.hero__photo-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--green-rgb), 0.18);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+[data-theme='dark'] .hero__photo-wrap::before {
+  background: rgba(var(--green-rgb), 0.22);
+}
+
+.hero__photo {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 175px;
+  height: 175px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -2532,13 +3084,11 @@ blockquote p:last-child,
   min-width: 0;
 }
 
-/* On a narrow screen the circle shrinks: at 180px it would take most of the
-   width of a phone, and the greeting and the heading are what the reader
-   came for. */
+/* On a narrow screen the circle shrinks */
 @media (max-width: 640px) {
   .hero__photo {
-    width: 140px;
-    height: 140px;
+    width: 135px;
+    height: 135px;
   }
 }
 
@@ -2874,41 +3424,6 @@ blockquote p:last-child,
   color: var(--on-accent);
 }
 
-.post-like__btn {
-  transition: all 0.2s ease;
-}
-
-.post-like__btn svg {
-  color: #e05252;
-  transition: transform 0.2s ease;
-}
-
-.post-like__btn:hover svg {
-  transform: scale(1.15);
-}
-
-.post-like__btn--liked {
-  background: #fdf2f2 !important;
-  border-color: #f8b4b4 !important;
-  color: #c81e1e !important;
-}
-
-.post-like__btn--liked svg {
-  fill: #e05252;
-  stroke: #e05252;
-}
-
-[data-theme='dark'] .post-like__btn--liked {
-  background: rgba(224, 82, 82, 0.15) !important;
-  border-color: rgba(224, 82, 82, 0.4) !important;
-  color: #fca5a5 !important;
-}
-
-.post-like__count {
-  font-size: 0.8rem;
-  opacity: 0.85;
-}
-
 /*
   Green, because it is a confirmation and not a caption. `min-height` keeps
   the line reserved, so the footer does not jump when the message appears.
@@ -2961,69 +3476,86 @@ blockquote p:last-child,
 }
 
 .post-comments__list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.post-comment {
-  padding: 1.25rem;
-  background: var(--paper-alt);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.post-comment .children {
-  list-style: none;
-  padding-left: 1.5rem;
-  margin-top: 1.25rem;
-  border-left: 2px solid var(--line);
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 2.5rem !important;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
+/* Comentário individual (Root ou filho) */
+.post-comment {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent;
+}
+
+.post-comment__body {
+  padding: 1.15rem 1.35rem;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.post-comment:hover > .post-comment__body {
+  border-color: var(--line-strong);
+}
+
+/* Destaque sutil para respostas do próprio autor do blog */
+.post-comment.bypostauthor > .post-comment__body {
+  border-left: 3px solid var(--green);
+  background: color-mix(in srgb, var(--green) 3%, var(--paper-alt));
+}
+
+/* Selo de autor */
+.post-comment__badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: lowercase;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+}
+
+/* Cabeçalho do comentário */
 .post-comment__meta {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.65rem;
   font-size: 0.85rem;
-}
-
-/*
-   O avatar de quem comentou ou reagiu. Redondo e pequeno:
-   ele acompanha a linha do nome, não compete com o texto.
-*/
-.post-comment__avatar {
-  display: inline-flex;
-  flex: 0 0 auto;
-}
-
-.post-comment__avatar img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  display: block;
 }
 
 .post-comment__author {
   color: var(--ink);
   font-weight: 600;
+  font-size: 0.92rem;
 }
 
 .post-comment__author a {
   color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--line-strong);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.post-comment__author a:hover {
+  color: var(--green);
+  border-bottom-style: solid;
 }
 
 .post-comment__dot {
   color: var(--ink-mute);
+  font-size: 0.75rem;
 }
 
 .post-comment__date {
@@ -3031,50 +3563,99 @@ blockquote p:last-child,
   font-size: 0.8rem;
 }
 
-/*
-   O verbo da interação: "curtiu", "republicou", "mencionou".
-   Vem da federação, e sem ele o leitor vê só um nome e um vazio.
-   Mesma cor e mesmo corpo da data, porque é a mesma camada de informação.
-*/
-.post-comment__verbo {
-  color: var(--ink-mute);
-  font-size: 0.8rem;
+.post-comment__date a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-comment__date a:hover {
+  text-decoration: underline;
 }
 
 .post-comment__moderation {
   margin: 0.4rem 0 0.8rem;
   font-size: 0.82rem;
   color: var(--green);
+  font-style: italic;
 }
 
+/* Conteúdo da mensagem */
 .post-comment__content {
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--ink);
 }
 
 .post-comment__content p {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.65rem;
 }
 
 .post-comment__content p:last-child {
   margin-bottom: 0;
 }
 
+/* Botão de Responder (réplica / tréplica) */
 .post-comment__reply {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
+  display: flex;
+  align-items: center;
 }
 
-.post-comment__reply a {
-  display: inline-block;
+.post-comment__reply a,
+.post-comment .comment-reply-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--green);
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
   text-decoration: none;
+  transition: all 0.15s ease;
 }
 
-.post-comment__reply a:hover {
-  text-decoration: underline;
+.post-comment__reply a:hover,
+.post-comment .comment-reply-link:hover {
+  color: var(--green);
+  border-color: var(--green);
+  background: color-mix(in srgb, var(--green) 8%, transparent);
+}
+
+/* Réplicas e Tréplicas (Filhos aninhados com linhas conectoras) */
+.post-comment .children,
+ol.children {
+  list-style: none !important;
+  margin: 0.85rem 0 0 0.75rem !important;
+  padding: 0 0 0 1.25rem !important;
+  border-left: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  position: relative;
+}
+
+/* Responsividade de aninhamento para celular */
+@media (max-width: 600px) {
+  .post-comment .children,
+  ol.children {
+    margin-left: 0.35rem !important;
+    padding-left: 0.85rem !important;
+  }
+  .post-comment__body {
+    padding: 0.95rem 1.05rem;
+  }
+}
+
+/* Quando o formulário de resposta estiver ativo abaixo de um comentário */
+.post-comment .comment-respond {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: var(--paper);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
 }
 
 .post-comments__empty,
@@ -3300,10 +3881,7 @@ a.link-externo {
 
 .prose a.link-externo .link-externo__texto,
 a.link-externo .link-externo__texto {
-  text-decoration: underline;
-  text-decoration-color: rgba(var(--green-rgb), 0.45);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 3px;
+  text-decoration: none !important;
 }
 
 .prose a.link-externo:hover .link-externo__texto,
@@ -3765,141 +4343,74 @@ a.link-externo:focus-visible .link-externo__icone {
 		transition: transform 0.2s ease, visibility 0.2s ease;
 	}
 
-	/* 2. O conteudo reserva a coluna. O padding fica no <body> para valer
-	      tambem para o cabecalho sticky e o rodape. */
+	/* 2. O cabeçalho e sua linha agora atravessam a tela inteira de ponta a ponta.
+	      A reserva de espaço da coluna da sidebar fica no .layout (ou .content),
+	      permitindo que o cabeçalho tenha largura total e seus botões fiquem no canto direito. */
 	body {
-		padding-right: var(--sidebar-w, 268px);
-		transition: padding-right 0.2s ease;
-	}
-
-	/* 3. Estado recolhido.
-	      -----------------------------------------------------------------
-	      `position: fixed` AQUI NÃO É DETALHE: é o que impede a barra de
-	      ESTICAR O DOCUMENTO.
-
-	      Recolhida, ela sai da tela por `translateX(100%)` — e uma caixa
-	      comum empurrada para fora da direita faz o documento ficar mais
-	      largo. Foi o que a medicao mostrou: `scrollWidth` de 1543px numa
-	      janela de 1275, com a barra inteira em 1275->1543. Exatamente os
-	      268px dela, e uma barra de rolagem horizontal embaixo da pagina.
-
-	      Um elemento `fixed` nao entra na conta da rolagem: sai do fluxo E
-	      do documento. Era assim que a barra se comportava antes de a coluna
-	      passar para o fluxo (o que resolveu a rolagem dupla) — e e assim que
-	      ela volta a se comportar enquanto esta guardada, onde nao ha nada
-	      para alinhar com ela: o painel do `body::after` esta `display: none`
-	      neste estado. */
-	html[data-sidebar="collapsed"] .sidebar {
-		position: fixed;
-		transform: translateX(100%);
-		visibility: hidden;
-	}
-
-	html[data-sidebar="collapsed"] body {
 		padding-right: 0;
 	}
 
-	/* 4. Controles que so existem no drawer mobile. */
+	.layout {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: flex-start;
+		gap: clamp(1.5rem, 3.5vw, 3.5rem);
+		width: 100%;
+		max-width: calc(var(--content-max, 620px) + var(--sidebar-w, 268px) + 3.5rem + 5rem);
+		margin-inline: auto;
+		padding: 0 clamp(1rem, 2.5vw, 2.5rem);
+		transition: max-width 0.2s ease, padding 0.2s ease;
+	}
+
+	.content {
+		order: 1;
+		flex: 1 1 0%;
+		min-width: 0;
+		max-width: var(--content-max, 620px);
+		padding: 1.75rem 0 4rem;
+	}
+
+	.content__inner {
+		max-width: 100%;
+		margin-inline: 0;
+	}
+
+	.sidebar {
+		order: 2;
+		position: static;
+		width: var(--sidebar-w, 268px);
+		max-width: var(--sidebar-w, 268px);
+		flex-shrink: 0;
+		margin-top: 1.75rem;
+		padding: 0 0 2rem;
+		background: transparent;
+		border-left: none;
+		height: auto;
+		max-height: none;
+		overflow-y: visible;
+		z-index: 10;
+	}
+
+	html[data-sidebar="collapsed"] .sidebar {
+		display: none;
+	}
+
+	html[data-sidebar="collapsed"] .layout {
+		max-width: var(--content-max, 620px);
+	}
+
 	.sidebar-backdrop,
 	.sidebar__close {
 		display: none;
 	}
 
-	/* 5. "Voltar ao topo" e fixed a direita e ficaria atras do painel. */
 	.to-top {
-		right: calc(var(--sidebar-w, 268px) + 1.5rem);
-		transition: right 0.2s ease;
-	}
-
-	html[data-sidebar="collapsed"] .to-top {
 		right: 1.5rem;
 	}
 
-	/* 6. UMA ROLAGEM SO.
-	      -----------------------------------------------------------------
-	      MEDIDO: numa janela de 720px, o conteudo desta barra tem 881px. Com
-	      `height: 100dvh` e `overflow-y: auto`, ela era um SEGUNDO conteiner
-	      de rolagem ao lado do primeiro — duas barras de rolagem na mesma
-	      tela, e a roda do mouse fazendo uma coisa de cada lado do painel.
-
-	      `position: sticky` NAO RESOLVE, e vale registrar a conta: preso pelo
-	      topo, os 161px que passam da janela ficariam inalcancaveis para
-	      sempre; preso pelo rodape, o inalcancavel seria o topo. Um elemento
-	      maior que a janela nao cabe numa janela. Entao ele volta para o
-	      fluxo e rola COM a pagina — que e o unico jeito de existir uma
-	      rolagem so sem esconder item nenhum.
-
-	      O PAINEL FICA. Quem desenha o fundo e a borda da coluna passa a ser
-	      um pseudo-elemento do <body>, e nao mais a propria barra: assim a
-	      coluna continua parecendo coluna depois que os links acabam, em vez
-	      de o papel de tras aparecer do nada no meio da pagina.
-
-	      E O ANCORA E A CAIXA DO <body>, NAO O `.layout`. Isto foi erro
-	      medido DUAS vezes, e as duas medidas ficam registradas, porque as
-	      duas eram invisiveis a olho nu:
-
-	      1) Presa ao `.layout`, a barra saiu em 754->1022 numa janela de
-	      1290: a caixa do `.layout` ja exclui os 268px do `padding-right` do
-	      <body>, entao o `right: 0` a encostava no fim do CONTEUDO — em cima
-	      da coluna de texto, que termina em 814.
-
-	      2) Presa ao <body>, ela ficou certa (1007->1275) e foi o PAINEL que
-	      saiu do lugar: `position: fixed` se mede pelo viewport, e o viewport
-	      tem os 15px da barra de rolagem que a caixa do <body> nao tem. O
-	      painel ia de 1022 a 1290, a barra de 1007 a 1275: 15px de
-	      desencontro — exatamente a largura da barra de rolagem.
-
-	      Por isso o painel tambem e `absolute`: os dois passam a se medir
-	      pela MESMA caixa e o desencontro some por construcao, em vez de
-	      ficar dependendo de um numero magico que muda com o navegador e o
-	      sistema de quem le. Uma barra e um painel, os dois ancorados no
-	      <body>: 1007->1275. */
-	body {
-		position: relative;
-	}
-
-	.sidebar {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: auto;
-		height: auto;
-		max-height: none;
-		overflow-y: visible;
-		/*
-		   A barra TAMBEM pinta a propria coluna, e nao so o painel.
-
-		   Isto foi erro medido numa pagina CURTA (`/contato/`, 910px de
-		   documento): ali a caixa do <body> tem 813px, porque quem estica o
-		   documento e a propria barra — e o painel, que termina junto com o
-		   <body>, parava 97px antes do fim da barra. Os ultimos links ficavam
-		   sobre o papel de tras, sem coluna nenhuma atras deles.
-
-		   Com as duas pinturas a coluna fica coberta nos dois casos: numa
-		   pagina longa quem cobre e o painel (a barra tem so a altura dos
-		   links), numa curta quem cobre e a barra. As duas bordas esquerdas
-		   caem na mesma coluna de pixel, entao nao aparece linha dobrada.
-		*/
-		background: var(--paper-alt);
-		border-left: 1px solid var(--line);
-	}
-
 	body::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 40;
-		width: var(--sidebar-w, 268px);
-		background: var(--paper-alt);
-		border-left: 1px solid var(--line);
-		/*
-		   O painel passa por cima do cabecalho (como a barra fixa passava) e
-		   nao pode interceptar clique nenhum — quem clica ali esta clicando no
-		   cabecalho, que continua por baixo.
-		*/
-		pointer-events: none;
+		display: none;
 	}
 
 	html[data-sidebar="collapsed"] body::after {
@@ -4196,182 +4707,193 @@ a.link-externo:focus-visible .link-externo__icone {
 }
 
 /* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (ESTILO CADERNO/LIVRO)
+   MARCADOR DE TEXTO SUAVE & TRANSLÚCIDO (MINIMALISTA)
    Aplica nos elementos de ênfase (strong / b / mark) do corpo de texto (.prose)
-   um efeito suave de caneta marca-texto feita à mão.
+   um grifado leve e discreto em tons de amarelo/âmbar.
    ============================================================ */
 
 .prose strong,
 .prose b,
 .prose mark {
-  font-weight: 600;
-  background: linear-gradient(104deg, rgba(254, 240, 138, 0.82) 0.9%, rgba(253, 224, 71, 0.72) 100%);
-  padding: 0.12em 0.35em;
-  border-radius: 3px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  display: inline !important;
+  font-weight: 600 !important;
+  background-color: #f0e6cf !important;
+  color: #2b251a !important;
+  background-image: none !important;
+  padding: 0.1em 0.35em !important;
+  border-radius: 4px !important;
+  filter: none !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
+}
+
+.prose strong::before,
+.prose b::before,
+.prose mark::before {
+  content: none !important;
 }
 
 [data-theme='dark'] .prose strong,
 [data-theme='dark'] .prose b,
 [data-theme='dark'] .prose mark {
-  background: linear-gradient(104deg, rgba(202, 138, 4, 0.42) 0.9%, rgba(234, 179, 8, 0.46) 100%);
-  color: #fef08a;
+  background-color: rgba(217, 185, 130, 0.2) !important;
+  background-image: none !important;
+  filter: none !important;
+  color: #f2dec0 !important;
 }
+
+
+
+/* Metadados Editoriais da Home (Tema, Data, Tempo de Leitura) */
+.post-item__meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+
+.post-item__meta-line .post-item__theme {
+  margin-bottom: 0;
+}
+
+.post-item__meta-divider {
+  color: var(--ink-mute, #a1a1aa);
+  user-select: none;
+  font-size: 0.75rem;
+}
+
+.post-item__date,
+.post-item__reading-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
 /* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (OPÇÃO 4: TRAÇO INCLINADO FEITO À MÃO)
-   Tom de amarelo quente, suave e discreto (marca-texto pastel envelhecido).
+   CHARMES VISUAIS & MICRO-INTERAÇÕES
    ============================================================ */
 
-.prose strong,
-.prose b,
-.prose mark {
+/* 1. BARRA DE LEITURA NO TOPO */
+.reading-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, var(--green, #15803d), #eab308);
+  width: 0%;
+  z-index: 99999;
+  pointer-events: none;
+  transition: width 0.08s ease-out;
+}
+
+/* 2. SELEÇÃO DE TEXTO PERSONALIZADA */
+::selection {
+  background: rgba(254, 240, 138, 0.75);
+  color: #1a1a1a;
+}
+[data-theme='dark'] ::selection {
+  background: rgba(234, 179, 8, 0.45);
+  color: #ffffff;
+}
+
+/* 4. SUBLINHADO TRACEJADO CHARMOSO NOS LINKS (.prose a) */
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo) {
+  text-decoration: underline dashed rgba(180, 145, 90, 0.55) !important;
+  text-underline-offset: 4px !important;
+  text-decoration-thickness: 1.5px !important;
+  transition: all 0.2s ease !important;
+}
+
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo):hover,
+.prose a:not(.button):not(.wp-block-button__link):not(.link-externo):focus-visible {
+  text-decoration-style: solid !important;
+  text-decoration-color: var(--green-deep, #20422c) !important;
+  color: var(--green-deep, #20422c) !important;
+}
+
+/* Remove sublinhado APENAS de links que envolvem ou estão dentro de grifados */
+.prose strong a,
+.prose b a,
+.prose mark a,
+.prose a:has(strong),
+.prose a:has(b),
+.prose a:has(mark),
+.prose a.link-externo,
+a.link-externo {
+  text-decoration: none !important;
+}
+
+.prose strong a:hover,
+.prose b a:hover,
+.prose mark a:hover,
+.prose a:has(strong):hover,
+.prose a:has(b):hover,
+.prose a:has(mark):hover {
+  text-decoration: none !important;
+}
+
+/* 7. DIVISOR EDITORIAL COM GLIFOS NO SEPARADOR (.prose hr) */
+hr.wp-block-separator,
+.prose hr,
+.prose .wp-block-separator,
+.wp-block-separator {
+  border: 0 !important;
+  text-align: center !important;
+  margin: 3rem 0 !important;
+  height: 24px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  background: transparent !important;
+  position: relative !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+}
+
+hr.wp-block-separator::before,
+.prose hr::before,
+.prose .wp-block-separator::before,
+.wp-block-separator::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 5% !important;
+  right: 5% !important;
+  height: 1px !important;
+  background: var(--line, #e2e8f0) !important;
+  z-index: 1 !important;
+}
+
+hr.wp-block-separator::after,
+.prose hr::after,
+.prose .wp-block-separator::after,
+.wp-block-separator::after {
+  content: "✦ ✦ ✦" !important;
+  position: relative !important;
+  z-index: 2 !important;
+  display: inline-block !important;
+  background: var(--paper, #faf9f5) !important;
+  padding: 0 0.8rem !important;
+  color: var(--ink-mute, #a1a1aa) !important;
+  font-size: 0.82rem !important;
+  letter-spacing: 0.25em !important;
+}
+
+/* 8. TECLAS FÍSICAS DE ATALHO (<kbd>) */
+kbd,
+.prose kbd {
   display: inline-block;
+  padding: 0.15em 0.45em;
+  font-size: 0.78em;
+  font-family: inherit;
   font-weight: 600;
-  position: relative;
-  padding: 0.05em 0.25em;
-  z-index: 1;
-}
-
-.prose strong::before,
-.prose b::before,
-.prose mark::before {
-  content: "";
-  position: absolute;
-  inset: 12% -2px 10% -2px;
-  background: rgba(253, 230, 138, 0.45);
-  border-radius: 4px 2px 5px 2px;
-  transform: rotate(-0.8deg) skew(-2deg);
-  z-index: -1;
-}
-
-[data-theme='dark'] .prose strong,
-[data-theme='dark'] .prose b,
-[data-theme='dark'] .prose mark {
-  color: #fef9c3;
-}
-
-[data-theme='dark'] .prose strong::before,
-[data-theme='dark'] .prose b::before,
-[data-theme='dark'] .prose mark::before {
-  background: rgba(234, 179, 8, 0.22);
-}
-/* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (SUTIL, DISCRETO & COMPATÍVEL COM QUEBRA DE LINHA)
-   Usa background inline nativo com box-decoration-break: clone.
-   Isso permite que o texto quebre linhas naturalmente sem criar blocos rígidos,
-   sem empurrar pontos finais e sem marcar áreas vazias.
-   ============================================================ */
-
-.prose strong,
-.prose b,
-.prose mark {
-  display: inline !important;
-  font-weight: 600;
-  background-color: rgba(253, 230, 138, 0.42) !important;
-  background-image: linear-gradient(104deg, rgba(254, 240, 138, 0.5) 0%, rgba(253, 224, 71, 0.35) 100%) !important;
-  padding: 0.12em 0.25em !important;
-  border-radius: 3px !important;
-  box-decoration-break: clone !important;
-  -webkit-box-decoration-break: clone !important;
-}
-
-.prose strong::before,
-.prose b::before,
-.prose mark::before {
-  content: none !important;
-}
-
-[data-theme='dark'] .prose strong,
-[data-theme='dark'] .prose b,
-[data-theme='dark'] .prose mark {
-  background-color: rgba(234, 179, 8, 0.2) !important;
-  background-image: linear-gradient(104deg, rgba(202, 138, 4, 0.25) 0%, rgba(234, 179, 8, 0.18) 100%) !important;
-  color: #fef9c3 !important;
-}
-/* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (OPÇÃO C1: DUPLA PASSADA DESALINHADA)
-   Simula a física de um marcador de texto passado duas vezes à mão:
-   - 1ª passada ampla na altura do texto (78% de cobertura)
-   - 2ª passada de reforço na base com ângulo e densidade diferentes
-   100% inline nativo com box-decoration-break: clone.
-   ============================================================ */
-
-.prose strong,
-.prose b,
-.prose mark {
-  display: inline !important;
-  font-weight: 600;
-  background-image:
-    linear-gradient(100deg, rgba(253, 224, 71, 0.45) 15%, rgba(250, 204, 21, 0.35) 60%, transparent 85%),
-    linear-gradient(to right, rgba(254, 240, 138, 0.42), rgba(253, 224, 71, 0.38)) !important;
-  background-repeat: no-repeat !important;
-  background-size: 100% 55%, 100% 78% !important;
-  background-position: 2px 90%, 0 76% !important;
-  padding: 0.08em 0.32em 0.16em 0.32em !important;
-  border-radius: 180px 12px 160px 10px / 12px 180px 10px 160px !important;
-  box-decoration-break: clone !important;
-  -webkit-box-decoration-break: clone !important;
-}
-
-.prose strong::before,
-.prose b::before,
-.prose mark::before {
-  content: none !important;
-}
-
-[data-theme='dark'] .prose strong,
-[data-theme='dark'] .prose b,
-[data-theme='dark'] .prose mark {
-  background-image:
-    linear-gradient(100deg, rgba(234, 179, 8, 0.28) 15%, rgba(202, 138, 4, 0.22) 60%, transparent 85%),
-    linear-gradient(to right, rgba(234, 179, 8, 0.2), rgba(202, 138, 4, 0.18)) !important;
-  color: #fef9c3 !important;
-}
-/* ============================================================
-   MARCADOR DE TEXTO ARTESANAL (BORDAS SUAVES DE FELTRO & GOTA FINAL)
-   Resolve os cantos duros:
-   - Esfumado suave nas bordas horizontais (fade de feltro 0% -> 100%)
-   - Leve sangramento vertical imitando tinta absorvida pelo papel
-   - Gota/acúmulo orgânico no final sem quinas rígidas
-   ============================================================ */
-
-.prose strong,
-.prose b,
-.prose mark {
-  display: inline !important;
-  font-weight: 600;
-  background-image:
-    /* Gota / acúmulo suave no finalzinho (esfumada, sem corte seco) */
-    radial-gradient(ellipse 9px 13px at calc(100% - 3px) 80%, rgba(245, 158, 11, 0.44) 0%, rgba(251, 191, 36, 0.28) 60%, transparent 88%),
-    /* 2ª passada de reforço com entrada e saída esfumadas */
-    linear-gradient(100deg, transparent 0%, rgba(253, 224, 71, 0.42) 12%, rgba(250, 204, 21, 0.35) 60%, transparent 92%),
-    /* 1ª passada: bordas suaves (fade de feltro nas pontas esquerda e direita) */
-    linear-gradient(to right, transparent 0%, rgba(254, 240, 138, 0.4) 6px, rgba(254, 240, 138, 0.44) 50%, rgba(253, 224, 71, 0.4) calc(100% - 6px), transparent 100%) !important;
-  background-repeat: no-repeat !important;
-  background-size: 100% 100%, 100% 55%, 100% 78% !important;
-  background-position: 0 0, 2px 90%, 0 76% !important;
-  padding: 0.1em 0.45em 0.18em 0.4em !important;
-  border-radius: 6px !important;
-  /* Suaviza o sangramento da tinta nas bordas para tirar qualquer aspecto vetorizado */
-  filter: drop-shadow(0 0 1.5px rgba(253, 224, 71, 0.35)) !important;
-  box-decoration-break: clone !important;
-  -webkit-box-decoration-break: clone !important;
-}
-
-.prose strong::before,
-.prose b::before,
-.prose mark::before {
-  content: none !important;
-}
-
-[data-theme='dark'] .prose strong,
-[data-theme='dark'] .prose b,
-[data-theme='dark'] .prose mark {
-  background-image:
-    radial-gradient(ellipse 9px 13px at calc(100% - 3px) 80%, rgba(217, 119, 6, 0.35) 0%, rgba(245, 158, 11, 0.22) 60%, transparent 88%),
-    linear-gradient(100deg, transparent 0%, rgba(234, 179, 8, 0.26) 12%, rgba(202, 138, 4, 0.2) 60%, transparent 92%),
-    linear-gradient(to right, transparent 0%, rgba(234, 179, 8, 0.18) 6px, rgba(234, 179, 8, 0.22) 50%, rgba(202, 138, 4, 0.18) calc(100% - 6px), transparent 100%) !important;
-  filter: drop-shadow(0 0 1.5px rgba(234, 179, 8, 0.2)) !important;
-  color: #fef9c3 !important;
+  color: var(--ink);
+  background-color: var(--paper-card, #ffffff);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.05);
+  line-height: 1.2;
 }

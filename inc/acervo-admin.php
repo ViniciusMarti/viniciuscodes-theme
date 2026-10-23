@@ -102,6 +102,14 @@ function vc_acervo_campos(): array {
 			'rotulo'   => 'estado da leitura',
 			'so_livro' => true,
 		),
+		'pagina'  => array(
+			'rotulo'   => 'página atual (progresso)',
+			'so_livro' => true,
+		),
+		'paginas' => array(
+			'rotulo'   => 'total de páginas',
+			'so_livro' => true,
+		),
 	);
 }
 
@@ -155,28 +163,52 @@ function vc_acervo_dec( string $valor ): string {
  *
  * @return int Zero quando não há página com esse template.
  */
-function vc_acervo_pagina(): int {
-	static $id = null;
+function vc_acervo_pagina( string $tipo = 'livro' ): int {
+	static $cache = array();
 
-	if ( null !== $id ) {
-		return (int) $id;
+	if ( isset( $cache[ $tipo ] ) ) {
+		return (int) $cache[ $tipo ];
 	}
 
-	$id = 0;
+	$slug     = ( 'filme' === $tipo ) ? 'filmes' : 'livros';
+	$template = ( 'filme' === $tipo ) ? 'page-templates/filmes.php' : 'page-templates/livros.php';
 
 	/*
-	 * Pelo TEMPLATE, que é o que define o acervo: a página que usa
-	 * `page-templates/acervo.php`. Isso continua verdade mesmo que o endereço
-	 * dela mude um dia — e endereço é justamente a parte que costuma mudar.
-	 *
-	 * `get_posts()` e não `get_pages()`: com o mesmo `meta_key` e o mesmo
-	 * `meta_value` que estão no banco (conferidos com `wp post meta list`), a
-	 * primeira acha a página e a segunda devolveu lista VAZIA — e a diferença
-	 * não estava no meta, e sim no `number => 1` que eu tinha passado, argumento
-	 * que ela não soube usar. Ficou a que acha sem depender de saber qual dos
-	 * dois era o culpado.
+	 * Pelo template da página correspondente.
 	 */
 	$achadas = get_posts(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'meta_key'       => '_wp_page_template',
+			'meta_value'     => $template,
+		)
+	);
+
+	if ( $achadas ) {
+		$cache[ $tipo ] = (int) $achadas[0];
+
+		return $cache[ $tipo ];
+	}
+
+	/*
+	 * Pelo endereço correspondente (/livros/ ou /filmes/).
+	 */
+	$pagina = get_page_by_path( $slug );
+
+	if ( $pagina ) {
+		$cache[ $tipo ] = (int) $pagina->ID;
+
+		return $cache[ $tipo ];
+	}
+
+	/*
+	 * Fallback para a página unificada anterior (/acervo/), caso ainda não existam páginas separadas.
+	 */
+	$legado = get_posts(
 		array(
 			'post_type'      => 'page',
 			'post_status'    => 'any',
@@ -188,24 +220,23 @@ function vc_acervo_pagina(): int {
 		)
 	);
 
-	if ( $achadas ) {
-		$id = (int) $achadas[0];
+	if ( $legado ) {
+		$cache[ $tipo ] = (int) $legado[0];
 
-		return (int) $id;
+		return $cache[ $tipo ];
 	}
 
-	/*
-	 * Segunda tentativa, pelo endereço: se alguém trocar o template da página, o
-	 * acervo continua sendo achado pelo slug em vez de a tela dizer que não
-	 * existe.
-	 */
-	$pagina = get_page_by_path( 'acervo' );
+	$pagina_legado = get_page_by_path( 'acervo' );
 
-	if ( $pagina ) {
-		$id = (int) $pagina->ID;
+	if ( $pagina_legado ) {
+		$cache[ $tipo ] = (int) $pagina_legado->ID;
+
+		return $cache[ $tipo ];
 	}
 
-	return (int) $id;
+	$cache[ $tipo ] = 0;
+
+	return 0;
 }
 
 /* -------------------------------------------------------------------------
@@ -456,8 +487,10 @@ function vc_acervo_aplicar( string $html, array $acao ): array {
  * @param string $html O texto novo.
  * @return array{ok: bool, erro: string}
  */
-function vc_acervo_gravar( string $html ): array {
-	$id = vc_acervo_pagina();
+function vc_acervo_gravar( string $html, int $id = 0 ): array {
+	if ( ! $id ) {
+		$id = vc_acervo_pagina();
+	}
 
 	if ( ! $id ) {
 		return array(
@@ -618,9 +651,27 @@ function vc_acervo_menu() {
 		'Acervo',
 		'edit_pages',
 		'vc-acervo',
-		'vc_acervo_tela',
+		'vc_acervo_tela_livros',
 		'dashicons-book-alt',
 		21
+	);
+
+	add_submenu_page(
+		'vc-acervo',
+		'Livros',
+		'Livros',
+		'edit_pages',
+		'vc-acervo',
+		'vc_acervo_tela_livros'
+	);
+
+	add_submenu_page(
+		'vc-acervo',
+		'Filmes',
+		'Filmes',
+		'edit_pages',
+		'vc-acervo-filmes',
+		'vc_acervo_tela_filmes'
 	);
 }
 add_action( 'admin_menu', 'vc_acervo_menu' );
@@ -634,7 +685,7 @@ add_action( 'admin_menu', 'vc_acervo_menu' );
 function vc_acervo_media() {
 	$tela = get_current_screen();
 
-	if ( $tela && 'toplevel_page_vc-acervo' === $tela->id ) {
+	if ( $tela && in_array( $tela->id, array( 'toplevel_page_vc-acervo', 'acervo_page_vc-acervo-filmes' ), true ) ) {
 		wp_enqueue_media();
 	}
 }
@@ -662,11 +713,14 @@ function vc_acervo_aviso( string $tipo, string $texto ): void {
  * O endereço desta tela, com os parâmetros que ela entende.
  *
  * @param array<string, string|int> $extra Parâmetros.
+ * @param string                    $tipo  'livro' ou 'filme'.
  * @return string
  */
-function vc_acervo_url( array $extra = array() ): string {
+function vc_acervo_url( array $extra = array(), string $tipo = 'livro' ): string {
+	$pagina = ( 'filme' === $tipo ) ? 'vc-acervo-filmes' : 'vc-acervo';
+
 	return add_query_arg(
-		array_merge( array( 'page' => 'vc-acervo' ), $extra ),
+		array_merge( array( 'page' => $pagina ), $extra ),
 		admin_url( 'admin.php' )
 	);
 }
@@ -674,10 +728,11 @@ function vc_acervo_url( array $extra = array() ): string {
 /**
  * O formulário de uma obra.
  *
- * @param array{titulo: string, tipo: string, datas: array<int, string>, campos: array<string, string>} $obra   A obra.
- * @param int                                                                                          $indice -1 para obra nova.
+ * @param array{titulo: string, tipo: string, datas: array<int, string>, campos: array<string, string>} $obra       A obra.
+ * @param int                                                                                          $indice     -1 para obra nova.
+ * @param string                                                                                       $tipo_secao 'livro' ou 'filme'.
  */
-function vc_acervo_formulario( array $obra, int $indice ): void {
+function vc_acervo_formulario( array $obra, int $indice, string $tipo_secao = 'livro' ): void {
 	$livro = ( 'livro' === $obra['tipo'] );
 
 	?>
@@ -685,6 +740,7 @@ function vc_acervo_formulario( array $obra, int $indice ): void {
 		<?php wp_nonce_field( 'vc_acervo_' . $indice ); ?>
 		<input type="hidden" name="action" value="vc_acervo_salvar">
 		<input type="hidden" name="indice" value="<?php echo (int) $indice; ?>">
+		<input type="hidden" name="tipo_secao" value="<?php echo esc_attr( $tipo_secao ); ?>">
 
 		<table class="form-table" role="presentation">
 			<tr>
@@ -748,9 +804,10 @@ function vc_acervo_formulario( array $obra, int $indice ): void {
 							<select id="<?php echo esc_attr( $id ); ?>" name="campos[<?php echo esc_attr( $nome ); ?>]">
 								<?php
 								$estados = array(
-									''      => '-',
-									'lendo' => 'lendo',
-									'lido'  => 'lido',
+									''           => '—',
+									'lendo'      => 'lendo',
+									'lido'       => 'lido',
+									'abandonado' => 'abandonado',
 								);
 								?>
 								<?php foreach ( $estados as $chave => $rotulo ) : ?>
@@ -796,41 +853,45 @@ function vc_acervo_formulario( array $obra, int $indice ): void {
 
 		<p class="submit">
 			<button type="submit" class="button button-primary">
-				<?php echo -1 === $indice ? 'acrescentar ao acervo' : 'salvar'; ?>
+				<?php echo -1 === $indice ? 'acrescentar' : 'salvar'; ?>
 			</button>
-			<a class="button" href="<?php echo esc_url( vc_acervo_url() ); ?>">cancelar</a>
+			<a class="button" href="<?php echo esc_url( vc_acervo_url( array(), $tipo_secao ) ); ?>">cancelar</a>
 		</p>
 	</form>
 	<?php
 }
 
 /**
- * A tela: a lista de tudo, o formulário de uma obra, os avisos.
+ * A tela: a lista de obras do tipo selecionado, o formulário e os avisos.
+ *
+ * @param string $tipo_ativo 'livro' ou 'filme'.
  */
-function vc_acervo_tela() {
+function vc_acervo_tela( string $tipo_ativo = 'livro' ) {
 	if ( ! current_user_can( 'edit_pages' ) ) {
 		wp_die( esc_html__( 'Você não tem permissão para editar o acervo.', 'viniciuscodes' ) );
 	}
 
-	$id = vc_acervo_pagina();
+	$id = vc_acervo_pagina( $tipo_ativo );
 
 	if ( ! $id ) {
-		vc_acervo_aviso( 'error', 'Não achei a página que usa o template do acervo (page-templates/acervo.php).' );
+		vc_acervo_aviso( 'error', sprintf( 'Não achei a página de %s no WordPress.', 'filme' === $tipo_ativo ? 'filmes' : 'livros' ) );
 		return;
 	}
 
 	$html  = (string) get_post_field( 'post_content', $id );
 	$obras = vc_acervo_ler( $html );
 
-	$arq   = isset( $_GET['vc-aviso'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['vc-aviso'] ) ) : '';
-	$erro  = isset( $_GET['vc-erro'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['vc-erro'] ) ) : '';
-	$abrir = isset( $_GET['obra'] ) ? (int) $_GET['obra'] : null;
-	$busca = isset( $_GET['busca'] ) ? trim( sanitize_text_field( wp_unslash( (string) $_GET['busca'] ) ) ) : '';
+	$arq          = isset( $_GET['vc-aviso'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['vc-aviso'] ) ) : '';
+	$erro         = isset( $_GET['vc-erro'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['vc-erro'] ) ) : '';
+	$abrir        = isset( $_GET['obra'] ) ? (int) $_GET['obra'] : null;
+	$busca        = isset( $_GET['busca'] ) ? trim( sanitize_text_field( wp_unslash( (string) $_GET['busca'] ) ) ) : '';
+	$titulo_secao = ( 'filme' === $tipo_ativo ) ? 'Filmes' : 'Livros';
+	$slug_pagina  = ( 'filme' === $tipo_ativo ) ? 'vc-acervo-filmes' : 'vc-acervo';
 	?>
 	<div class="wrap vc-acervo">
-		<h1 class="wp-heading-inline">Acervo</h1>
-		<a class="page-title-action" href="<?php echo esc_url( vc_acervo_url( array( 'obra' => -1 ) ) ); ?>">acrescentar obra</a>
-		<a class="page-title-action" href="<?php echo esc_url( (string) get_permalink( $id ) ); ?>" target="_blank" rel="noopener">ver a página</a>
+		<h1 class="wp-heading-inline"><?php echo esc_html( $titulo_secao ); ?></h1>
+		<a class="page-title-action" href="<?php echo esc_url( vc_acervo_url( array( 'obra' => -1 ), $tipo_ativo ) ); ?>">acrescentar <?php echo esc_html( 'filme' === $tipo_ativo ? 'filme' : 'livro' ); ?></a>
+		<a class="page-title-action" href="<?php echo esc_url( (string) get_permalink( $id ) ); ?>" target="_blank" rel="noopener">ver página pública</a>
 		<hr class="wp-header-end">
 
 		<?php
@@ -841,49 +902,36 @@ function vc_acervo_tela() {
 		if ( '' !== $erro ) {
 			vc_acervo_aviso( 'error', $erro );
 		}
-
-		$contagem = array();
-
-		foreach ( vc_acervo_tipos() as $tipo => $rotulo ) {
-			$quantas = 0;
-
-			foreach ( $obras as $o ) {
-				if ( $o['tipo'] === $tipo ) {
-					$quantas++;
-				}
-			}
-
-			$contagem[] = $quantas . ' ' . $rotulo;
-		}
 		?>
 		<p class="vc-conta">
-			<?php echo esc_html( count( $obras ) . ' obras: ' . implode( ', ', $contagem ) . '.' ); ?>
-			O acervo vive no texto da <a href="<?php echo esc_url( (string) get_edit_post_link( $id ) ); ?>">página <?php echo (int) $id; ?></a>,
-			uma obra por linha: esta tela edita esse mesmo texto.
+			<?php echo esc_html( count( $obras ) . ' ' . ( 'filme' === $tipo_ativo ? 'filmes cadastrados.' : 'livros cadastrados.' ) ); ?>
+			Vive no texto da <a href="<?php echo esc_url( (string) get_edit_post_link( $id ) ); ?>">página <?php echo (int) $id; ?></a>,
+			uma obra por linha.
 		</p>
 
 		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>" class="vc-busca">
-			<input type="hidden" name="page" value="vc-acervo">
-			<label class="screen-reader-text" for="vc-busca">buscar uma obra</label>
+			<input type="hidden" name="page" value="<?php echo esc_attr( $slug_pagina ); ?>">
+			<label class="screen-reader-text" for="vc-busca">buscar</label>
 			<input type="search" id="vc-busca" name="busca" value="<?php echo esc_attr( $busca ); ?>" placeholder="buscar pelo nome">
 			<button type="submit" class="button">buscar</button>
 			<?php if ( '' !== $busca ) : ?>
-				<a class="button" href="<?php echo esc_url( vc_acervo_url() ); ?>">limpar</a>
+				<a class="button" href="<?php echo esc_url( vc_acervo_url( array(), $tipo_ativo ) ); ?>">limpar</a>
 			<?php endif; ?>
 		</form>
 
 		<?php if ( -1 === $abrir ) : ?>
 			<div class="vc-painel">
-				<h2>obra nova</h2>
+				<h2>acrescentar <?php echo esc_html( 'filme' === $tipo_ativo ? 'filme' : 'livro' ); ?></h2>
 				<?php
 				vc_acervo_formulario(
 					array(
 						'titulo' => '',
-						'tipo'   => 'livro',
+						'tipo'   => $tipo_ativo,
 						'datas'  => array(),
 						'campos' => array(),
 					),
-					-1
+					-1,
+					$tipo_ativo
 				);
 				?>
 			</div>
@@ -892,16 +940,18 @@ function vc_acervo_tela() {
 		<?php if ( null !== $abrir && $abrir >= 0 && isset( $obras[ $abrir ] ) ) : ?>
 			<div class="vc-painel">
 				<h2>editando: <?php echo esc_html( $obras[ $abrir ]['titulo'] ); ?></h2>
-				<?php vc_acervo_formulario( $obras[ $abrir ], $abrir ); ?>
+				<?php vc_acervo_formulario( $obras[ $abrir ], $abrir, $tipo_ativo ); ?>
 			</div>
 		<?php endif; ?>
 
-		<?php foreach ( vc_acervo_tipos() as $tipo => $rotulo ) : ?>
-			<?php
+		<?php
+		$grupos = array( $tipo_ativo => ( 'filme' === $tipo_ativo ? 'filmes' : 'livros' ) );
+
+		foreach ( $grupos as $tipo => $rotulo ) :
 			$lista = array();
 
 			foreach ( $obras as $i => $o ) {
-				if ( $o['tipo'] !== $tipo ) {
+				if ( '' !== $o['tipo'] && $o['tipo'] !== $tipo ) {
 					continue;
 				}
 
@@ -913,17 +963,13 @@ function vc_acervo_tela() {
 			}
 			?>
 			<?php if ( $lista ) : ?>
-				<h2 class="vc-titulo-grupo">
-					<?php echo esc_html( $rotulo ); ?>
-					<span class="count">(<?php echo count( $lista ); ?>)</span>
-				</h2>
 				<table class="wp-list-table widefat fixed striped vc-tabela">
 					<thead>
 						<tr>
 							<td class="vc-col-capa">capa</td>
 							<td>nome</td>
-							<td class="vc-col-datas">datas</td>
-							<td class="vc-col-campos">o que mais está escrito</td>
+							<td class="vc-col-datas"><?php echo 'filme' === $tipo_ativo ? 'datas' : 'autor'; ?></td>
+							<td class="vc-col-campos">detalhes</td>
 							<td class="vc-col-acoes">ações</td>
 						</tr>
 					</thead>
@@ -940,35 +986,43 @@ function vc_acervo_tela() {
 							</td>
 							<td>
 								<strong>
-									<a href="<?php echo esc_url( vc_acervo_url( array( 'obra' => $i ) ) ); ?>"><?php echo esc_html( $o['titulo'] ); ?></a>
+									<a href="<?php echo esc_url( vc_acervo_url( array( 'obra' => $i ), $tipo_ativo ) ); ?>"><?php echo esc_html( $o['titulo'] ); ?></a>
 								</strong>
 							</td>
 							<td class="vc-col-datas">
-								<?php if ( $o['datas'] ) : ?>
-									<?php echo esc_html( implode( ', ', $o['datas'] ) ); ?>
-									<?php if ( count( $o['datas'] ) > 1 ) : ?>
-										<span class="vc-vezes"><?php echo (int) count( $o['datas'] ); ?>×</span>
+								<?php if ( 'filme' === $tipo_ativo ) : ?>
+									<?php if ( $o['datas'] ) : ?>
+										<?php echo esc_html( implode( ', ', $o['datas'] ) ); ?>
+										<?php if ( count( $o['datas'] ) > 1 ) : ?>
+											<span class="vc-vezes"><?php echo (int) count( $o['datas'] ); ?>×</span>
+										<?php endif; ?>
+									<?php else : ?>
+										<span class="vc-quero">quero ver</span>
 									<?php endif; ?>
 								<?php else : ?>
-									<span class="vc-quero">quero ver</span>
+									<?php echo esc_html( $o['campos']['autor'] ?? '—' ); ?>
 								<?php endif; ?>
 							</td>
 							<td class="vc-col-campos">
 								<?php
-								/* O que já está escrito nesta linha, em nomes de campo: é o
-								   jeito de ver de relance o que falta preencher. */
-								$escritos = array_keys( $o['campos'] );
-								echo esc_html( $escritos ? implode( ', ', $escritos ) : 'nada' );
+								$escritos = array();
+								foreach ( $o['campos'] as $k => $v ) {
+									if ( '' !== $v && 'capa' !== $k && ( 'filme' === $tipo_ativo || 'autor' !== $k ) ) {
+										$escritos[] = $k . ': ' . ( mb_strlen( $v ) > 25 ? mb_substr( $v, 0, 25 ) . '…' : $v );
+									}
+								}
+								echo esc_html( $escritos ? implode( ' · ', $escritos ) : '—' );
 								?>
 							</td>
 							<td class="vc-col-acoes">
-								<a class="button button-small" href="<?php echo esc_url( vc_acervo_url( array( 'obra' => $i ) ) ); ?>">editar</a>
+								<a class="button button-small" href="<?php echo esc_url( vc_acervo_url( array( 'obra' => $i ), $tipo_ativo ) ); ?>">editar</a>
 								<form method="post" class="vc-remover"
 									action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"
-									onsubmit="<?php echo esc_attr( 'return confirm(' . wp_json_encode( 'Remover "' . $o['titulo'] . '" do acervo?' ) . ');' ); ?>">
+									onsubmit="<?php echo esc_attr( 'return confirm(' . wp_json_encode( 'Remover "' . $o['titulo'] . '"?' ) . ');' ); ?>">
 									<?php wp_nonce_field( 'vc_acervo_' . $i ); ?>
 									<input type="hidden" name="action" value="vc_acervo_salvar">
 									<input type="hidden" name="indice" value="<?php echo (int) $i; ?>">
+									<input type="hidden" name="tipo_secao" value="<?php echo esc_attr( $tipo_ativo ); ?>">
 									<input type="hidden" name="remover" value="1">
 									<button type="submit" class="button button-small button-link-delete">remover</button>
 								</form>
@@ -982,12 +1036,6 @@ function vc_acervo_tela() {
 	</div>
 
 	<style>
-		/*
-		   Curto de propósito: a tela usa as classes do próprio painel
-		   (`wp-list-table`, `button`, `form-table`, `notice`, `page-title-action`),
-		   e o que é nosso são só três coisas: a prévia da capa, o "quero ver"
-		   marcado, e o botão de remover ao lado do de editar.
-		*/
 		.vc-conta { color: #50575e; max-width: 900px; }
 		.vc-busca { display: flex; align-items: center; gap: 8px; margin: 14px 0 8px; max-width: 520px; }
 		.vc-painel { background: #fff; border: 1px solid #c3c4c7; border-left: 4px solid #2271b1; padding: 1px 20px 20px; margin: 18px 0; max-width: 900px; }
@@ -1016,8 +1064,6 @@ function vc_acervo_tela() {
 
 		if ( botao && campo ) {
 			botao.addEventListener( 'click', function () {
-				/* A biblioteca é carregada no rodapé, depois deste script: por
-				   isso a checagem é no clique, e não na hora de ligar o botão. */
 				if ( ! window.wp || ! window.wp.media ) {
 					return;
 				}
@@ -1030,8 +1076,6 @@ function vc_acervo_tela() {
 
 				quadro.on( 'select', function () {
 					var anexo = quadro.state().get( 'selection' ).first().toJSON();
-
-					/* Guarda o NOME do arquivo, que é a convenção do campo. */
 					campo.value = anexo.url.split( '/' ).pop();
 
 					if ( previa ) {
@@ -1046,8 +1090,6 @@ function vc_acervo_tela() {
 			} );
 		}
 
-		/* Os campos que só valem para livro aparecem quando o tipo é livro — e
-		   um campo que já tem conteúdo nunca é escondido. */
 		var tipo = document.getElementById( 'vc-tipo' );
 
 		if ( tipo ) {
@@ -1070,23 +1112,34 @@ function vc_acervo_tela() {
 	<?php
 }
 
+/**
+ * Tela de Livros no admin.
+ */
+function vc_acervo_tela_livros() {
+	vc_acervo_tela( 'livro' );
+}
+
+/**
+ * Tela de Filmes no admin.
+ */
+function vc_acervo_tela_filmes() {
+	vc_acervo_tela( 'filme' );
+}
+
 /* -------------------------------------------------------------------------
    9. QUEM RECEBE O POST
    ------------------------------------------------------------------------- */
 
 /**
  * Salva, acrescenta ou remove uma obra.
- *
- * A ordem importa: permissão, depois nonce, depois o trabalho. E o trabalho em si
- * mora em `vc_acervo_aplicar()`, que é pura — é o que permite testar as três
- * ações sobre uma cópia do texto, sem tocar na página.
  */
 function vc_acervo_salvar() {
-	$id     = vc_acervo_pagina();
-	$indice = isset( $_POST['indice'] ) ? (int) $_POST['indice'] : -1;
+	$tipo_secao = isset( $_POST['tipo_secao'] ) ? sanitize_key( (string) $_POST['tipo_secao'] ) : 'livro';
+	$id         = vc_acervo_pagina( $tipo_secao );
+	$indice     = isset( $_POST['indice'] ) ? (int) $_POST['indice'] : -1;
 
 	if ( ! $id || ! current_user_can( 'edit_post', $id ) ) {
-		wp_die( esc_html__( 'Você não tem permissão para editar o acervo.', 'viniciuscodes' ) );
+		wp_die( esc_html__( 'Você não tem permissão para editar esta página.', 'viniciuscodes' ) );
 	}
 
 	check_admin_referer( 'vc_acervo_' . $indice );
@@ -1107,7 +1160,7 @@ function vc_acervo_salvar() {
 
 		$acao['obra'] = array(
 			'titulo' => isset( $_POST['titulo'] ) ? wp_unslash( (string) $_POST['titulo'] ) : '',
-			'tipo'   => isset( $_POST['tipo'] ) ? wp_unslash( (string) $_POST['tipo'] ) : '',
+			'tipo'   => isset( $_POST['tipo'] ) ? wp_unslash( (string) $_POST['tipo'] ) : $tipo_secao,
 			'datas'  => preg_split( '~[,;]+~', isset( $_POST['datas'] ) ? wp_unslash( (string) $_POST['datas'] ) : '' ),
 			'campos' => $campos,
 		);
@@ -1116,22 +1169,22 @@ function vc_acervo_salvar() {
 	$r = vc_acervo_aplicar( $html, $acao );
 
 	if ( '' !== $r['erro'] ) {
-		wp_safe_redirect( vc_acervo_url( array( 'vc-erro' => $r['erro'] ) ) );
+		wp_safe_redirect( vc_acervo_url( array( 'vc-erro' => $r['erro'] ), $tipo_secao ) );
 		exit;
 	}
 
-	$g = vc_acervo_gravar( $r['html'] );
+	$g = vc_acervo_gravar( $r['html'], $id );
 
 	if ( ! $g['ok'] ) {
-		wp_safe_redirect( vc_acervo_url( array( 'vc-erro' => $g['erro'] ) ) );
+		wp_safe_redirect( vc_acervo_url( array( 'vc-erro' => $g['erro'] ), $tipo_secao ) );
 		exit;
 	}
 
 	$recado = ! empty( $_POST['remover'] )
-		? 'Obra removida do acervo.'
-		: ( -1 === $indice ? 'Obra acrescentada ao acervo.' : 'Obra salva.' );
+		? 'Obra removida.'
+		: ( -1 === $indice ? 'Obra acrescentada.' : 'Obra salva.' );
 
-	wp_safe_redirect( vc_acervo_url( array( 'vc-aviso' => $recado ) ) );
+	wp_safe_redirect( vc_acervo_url( array( 'vc-aviso' => $recado ), $tipo_secao ) );
 	exit;
 }
 add_action( 'admin_post_vc_acervo_salvar', 'vc_acervo_salvar' );

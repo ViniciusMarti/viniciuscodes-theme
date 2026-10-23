@@ -45,6 +45,27 @@
 
 		anunciarTema();
 
+		if (window.matchMedia) {
+			var mediaQueryEscuro = window.matchMedia('(prefers-color-scheme: dark)');
+			var atualizarTemaDoSistema = function (e) {
+				var escolhaSalva = null;
+				try {
+					escolhaSalva = localStorage.getItem('vco-theme');
+				} catch (err) {}
+
+				if (!escolhaSalva) {
+					raiz.dataset.theme = e.matches ? 'dark' : 'light';
+					anunciarTema();
+				}
+			};
+
+			if (typeof mediaQueryEscuro.addEventListener === 'function') {
+				mediaQueryEscuro.addEventListener('change', atualizarTemaDoSistema);
+			} else if (typeof mediaQueryEscuro.addListener === 'function') {
+				mediaQueryEscuro.addListener(atualizarTemaDoSistema);
+			}
+		}
+
 		botaoDoTema.addEventListener('click', function () {
 			var proximo = raiz.dataset.theme === 'dark' ? 'light' : 'dark';
 
@@ -341,56 +362,5 @@
 		}
 	}
 
-	/* ----------------------------------------------------------- curtir/gostar */
-	var botoesCurtir = document.querySelectorAll('[data-post-like]');
-
-	botoesCurtir.forEach(function (btn) {
-		var postId = btn.getAttribute('data-post-like');
-		if (!postId) {
-			return;
-		}
-
-		var jaCurtiu = false;
-		try {
-			jaCurtiu = '1' === localStorage.getItem('vco-like-' + postId);
-		} catch (e) {}
-
-		if (jaCurtiu) {
-			btn.classList.add('post-like__btn--liked');
-		}
-
-		btn.addEventListener('click', function () {
-			if (btn.classList.contains('post-like__btn--liked')) {
-				return;
-			}
-
-			btn.classList.add('post-like__btn--liked');
-			try {
-				localStorage.setItem('vco-like-' + postId, '1');
-			} catch (e) {}
-
-			fetch('/wp-json/vinicius/v1/curtir/' + postId, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-				.then(function (res) {
-					return res.json();
-				})
-				.then(function (dados) {
-					if (dados && dados.curtidas) {
-						var countSpan = btn.querySelector('.post-like__count');
-						if (!countSpan) {
-							countSpan = document.createElement('span');
-							countSpan.className = 'post-like__count';
-							btn.appendChild(countSpan);
-						}
-						countSpan.textContent = '(' + dados.curtidas + ')';
-					}
-				})
-				.catch(function () {});
-		});
-	});
-})();
+	})();
 

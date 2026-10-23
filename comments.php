@@ -5,12 +5,7 @@
  * Princípios:
  * 1. Sem ruído visual ou caixas pesadas.
  * 2. Tipografia alinhada ao restante do site.
- * 3. Campos simples (nome, e-mail e site) e honeypot anti-spam. O E-MAIL É
- *    OPCIONAL, e existe por um motivo só: é ele que traz o Gravatar de quem
- *    comenta. Sem o campo, todo mundo cai no mesmo ícone genérico.
- *
- *    A MENÇÃO DO FEDIVERSO NÃO DEPENDE DISSO: o avatar dela vem junto com a
- *    própria menção, e o plugin o entrega pelo `get_avatar()`.
+ * 3. Campos simples (nome, e-mail, comentário) e honeypot anti-spam.
  * 4. Suporte nativo a comentários locais e webmentions/pingbacks da IndieWeb.
  *
  * @package ViniciusCodes
@@ -19,21 +14,9 @@
 if ( post_password_required() ) {
 	return;
 }
-
-$vc_total_comentarios = get_comments_number();
 ?>
 
 <section id="comentarios" class="post-comments" aria-label="comentários e respostas">
-	<div class="post-comments__header">
-		<h2 class="post-comments__title">
-			<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( 'message-circle', 18 ); ?></span>
-			<span>comentários</span>
-			<?php if ( $vc_total_comentarios > 0 ) : ?>
-				<span class="post-comments__count">(<?php echo (int) $vc_total_comentarios; ?>)</span>
-			<?php endif; ?>
-		</h2>
-	</div>
-
 	<?php if ( have_comments() ) : ?>
 		<ol class="post-comments__list">
 			<?php
@@ -41,9 +24,48 @@ $vc_total_comentarios = get_comments_number();
 				array(
 					'style'       => 'ol',
 					'short_ping'  => true,
-					'avatar_size' => 32, // O desenho é do `vc_comentario()`, em functions.php
+					'avatar_size' => 0, // Sem avatares externos por privacidade e leveza
 					'format'      => 'html5',
-					'callback'    => 'vc_comentario',
+					'callback'    => function ( $comment, $args, $depth ) {
+						$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
+						?>
+						<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( 'post-comment', $comment ); ?>>
+							<article class="post-comment__body">
+								<header class="post-comment__meta">
+									<strong class="post-comment__author"><?php comment_author_link(); ?></strong>
+									<span class="post-comment__dot" aria-hidden="true">·</span>
+									<time class="post-comment__date" datetime="<?php comment_time( 'c' ); ?>">
+										<?php comment_date( 'd \d\e F \d\e Y' ); ?>
+									</time>
+								</header>
+
+								<?php if ( '0' === $comment->comment_approved ) : ?>
+									<p class="post-comment__moderation">
+										<em>seu comentário foi recebido e aguarda aprovação prévia.</em>
+									</p>
+								<?php endif; ?>
+
+								<div class="post-comment__content">
+									<?php comment_text(); ?>
+								</div>
+
+								<div class="post-comment__reply">
+									<?php
+									comment_reply_link(
+										array_merge(
+											$args,
+											array(
+												'depth'     => $depth,
+												'max_depth' => $args['max_depth'],
+												'reply_text' => 'responder',
+											)
+										)
+									);
+									?>
+								</div>
+							</article>
+						<?php
+					},
 				)
 			);
 			?>
@@ -53,11 +75,6 @@ $vc_total_comentarios = get_comments_number();
 			<nav class="post-comments__nav" aria-label="navegação de comentários">
 				<?php paginate_comments_links(); ?>
 			</nav>
-		<?php endif; ?>
-
-	<?php else : ?>
-		<?php if ( comments_open() ) : ?>
-			<p class="post-comments__empty">ainda não há comentários por aqui. seja a primeira pessoa a deixar uma resposta!</p>
 		<?php endif; ?>
 	<?php endif; ?>
 
@@ -83,7 +100,7 @@ $vc_total_comentarios = get_comments_number();
 							. '<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ?? '' ) . '" size="30" required autocomplete="name" />'
 							. '</div>',
 						'email'  => '<div class="post-comments__field">'
-							. '<label for="email">e-mail <span class="post-comments__hint">(opcional, não será publicado; é o que mostra seu avatar)</span></label>'
+							. '<label for="email">e-mail <span class="post-comments__hint">(opcional, não será publicado)</span></label>'
 							. '<input id="email" name="email" type="email" value="' . esc_attr( $commenter['comment_author_email'] ?? '' ) . '" size="30" autocomplete="email" />'
 							. '</div>',
 						'url'    => '<div class="post-comments__field">'

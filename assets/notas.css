@@ -4,95 +4,162 @@
 
    Carregada só nessas páginas: ver `inc/notas-feed.php`.
 
-   A LINHA DO TEMPO É FEITA DE CARTÕES, e o motivo está escrito por
-   extenso no `archive-nota.php`: o `.post-item` do `global.css` foi
-   desenhado para um texto COM título, e é o título que segmenta a
-   lista aos olhos. Sem ele, meta miúda + prosa + fio de 1px lê como
-   um texto corrido com divisórias. Aqui cada nota ganha superfície
-   própria (fundo `--paper-card`, borda, raio), um vão real até a
-   vizinha, e uma âncora visual no topo — o avatar.
+   QUASE TUDO JÁ VEM DO TEMA, e isso é deliberado. A lista usa
+   `.post-list` (o ritmo, a borda de topo, o cancelamento da borda
+   dupla embaixo do `.term-header`) e cada nota usa `.post-item` (o
+   respiro e a borda de baixo). O texto usa `.prose`, que já resolve
+   links, listas, imagens e o ritmo entre parágrafos.
 
-   O QUE CONTINUA VINDO DO TEMA: `.prose` resolve links, listas,
-   imagens e o ritmo entre parágrafos; `.post-share__btn` e
-   `.post-like__btn` desenham o botão de gostar. Nada disso se repete
-   aqui.
+   O que sobra para este arquivo é só o que é próprio de uma nota:
+   o texto no lugar do título, o lugar do botão de gostar, e a forma
+   compacta que esse botão tem na lista.
 
    NENHUMA COR É ESCRITA À MÃO. Tudo sai dos tokens de `global.css`
-   (`--paper-card`, `--line`, `--line-strong`, `--ink`, `--ink-mute`,
-   `--green-deep`, `--radius`), e por isso o tema escuro — que só troca
-   os tokens — funciona aqui sem uma linha a mais.
-
-   A ORDEM DAS FOLHAS IMPORTA. Várias regras daqui vencem as do
-   `global.css` por vir DEPOIS e ter a mesma especificidade — é o que
-   o arquivo já fazia com o `padding-block`, e o `inc/notas-feed.php`
-   garante ao enfileirar esta folha depois das do tema.
+   (`--ink-mute`, `--ink-soft`, `--green`, `--line`), e por isso o
+   tema escuro — que só troca os tokens — funciona aqui sem uma
+   linha a mais.
    ============================================================ */
 
-/* ---------- a lista: um feed, não uma lista de artigos ---------- */
-
-/*
-   O VÃO SUBSTITUI O FIO.
-
-   O `.post-list` do tema é uma coluna flex de `gap: 0` onde o que
-   separa um item do outro é o `border-bottom` do `.post-item`. Com
-   cartões isso vira borda dupla: o vão entre eles mais a borda de
-   cada um. Zerar o `gap` e manter o fio era o desenho antigo; agora o
-   contrário — o fio sai e o vão fica, que é o que separa superfícies.
-
-   O `border-top` da lista não precisa ser zerado aqui: o
-   `.term-header + .post-list` do `global.css` já o remove, porque o
-   cabeçalho da página desenha a própria linha e as duas apareciam
-   paralelas.
-*/
-.post-list--notas {
-  gap: 1rem;
-}
-
-/* ---------- o item e o cartão ---------- */
+/* ---------- o item da linha do tempo: Flat Soft Wash (sem borda) ---------- */
 
 .post-item--nota {
-  /*
-     SEM PADDING E SEM BORDA: o respiro e o contorno passaram a ser do
-     cartão. Manter o `padding-block` de 1.75rem aqui somaria 3.5rem de
-     vão morto entre dois cartões que já se separam por 1rem de `gap`.
-  */
-  padding-block: 0;
-  border-bottom: 0;
-
-  /* O item é o sistema de coordenadas da área de clique: ver "o
-     cartão inteiro é o alvo do clique", logo abaixo. */
-  position: relative;
-}
-
-.nota__cartao {
-  padding: 1.2rem 1.35rem;
-  background: var(--paper-card);
-  border: 1px solid var(--line);
+  margin: 1.25rem 0;
+  padding: 1.25rem 1.4rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
   border-radius: var(--radius);
+  box-shadow: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: background 0.2s ease;
 }
 
-/*
-   O CARTÃO RESPONDE AO MOUSE, e isso é informação, não enfeite: o
-   clique em qualquer ponto dele abre a nota, e sem uma reação na
-   borda o cursor sobre o fundo não sugere que ali há um alvo. O
-   `:focus-within` é o mesmo aviso para quem chega pelo teclado — o
-   `Tab` para dentro do cartão acende a borda, então o foco visível
-   não depende só do anel do link interno.
-*/
-.nota__cartao:hover,
-.nota__cartao:focus-within {
-  border-color: var(--line-strong);
+.post-item--nota:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: transparent;
+  box-shadow: none;
 }
 
-/* ---------- o cartão inteiro é o alvo do clique ---------- */
+/* Sem fita adesiva decorativa */
+.post-item--nota::before {
+  display: none !important;
+}
+
+[data-theme='dark'] .post-item--nota {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .post-item--nota:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme='dark'] .post-item--nota::before {
+  display: none !important;
+}
+
+.nota__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nota__avatar {
+  flex-shrink: 0;
+  display: block;
+  line-height: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.nota__avatar-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--line);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.nota__avatar:hover .nota__avatar-img {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+.nota__cabecalho-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+
+.nota__autor-nome {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+
+.nota__autor-nome:hover {
+  text-decoration: underline;
+  color: var(--green);
+}
+
+.nota__sep {
+  color: var(--ink-mute);
+  user-select: none;
+  font-size: 0.8rem;
+}
+
+.nota__data-link {
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.nota__data-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+.nota__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--line);
+}
+
+.nota__numero-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  z-index: 2;
+}
+
+.nota__numero-link:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+/* ---------- a nota inteira é o alvo do clique ---------- */
 
 /*
-   CLICAR EM QUALQUER PONTO DO CARTÃO ABRE A NOTA.
+   CLICAR EM QUALQUER PONTO DA NOTA ABRE A NOTA.
 
    Em toda lista do tema, quem se clica é o TÍTULO. A nota não tem título, então
    não tinha alvo nenhum: o texto ficava inerte e só o `#N` e o horário levavam à
-   página da nota. Aqui o alvo passa a ser o cartão inteiro, e quem carrega o
-   clique é o link do horário — o `u-url` do `h-entry`, que já era o endereço
+   página da nota. Aqui o alvo passa a ser o item inteiro, e quem carrega o
+   clique é o link da data — o `u-url` do `h-entry`, que já era o endereço
    canônico da nota. O microformato não muda: o `::after` não cria um segundo
    link, ele estende a área de clique de um link que já existia.
 
@@ -102,27 +169,11 @@
    alvos com comportamentos diferentes conforme o ponto do clique. O `::after`
    cobre sem envolver, e o HTML continua válido com quantos links a nota tiver.
 
-   O SELETOR PASSOU A SER UMA CLASSE, E NÃO MAIS UMA POSIÇÃO.
-
-   Antes esta regra era `.post-item__meta > .u-url::after`, e o `>` era
-   obrigatório: as notas têm DOIS elementos com `u-url` — o link do horário e o
-   do autor, que no microformato também carrega `u-url` para dizer que o autor é
-   o mesmo daquele endereço. Sem o `>`, os dois ganhavam área de clique e, como
-   o do autor vem depois no HTML, ele vencia: clicar no TEXTO da nota abria a
-   página do autor. Isso foi medido, não deduzido — `document.elementFromPoint()`
-   na coordenada do texto devolvia `a.u-url.p-name`.
-
-   Com o cabeçalho novo o horário deixou de ser o primeiro de dois irmãos e
-   ganhou classe própria (`.nota__tempo`), então a regra passou a apontar para o
-   que ela quer em vez de depender de quem vem antes na árvore. O `>` saiu por
-   deixar de ser necessário, não por deixar de funcionar.
-
    O `z-index: 0` E A REGRA SEGUINTE SÃO UM PAR. O `::after` nasce dentro do
-   `<a>` do horário; sem número de ordem ele ficaria por cima dos outros links
-   do cartão, e o nome do autor, o `#N` e qualquer link citado no corpo
-   deixariam de ser clicáveis. Com o zero ele fica acima do texto e abaixo de
-   quem tiver número maior — e a regra seguinte dá número maior a todos os
-   demais links.
+   `<a>` da data; sem número de ordem ele ficaria por cima dos outros links do
+   item, e o `#N`, o nome do autor e qualquer link citado no corpo deixariam de
+   ser clicáveis. Com o zero ele fica acima do texto e abaixo de quem tiver
+   número maior — e a regra seguinte dá número maior a todos os outros links.
 
    O QUE SE PERDE, e é honesto registrar: arrastar o mouse sobre o texto para
    selecionar deixa de funcionar, porque o arrasto começa em cima da área de
@@ -132,118 +183,20 @@
    JavaScript; a alternativa seria depender de script para algo que o CSS
    resolve sozinho, e aí o clique só existiria para quem tem script ligado.
 */
-.post-item--nota .nota__tempo::after {
+.post-item--nota .nota__data-link::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-/*
-   Quem fica acima da área de clique: todo link do cartão, menos o do horário,
-   que É a área. O `:not()` cobre o link do autor e o do `#N` de uma vez — e é
-   por isso que ele veio no lugar da lista enumerada: enumerar exige lembrar de
-   acrescentar o próximo link que aparecer aqui, e esquecer não quebra a
-   aparência, quebra o clique, que é o defeito mais difícil de ver.
-
-   O BOTÃO DE GOSTAR ENTRA NA MESMA LISTA, e por isso ele é um `<button>` e não
-   um `<a>`: o seletor acima pega LINKS, e o botão não é um. Sem esta linha o
-   coração ficaria embaixo da área de clique — visível, e morto.
-*/
-.post-item--nota .nota__autor a,
-.post-item--nota a:not(.nota__tempo),
+.post-item--nota .nota__avatar,
+.post-item--nota .nota__autor-nome,
+.post-item--nota .nota__numero-link,
+.post-item--nota .nota__conteudo a,
 .post-item--nota .nota__acoes .post-like__btn {
   position: relative;
-  z-index: 1;
-}
-
-/* ---------- o cabeçalho do cartão ---------- */
-
-/*
-   A LINHA DO TOPO: avatar, autor, horário.
-
-   `flex-wrap` porque numa tela estreita os três não cabem lado a lado: com
-   `nowrap` a linha estouraria a coluna ou espremeria o nome. Com a quebra, o
-   horário desce e o cartão cresce em altura, que é o comportamento barato.
-
-   O `gap` de 0.45rem é o mesmo que o tema usa entre as partes da meta, para o
-   cabeçalho não inventar um ritmo próprio.
-*/
-.nota__cabecalho {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  color: var(--ink-mute);
-}
-
-/*
-   O AVATAR É A ÂNCORA DO CARTÃO, e o seu trabalho é começar a linha.
-
-   `flex: 0 0 auto` impede que ele encolha quando o nome do autor é longo — sem
-   isso o círculo vira uma elipse, que é o defeito clássico de imagem em linha
-   flexível.
-
-   O `border` de 1px na cor da linha faz o papel que um `box-shadow` faria com
-   mais custo: separa a foto do fundo do cartão quando a imagem tem bordas
-   claras, e no tema escuro isso é ainda mais necessário.
-
-   O `object-fit: cover` não é detalhe: a imagem do perfil é retrato (576×1024),
-   e num quadrado de 34px sem ele a foto aparece achatada.
-*/
-.nota__avatar {
-  flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--line);
-}
-
-/*
-   O NOME DO AUTOR É O ÚNICO TEXTO EM PESO ALTO NO CABEÇALHO, e é o que a
-   hierarquia pede: numa linha do tempo o nome identifica, o horário localiza.
-   Por isso o nome sobe para `--ink` e o resto fica em `--ink-mute`.
-*/
-.nota__autor a {
-  font-weight: 700;
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.nota__autor a:hover,
-.nota__autor a:focus-visible {
-  color: var(--green-deep);
-  text-decoration: underline;
-}
-
-/*
-   O `@` E O SEPARADOR NÃO SÃO LINKS, então não têm estado de foco nem de
-   hover — eles são pontuação da linha. A cor os deixa no mesmo plano do
-   horário, que é onde eles pertencem.
-*/
-.nota__handle,
-.nota__sep {
-  color: var(--ink-mute);
-}
-
-/*
-   O HORÁRIO É O PERMALINK, e por isso ele reage: é o único elemento da linha
-   que leva a algum lugar além do clique que já cobre o cartão. A cor dele
-   continua a da meta — quem faz o cartão inteiro clicável não precisa anunciar
-   isso duas vezes.
-*/
-.nota__tempo {
-  color: inherit;
-  text-decoration: none;
-}
-
-.nota__tempo:hover,
-.nota__tempo:focus-visible {
-  color: var(--green-deep);
-  text-decoration: underline;
+  z-index: 2;
 }
 
 /* ---------- o texto ---------- */
@@ -271,7 +224,8 @@
    e o `.prose img` traz `margin: 1.5rem auto`, um respiro de baixo que agora cai
    DEPOIS da última palavra da nota, dentro do `padding-block` do item. O
    `:last-child` de cima zera a margem do PARÁGRAFO, não a da imagem dentro dele:
-   sem esta regra sobra um vão morto antes do rodapé de ações.
+   sem esta regra sobram 24px de vão morto antes da borda que separa uma nota da
+   outra.
 
    O `:last-child` na imagem, e não um `:has()` no parágrafo, porque o `<img>` que
    o tratador grava é o único filho do último parágrafo — o `:has()` faria o mesmo
@@ -286,19 +240,6 @@
 }
 
 /*
-   O RAIO NA IMAGEM, que antes não existia.
-
-   Fora do cartão, uma foto de cantos retos encostada numa coluna de texto era
-   coerente com o resto do site, onde nada tem canto arredondado. Dentro de um
-   cartão de `--radius` ela passa a ser a única coisa de canto vivo na moldura, e
-   o contraste lê como descuido. O `--radius-sm` é menor de propósito: a imagem
-   não é um segundo cartão, é conteúdo dentro dele.
-*/
-.nota__conteudo img {
-  border-radius: var(--radius-sm);
-}
-
-/*
    No arquivo a nota é lida inteira, e não escolhida entre outras: o
    tamanho do corpo sobe um ponto. É a diferença entre varrer a lista
    e parar para ler — e é a única regra de tipografia deste arquivo.
@@ -310,40 +251,14 @@
 /* ---------- o número da nota ---------- */
 
 /*
-   O número é um IDENTIFICADOR, não um título: ele entra com o mesmo corpo e a
-   mesma cor do horário, e a distinção fica por conta do peso e dos algarismos
-   tabulares — que é o que faz `#1` e `#23` ocuparem a mesma coluna quando a
-   lista é varrida de cima a baixo. `tabular-nums` vale ainda mais agora, que ele
-   fecha a linha de ações: em algarismos proporcionais o cartão mudaria de largura
-   conforme o número da nota.
+   O número é um IDENTIFICADOR, não um título: ele entra na mesma linha da data,
+   com o mesmo corpo e a mesma cor, e a distinção fica por conta do peso e dos
+   algarismos tabulares — que é o que faz `#1` e `#23` ocuparem a mesma coluna
+   quando a lista é varrida de cima a baixo.
 */
 .vc-nota-numero {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-
-/*
-   COMO ELE APARECE NO RODAPÉ DO CARTÃO.
-
-   Antes o `#N` abria a meta, acima do texto, e era o link mais óbvio do item.
-   Agora ele divide a linha com o coração, e o desenho tem de dizer que ele é a
-   mesma espécie de coisa: um controle pequeno e discreto, não um rótulo. Daí a
-   cor de `--ink-mute` (igual à contagem de curtidas) e o mesmo corpo de 0.86rem
-   que o `.post-item__meta` usava.
-
-   A PÁGINA DA NOTA NÃO É AFETADA: lá o número é um `<span>` com
-   `.article__meta__part`, não um link, e esta classe não o alcança.
-*/
-.nota__numero {
-  font-size: 0.86rem;
-  color: var(--ink-mute);
-  text-decoration: none;
-}
-
-.nota__numero:hover,
-.nota__numero:focus-visible {
-  color: var(--green-deep);
-  text-decoration: underline;
 }
 
 /*
@@ -358,32 +273,24 @@
 /* ---------- a nota sozinha ---------- */
 
 /*
-   O TÍTULO DA NOTA É A LINHA DE IDENTIDADE DO CARTÃO.
+   Na página da nota o `<h1>` é a DATA. A 2.9rem do `.article__title`,
+   uma data grita mais alto que o texto que ela apresenta — e o texto
+   é o que manda nesta página. O cabeçalho desce para o tamanho de um
+   título de seção e assume a cor secundária: continua sendo o `<h1>`
+   (a página tem de ter um), mas para de competir.
 
-   Ele era a data, num corpo de 1.3 a 1.6rem e na cor secundária: menor que
-   os títulos do resto do site, e mesmo assim o maior texto da página antes da
-   nota. Agora carrega o que o cartão da lista carrega — avatar, nome e tempo
-   relativo —, na mesma ordem e com as mesmas classes.
-
-   A REGRA REPETE O DESENHO DO `.nota__cabecalho` EM VEZ DE HERDÁ-LO, e a
-   repetição tem motivo: `.article--nota .article__title` tem duas classes e
-   vence o `.nota__cabecalho`, que tem uma. Sem estas linhas o `<h1>` voltaria
-   aos 2.9rem do `global.css` e a linha de identidade viraria título de página.
-
-   Sem `letter-spacing` negativo: o número da nota sai em algarismos tabulares,
-   e apertar algarismos empilha os dígitos.
+   Sem `letter-spacing` negativo: os números já são tabulares, e
+   apertar uma data de dígitos empilha os algarismos.
 */
 .article--nota .article__title {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  font-weight: 400;
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  font-weight: 600;
   letter-spacing: 0;
-  line-height: 1.4;
-  color: var(--ink-mute);
+  color: var(--ink-soft);
+}
+
+.article--nota .article__title time {
+  font-variant-numeric: tabular-nums;
 }
 
 .article--nota .article__header {
@@ -451,25 +358,19 @@
 */
 
 /*
-   A LINHA DE AÇÕES, no rodapé do cartão.
+   A LINHA DO BOTÃO, na lista.
 
    `flex` sem `justify-content` alinha à esquerda, que é onde o texto da nota
-   começa: as ações continuam a coluna do texto em vez de abrir uma segunda, no
-   canto. O `gap` de 1rem separa o coração do `#N` sem que nenhum dos dois
-   precise de margem própria — margem em item de flex é o caminho para o
-   desalinhamento quando um dos dois some (o `#N` já é condicional: nota sem
-   número não o imprime).
+   começa: o botão continua a coluna em vez de abrir uma segunda, no canto.
 
-   SEM `margin-top` GENEROSO, e o respiro vem de graça: o botão carrega os 44px de
-   altura mínima do `post-share__btn` com o conteúdo centrado, então sobram uns
-   12px entre o ícone e a borda de cima do próprio botão. O `align-items: center`
-   é o que mantém o `#N` na mesma linha de base do coração, apesar dos 44px.
+   SEM `margin-top`, e o respiro vem de graça: o botão carrega os 44px de altura
+   mínima do `post-share__btn` com o conteúdo centrado, então sobram uns 12px
+   entre o ícone e a borda de cima do próprio botão. Somar uma margem a isso
+   abriria um vão que a nota não pediu — e é o mesmo cuidado que a regra do
+   `padding-block` do item já toma.
 */
 .nota__acoes {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.35rem;
 }
 
 /*
@@ -477,10 +378,6 @@
    textos: 2.25rem. O motivo é o que o `global.css` já registra lá — o que age
    sobre o texto é outra coisa que o texto, e a distância diz isso sem precisar
    de uma linha divisória.
-
-   A regra vence o `margin-top` de 0.35rem acima por especificidade (duas
-   classes contra uma), e não por ordem no arquivo: assim ela continua valendo
-   se as duas seções forem reordenadas.
 */
 .article--nota .nota__acoes {
   margin-top: 2.25rem;
@@ -517,20 +414,3 @@
   border-color: transparent !important;
   background: transparent !important;
 }
-
-/* ---------- a nota da home ---------- */
-
-/*
-   A HOME USA O MESMO CARTÃO DO ARQUIVO, e o bloco que ficava aqui dizia o
-   contrário: a nota da home era uma linha da lista editorial, sem avatar e sem
-   coração, para não pesar mais que os textos logo acima dela.
-
-   A TROCA É DO DONO DO SITE, e o motivo é de reconhecimento: a nota da home e a
-   nota do `/notas/` são a mesma coisa, e mostrá-las com dois desenhos diferentes
-   fazia o leitor achar que eram duas. O cartão mora em
-   `template-parts/card-nota.php`.
-
-   O CLIQUE QUE COBRE O CARTÃO INTEIRO já vem das regras do `.post-item--nota`,
-   mais acima neste arquivo, e elas agora valem para as duas telas: o bloco que
-   existia aqui para isso era a versão da home, e virou repetição.
-*/

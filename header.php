@@ -38,16 +38,7 @@ $vc_id       = $vc_singular ? (int) get_queried_object_id() : 0;
  */
 $vc_descricao = vc_descricao();
 
-/*
- * NA PÁGINA DE UMA NOTA, O TÍTULO É O TEXTO DELA. A regra mora em
- * `vc_titulo_da_nota()`, e vale aqui e no `<title>`: os dois têm de dizer a mesma
- * coisa, senão a aba e a prévia de link divergem.
- */
-if ( $vc_singular && defined( 'VC_NOTA' ) && VC_NOTA === get_post_type( $vc_id ) ) {
-	$vc_titulo = vc_titulo_da_nota( (int) $vc_id );
-} else {
-	$vc_titulo = $vc_singular ? get_the_title( $vc_id ) : wp_get_document_title();
-}
+$vc_titulo = $vc_singular ? get_the_title( $vc_id ) : wp_get_document_title();
 if ( false === strpos( $vc_titulo, '@viniciuscodes' ) ) {
 	$vc_titulo = $vc_titulo . ' · @viniciuscodes';
 }
@@ -108,29 +99,14 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	<meta property="og:title" content="<?php echo esc_attr( $vc_titulo ); ?>" />
 	<meta property="og:description" content="<?php echo esc_attr( $vc_descricao ); ?>" />
 	<meta property="og:url" content="<?php echo esc_url( $vc_singular ? get_permalink( $vc_id ) : home_url( add_query_arg( array() ) ) ); ?>" />
-	<?php
-	/*
-	 * AS TAGS DE IMAGEM SÓ SAEM QUANDO HÁ IMAGEM.
-	 *
-	 * `$vc_imagem` vem vazia nas notas sem imagem própria (ver
-	 * `vc_imagem_social()`). Imprimir `content=""` seria pior do que não imprimir:
-	 * um Open Graph com `og:image` vazio é um cartão quebrado, e não um cartão sem
-	 * imagem. O `twitter:card` acompanha, porque `summary_large_image` sem imagem
-	 * rende um retângulo vazio.
-	 */
-	?>
-	<?php if ( '' !== $vc_imagem ) : ?>
 	<meta property="og:image" content="<?php echo esc_url( $vc_imagem ); ?>" />
 	<meta property="og:image:alt" content="<?php echo esc_attr( $vc_titulo ); ?>" />
-	<?php endif; ?>
 	<meta property="og:locale" content="pt_BR" />
 
-	<meta name="twitter:card" content="<?php echo '' !== $vc_imagem ? 'summary_large_image' : 'summary'; ?>" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="<?php echo esc_attr( $vc_titulo ); ?>" />
 	<meta name="twitter:description" content="<?php echo esc_attr( $vc_descricao ); ?>" />
-	<?php if ( '' !== $vc_imagem ) : ?>
 	<meta name="twitter:image" content="<?php echo esc_url( $vc_imagem ); ?>" />
-	<?php endif; ?>
 
 	<?php
 	/*
@@ -143,9 +119,9 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	 * os dois gerava duas etiquetas iguais no `<head>`.
 	 */
 	?>
-	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=2" type="image/svg+xml" />
-	<meta name="theme-color" content="#faf9f5" media="(prefers-color-scheme: light)" />
-	<meta name="theme-color" content="#16181a" media="(prefers-color-scheme: dark)" />
+	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=3" type="image/svg+xml" />
+	<meta name="theme-color" content="#f8f6f0" media="(prefers-color-scheme: light)" />
+	<meta name="theme-color" content="#141715" media="(prefers-color-scheme: dark)" />
 
 	<?php
 	/*
@@ -204,75 +180,106 @@ $vc_imagem = vc_imagem_social( $vc_id );
  * porque ela está acima da dobra em todas as páginas.
  */
 ?>
-<header class="masthead">
-	<?php
-	/*
-	 * A MARCA DO CABEÇALHO É O h-card DO SITE.
-	 *
-	 * É daqui que o Bridgy Fed tira o perfil no Fediverso: nome, foto e o endereço
-	 * da home. A marca já era, sem saber, a coisa mais parecida com um h-card no site:
-	 * uma foto, um link para a home e um nome.
-	 *
-	 * O h-card É O DIV, E NÃO O LINK, e isso foi medido, não escolhido. Com
-	 * `h-card u-url` no próprio `<a>`, o parser do microformats2 devolve o h-card com a
-	 * LISTA DE URL VAZIA, e um h-card sem `u-url` não é reconhecido como o do domínio.
-	 * Com o `h-card` no div e o `u-url` no link de dentro, a URL sai certa. Testado com
-	 * as duas formas antes de escolher.
-	 *
-	 * O `display: contents` no div é para ele não virar um terceiro item do `masthead`,
-	 * que é `flex` com `space-between`: sem isso, as ferramentas sairiam do canto e
-	 * iriam para o meio.
-	 *
-	 * O NOME VAI ESCONDIDO, e não é truque: o que se lê na tela é o arroba, que é como o
-	 * site se chama em todo lugar. O `p-name` é para quem lê o HTML, e "@viniciuscodes"
-	 * não é nome de gente. O `visually-hidden` mantém a marca igual e o dado correto.
-	 */
-	?>
-	<div class="h-card masthead__quem">
-		<a class="masthead__brand u-url" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-			<img
-				class="u-photo"
-				src="<?php echo esc_url( vc_midia( 'vinicius-profile.webp' ) ); ?>"
-				alt=""
-				width="28"
-				height="28"
-				loading="eager"
-				decoding="async"
-			/>
-			<span class="p-name visually-hidden"><?php echo esc_html( vc_nome_do_autor() ); ?></span>
-			<span>@viniciuscodes</span>
+<header class="masthead masthead--substack" style="padding: 12px 20px; border-bottom: 1px solid var(--borda, #eaeaea); background: var(--fundo, #fff); position: sticky; top: 0; z-index: 100;">
+	<div class="masthead__top" style="max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+		<a class="masthead__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
+			<img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/favicon-circle-150x150.png' ) ); ?>" alt="" width="36" height="36" style="border-radius: 50%; object-fit: cover;" />
+			<span style="font-weight: 700; font-size: var(--text-base); letter-spacing: -0.01em;">Vinicius Oliveira</span>
 		</a>
-	</div>
 
-	<div class="masthead__tools">
-		<button
-			class="theme-toggle"
-			type="button"
-			data-theme-toggle
-			role="switch"
-			aria-checked="false"
-			aria-label="tema escuro"
-		>
-			<span class="theme-toggle__icon theme-toggle__icon--light">
-				<?php echo vc_icone( 'sun', 16 ); ?>
-			</span>
-			<span class="theme-toggle__icon theme-toggle__icon--dark">
-				<?php echo vc_icone( 'moon', 16 ); ?>
-			</span>
-		</button>
-
-		<button
-			class="sidebar-toggle"
-			type="button"
-			data-sidebar-toggle
-			aria-controls="barra-lateral"
-			aria-expanded="false"
-			aria-label="abrir menu"
-		>
-			<?php echo vc_icone( 'menu', 18 ); ?>
-		</button>
+		<nav class="masthead__nav" style="display: flex; align-items: center; gap: 14px; font-size: var(--text-sm);">
+			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">posts</a>
+			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">sobre</a>
+			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">viagens</a>
+			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">blogroll</a>
+			<a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">contato</a>
+			<a href="<?php echo esc_url( home_url( '/feed.xml' ) ); ?>" class="btn-rss-pill" style="background-color: var(--color-accent); color: #fff !important; padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: var(--text-xs); text-decoration: none;">rss</a>
+			
+			<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro" style="background: none; border: none; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; color: var(--cor-meta, #757575);">
+				<span class="theme-toggle__icon theme-toggle__icon--light"><?php echo vc_icone( 'sun', 16 ); ?></span>
+				<span class="theme-toggle__icon theme-toggle__icon--dark"><?php echo vc_icone( 'moon', 16 ); ?></span>
+			</button>
+		</nav>
 	</div>
 </header>
+
+<div class="topics-bar" style="border-bottom: 1px solid var(--borda, #eaeaea); background: var(--fundo, #fff); position: relative; z-index: 90;">
+	<div style="max-width: 900px; margin: 0 auto; padding: 8px 20px; display: flex; gap: 16px; align-items: center; justify-content: center; font-size: var(--text-sm); overflow: visible; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;">
+		<?php
+		// 1. Busca todas as categorias com posts calculados em tempo real
+		$vc_todos_temas = get_categories( array(
+			'taxonomy'   => 'category',
+			'orderby'    => 'count',
+			'order'      => 'DESC',
+			'hide_empty' => true,
+		) );
+
+		// 2. Separa os Top 5 e o Restante para o menu "Mais"
+		$vc_top_5 = array_slice( $vc_todos_temas, 0, 5 );
+		$vc_resto = array_slice( $vc_todos_temas, 5 );
+
+		foreach ( $vc_top_5 as $vc_t ) :
+			$vc_href = '/tema/' . $vc_t->slug . '/';
+			$vc_icone_svg = vc_icone( vc_icone_do_tema( $vc_t->slug ), 15 );
+		?>
+			<a href="<?php echo esc_url( $vc_href ); ?>" style="display: inline-flex; align-items: center; gap: 6px; color: var(--cor-meta, #757575); text-decoration: none; font-weight: 500; white-space: nowrap;">
+				<span style="display: inline-flex; align-items: center; opacity: 0.85;"><?php echo $vc_icone_svg; ?></span>
+				<span><?php echo esc_html( mb_strtolower( (string) $vc_t->name, 'UTF-8' ) ); ?></span>
+			</a>
+		<?php endforeach; ?>
+
+		<?php if ( ! empty( $vc_resto ) ) : ?>
+			<!-- Dropdown Elegante "Mais Temas" -->
+			<div class="topics-dropdown-wrap" style="position: relative; display: inline-block;">
+				<button type="button" class="topics-dropdown-btn" id="topicsDropdownBtn" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--borda, #eaeaea); border-radius: 14px; padding: 3px 10px; font-size: var(--text-xs); color: var(--cor-meta, #757575); cursor: pointer; font-family: inherit;">
+					<span>mais</span>
+					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><path d="m6 9 6 6 6-6"/></svg>
+				</button>
+
+				<div class="topics-dropdown-menu" id="topicsDropdownMenu" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--fundo, #ffffff); border: 1px solid var(--borda, #eaeaea); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 6px 0; min-width: 190px; z-index: 1000;">
+					<?php foreach ( $vc_resto as $vc_r ) :
+						$vc_r_href = '/tema/' . $vc_r->slug . '/';
+						$vc_r_icone = vc_icone( vc_icone_do_tema( $vc_r->slug ), 14 );
+					?>
+						<a href="<?php echo esc_url( $vc_r_href ); ?>" style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; color: var(--cor-texto, #292929); text-decoration: none; font-size: var(--text-sm); transition: background 0.15s;">
+							<span style="display: inline-flex; align-items: center; gap: 8px;">
+								<span style="opacity: 0.8;"><?php echo $vc_r_icone; ?></span>
+								<span><?php echo esc_html( mb_strtolower( (string) $vc_r->name, 'UTF-8' ) ); ?></span>
+							</span>
+							<span style="font-size: var(--text-xs); color: var(--cor-meta, #757575); background: rgba(127,127,127,0.1); border-radius: 10px; padding: 1px 6px;"><?php echo (int) $vc_r->count; ?></span>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		<?php endif; ?>
+	</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	var btn = document.getElementById('topicsDropdownBtn');
+	var menu = document.getElementById('topicsDropdownMenu');
+	if (!btn || !menu) return;
+
+	btn.addEventListener('click', function(e) {
+		e.stopPropagation();
+		var isHidden = menu.style.display === 'none';
+		menu.style.display = isHidden ? 'block' : 'none';
+		btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+		var arrow = btn.querySelector('svg');
+		if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : 'none';
+	});
+
+	document.addEventListener('click', function(e) {
+		if (!menu.contains(e.target) && e.target !== btn) {
+			menu.style.display = 'none';
+			btn.setAttribute('aria-expanded', 'false');
+			var arrow = btn.querySelector('svg');
+			if (arrow) arrow.style.transform = 'none';
+		}
+	});
+});
+</script>
 
 <div class="sidebar-backdrop" data-sidebar-close aria-hidden="true"></div>
 

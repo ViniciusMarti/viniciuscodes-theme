@@ -22,27 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'VC_VERSAO', '1.0.55' );
-
-/**
- * A versão de um arquivo do tema, para o navegador não servir o antigo.
- *
- * O TEMA TINHA UM NÚMERO ESCRITO À MÃO, e ele falhava do jeito mais silencioso
- * possível: quem edita o CSS esquece de subir o número, o arquivo muda no servidor e
- * o navegador continua desenhando o antigo. Quem editou vê a mudança (recarregou);
- * quem visita, não — e o defeito parece estar no CSS.
- *
- * `filemtime()` resolve porque o dado já existe: o sistema de arquivos sabe quando o
- * arquivo mudou. É a mesma escolha que o `notas.css` já fazia, pelo mesmo motivo.
- *
- * A `VC_VERSAO` continua sendo o último recurso, para o caso de o arquivo não existir:
- * melhor uma versão fixa do que uma URL sem versão nenhuma.
- */
-function vc_versao_do_arquivo( string $vc_relativo ): string {
-	$vc_caminho = get_theme_file_path( $vc_relativo );
-
-	return file_exists( $vc_caminho ) ? (string) filemtime( $vc_caminho ) : VC_VERSAO;
-}
+$vc_style_path = __DIR__ . '/style.css';
+define( 'VC_VERSAO', file_exists( $vc_style_path ) ? (string) filemtime( $vc_style_path ) : '1791744180000' );
 
 /* -------------------------------------------------------------------------
    RECURSOS DO TEMA
@@ -77,6 +58,21 @@ add_action(
 	}
 );
 
+/**
+ * Força o carregamento do editor-style.css no iframe e no canvas do Gutenberg
+ */
+add_action(
+	'enqueue_block_editor_assets',
+	static function () {
+		wp_enqueue_style(
+			'vc-editor-headings',
+			get_theme_file_uri( 'assets/editor-style.css' ),
+			array( 'wp-edit-blocks' ),
+			VC_VERSAO
+		);
+	}
+);
+
 /* -------------------------------------------------------------------------
    CSS E JAVASCRIPT
    ------------------------------------------------------------------------- */
@@ -93,8 +89,8 @@ add_action(
 		 * os templates repetem a mesma estrutura e os mesmos nomes de classe dos
 		 * componentes Astro, então o CSS que já existia desenha a página.
 		 */
-		wp_enqueue_style( 'vc-fontes', get_theme_file_uri( 'assets/fonts.css' ), array(), vc_versao_do_arquivo( 'assets/fonts.css' ) );
-		wp_enqueue_style( 'vc-global', get_theme_file_uri( 'assets/global.css' ), array( 'vc-fontes' ), vc_versao_do_arquivo( 'assets/global.css' ) );
+		wp_enqueue_style( 'vc-fontes', get_theme_file_uri( 'assets/fonts.css' ), array(), VC_VERSAO );
+		wp_enqueue_style( 'vc-global', get_theme_file_uri( 'assets/global.css' ), array( 'vc-fontes' ), VC_VERSAO );
 
 		/*
 		 * `true` no último argumento carrega no rodapé. Os dois
@@ -102,39 +98,24 @@ add_action(
 		 * dependem de clique, então atrasá-los não custa nada e não bloqueia a
 		 * primeira pintura.
 		 */
-		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), vc_versao_do_arquivo( 'assets/site.js' ), true );
+		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
+
+		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+			wp_enqueue_script( 'comment-reply' );
+		}
+
+
 	}
 );
 
 /*
- * A folha de fontes do tema sai da página, mas fica na fila.
- *
- * `assets/fonts.css` declara quatro `@font-face`, e o `header.php` chegava a
- * pré-carregar o arquivo maior. Com `--font-sans` apontando para a pilha do
- * sistema, as duas coisas viram peso morto: os arquivos ficam no disco, inertes,
- * porque nada mais os nomeia.
- *
- * TIRAR COM `wp_dequeue_style()` NÃO FUNCIONA AQUI, e o erro foi medido: o
- * `global.css` e o `filtros.css` declaram `vc-fontes` como
- * dependência, e o WordPress não imprime folha cuja dependência não está na
- * fila. O resultado foi a página inteira sem CSS — `body` em Times New Roman e o
- * herói ocupando 1249px. Dependência em WordPress não é só ordem.
- *
- * Filtrando a TAG, a fila fica intacta e só o `<link>` não é impresso: o arquivo
- * nunca chega a ser pedido pelo navegador.
+ * Blindagem contra fonte de terceiro externa (Google Fonts, Adobe, Typekit).
+ * Todas as fontes são autohospedadas em assets/fonts/ para máxima privacidade,
+ * zero requisições adicionais de terceiros e sem bloqueio de renderização.
  */
 add_filter(
 	'style_loader_tag',
 	static function ( $tag, $handle ) {
-		if ( 'vc-fontes' === $handle ) {
-			return '';
-		}
-
-		/*
-		 * Blindagem contra fonte de terceiro. Hoje não existe nenhuma — medido:
-		 * zero pedido para `fonts.googleapis.com`, `gstatic`, `typekit` ou `adobe`.
-		 * Fica aqui para que continue assim no dia em que um plugin entrar.
-		 */
 		return preg_match( '#fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|use\.adobe\.com#i', (string) $tag ) ? '' : $tag;
 	},
 	10,
@@ -157,38 +138,7 @@ add_filter(
 	2
 );
 
-/*
- * A folha do filtro da lista de textos, e só naquela página.
- *
- * No site ela também é uma folha à parte, dentro do `<style>` da página de
- * posts, e aqui essa divisão é útil pelo motivo somado: são poucas regras, usadas
- * em um lugar só. Carregá-las em toda página seria pedir a cada visitante da home
- * um arquivo a mais por causa de uma página que ele talvez não abra.
- *
- * `is_page_template()` responde nesta altura porque o gancho roda depois de o
- * WordPress já ter resolvido qual página está sendo pedida — e não antes, que é
- * quando a resposta seria sempre "nenhuma".
- */
-add_action(
-	'wp_enqueue_scripts',
-	static function () {
-		if ( ! is_page_template( 'page-templates/lista-de-posts.php' ) ) {
-			return;
-		}
 
-		wp_enqueue_style( 'vc-filtros', get_theme_file_uri( 'assets/filtros.css' ), array( 'vc-global' ), vc_versao_do_arquivo( 'assets/filtros.css' ) );
-
-		/*
-		 * O script do filtro vai junto e só aqui, pelo mesmo motivo da folha: sem
-		 * ele a barra fica `hidden` e a lista aparece inteira, em ordem. É o
-		 * comportamento degradado que queremos, não um meio-termo quebrado.
-		 *
-		 * `true` carrega no rodape: o script mexe no DOM da lista, que ja existe
-		 * quando ele roda.
-		 */
-		wp_enqueue_script( 'vc-filtros-js', get_theme_file_uri( 'assets/filtros.js' ), array(), VC_VERSAO, true );
-	}
-);
 
 
 /* -------------------------------------------------------------------------
@@ -211,61 +161,6 @@ add_action(
 	'init',
 	static function () {
 		add_rewrite_rule( '^feed\.xml$', 'index.php?feed=rss2', 'top' );
-	}
-);
-
-/*
- * O `/feed.xml` PASSOU A CONTER OS DOIS TIPOS, e é isto que faz a ponte para o
- * Fediverso funcionar sem configuração do outro lado.
- *
- * A REGRA É DA PONTE, NÃO NOSSA. O Bridgy Fed decide se um item é nota ou artigo
- * olhando se ele tem título: com título é artigo, e o Mastodon mostra o título e um
- * link; sem título é nota, e o Mastodon mostra o texto inteiro. O que o site
- * precisa fazer é só não mentir nesse campo.
- *
- * SÓ A CONSULTA PRINCIPAL ENTRA AQUI. O feed do arquivo de notas
- * (`/notas/feed/`) tem consulta própria e continua só com notas, e os feeds de tema
- * e de tag continuam só com o que é deles.
- *
- * A ORDEM SAI DE GRAÇA: os dois tipos entram na mesma consulta, e o WordPress
- * ordena por data decrescente, que é o padrão.
- */
-add_action(
-	'pre_get_posts',
-	static function ( $vc_consulta ) {
-		if ( is_admin() || ! $vc_consulta->is_main_query() || ! $vc_consulta->is_feed() ) {
-			return;
-		}
-
-		if ( $vc_consulta->is_post_type_archive() || $vc_consulta->is_category() || $vc_consulta->is_tag() || $vc_consulta->is_tax() || $vc_consulta->is_author() ) {
-			return;
-		}
-
-		$vc_consulta->set( 'post_type', array( 'post', defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) );
-	}
-);
-
-/*
- * A NOTA SAI SEM TÍTULO NO FEED.
- *
- * O título da nota no banco é rótulo interno ("Nota — 5 de outubro de 2026, 09:00"), e
- * a tela nunca o mostra: quem lê vê o texto e a hora. O feed precisa fazer o mesmo,
- * porque é por esse campo que a ponte classifica.
- *
- * COM O TÍTULO, a nota vira artigo no Mastodon e o texto que foi escrito não aparece:
- * chega só o rótulo e um link. SEM O TÍTULO, a nota chega inteira.
- *
- * O elemento `<title>` continua sendo impresso, vazio. É o formato que o WordPress
- * gera e o que os leitores de feed esperam; o que a ponte lê é o conteúdo dele.
- */
-add_filter(
-	'the_title_rss',
-	static function ( $vc_titulo ) {
-		if ( defined( 'VC_NOTA' ) && VC_NOTA === get_post_type() ) {
-			return '';
-		}
-
-		return $vc_titulo;
 	}
 );
 
@@ -458,17 +353,15 @@ function vc_imagem_social( int $post_id = 0 ): string {
 		}
 	}
 
-	return get_theme_file_uri( 'assets/og-padrao.webp' );
+	$midia = vc_midia( 'og-default.jpg' );
+	if ( ! empty( $midia ) ) {
+		return $midia;
+	}
+
+	return get_theme_file_uri( 'assets/images/og-default.jpg' );
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
-/** Data curta em portugues: "08 out 2026". */
-function vc_data_curta( ?int $post_id = null ): string {
-    $meses = array( 1 => "jan", 2 => "fev", 3 => "mar", 4 => "abr", 5 => "mai", 6 => "jun", 7 => "jul", 8 => "ago", 9 => "set", 10 => "out", 11 => "nov", 12 => "dez" );
-    list( $ano, $mes, $dia ) = array_map( "intval", explode( "-", (string) get_the_date( "Y-m-d", $post_id ) ) );
-    return sprintf( "%02d %s %d", $dia, $meses[ $mes ], $ano );
-}
-
 function vc_data_longa( ?int $post_id = null ): string {
 	/*
 	 * O mês é escrito aqui, e não pedido ao WordPress, porque este site está
@@ -499,6 +392,51 @@ function vc_data_longa( ?int $post_id = null ): string {
 	list( $vc_ano, $vc_mes, $vc_dia ) = array_map( 'intval', explode( '-', (string) get_the_date( 'Y-m-d', $post_id ) ) );
 
 	return sprintf( '%d de %s de %d', $vc_dia, $meses[ $vc_mes ], $vc_ano );
+}
+
+/** Data de modificação longa, no formato do site: "25 de setembro de 2026". */
+function vc_data_modificada_longa( ?int $post_id = null ): string {
+	$meses = array(
+		1  => 'janeiro',
+		2  => 'fevereiro',
+		3  => 'março',
+		4  => 'abril',
+		5  => 'maio',
+		6  => 'junho',
+		7  => 'julho',
+		8  => 'agosto',
+		9  => 'setembro',
+		10 => 'outubro',
+		11 => 'novembro',
+		12 => 'dezembro',
+	);
+
+	list( $vc_ano, $vc_mes, $vc_dia ) = array_map( 'intval', explode( '-', (string) get_the_modified_date( 'Y-m-d', $post_id ) ) );
+
+	return sprintf( '%d de %s de %d', $vc_dia, $meses[ $vc_mes ], $vc_ano );
+}
+
+/**
+ * Data curta, a da lista de textos: "25/09/2026".
+ *
+ * A DATA SAI DE `get_the_date()`, como a longa — e não de `date_i18n()` sobre o
+ * carimbo, que é o que estava aqui.
+ *
+ * A conta na mão aplicava o fuso DUAS vezes: `get_post_timestamp()` já devolve um
+ * instante absoluto (ele monta a data com o fuso do site), e `date_i18n()` soma o
+ * deslocamento do site outra vez. Medido: um texto gravado às 21:29 de 26/09
+ * aparecia na home como **27/09/2026**, um dia à frente, enquanto o próprio
+ * `<time datetime>` ao lado dele dizia `2026-09-26T21:29:00-03:00` — a contradição
+ * estava na mesma linha da lista.
+ *
+ * Só aparecia depois das 21h, porque é aí que três horas empurram a data para o
+ * dia seguinte. Foi por isso que passou despercebido: os textos publicados tinham
+ * horários de manhã e de tarde, e o defeito só se mostrou quando um foi gravado à
+ * noite. Vale como lembrete de que este erro não depende do fuso do leitor — ele
+ * está na conversão, e é o mesmo para todo mundo.
+ */
+function vc_data_curta( ?int $post_id = null ): string {
+	return (string) get_the_date( 'd/m/Y', $post_id );
 }
 
 /**
@@ -589,11 +527,11 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
  * escritas, nem alfabética. Quem chega aqui veio de uma nota, e o menu responde
  * às perguntas nessa sequência:
  *
- *   o que mais tem para ler   -> textos
+ *   o que mais tem para ler   -> todos os posts
  *   quem escreveu isso        -> sobre mim
- *   o que essa pessoa indica  -> biblioteca, blogroll
- *   que lugar é este          -> manifesto, mudanças
- *   falar comigo e acompanhar -> contato, assine
+ *   o que essa pessoa indica  -> o acervo, blogroll
+ *   que lugar é este          -> manifesto, como o site é feito
+ *   falar comigo e acompanhar -> contato, feed RSS
  *
  * UMA MUDANÇA TEM MOTIVO, e não é gosto:
  *
@@ -615,16 +553,11 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
  */
 function vc_navegacao(): array {
 	return array(
-		array( 'label' => 'textos',               'href' => '/posts/',       'icone' => 'newspaper' ),
-		array( 'label' => 'notas',               'href' => '/notas/',       'icone' => 'square-pen' ),
+		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
-		array( 'label' => 'viagens',             'href' => '/viagens/',     'icone' => 'route' ),
-		array( 'label' => 'biblioteca',          'href' => '/biblioteca/',  'icone' => 'library-big' ),
-		array( 'label' => 'blogroll',             'href' => '/blogroll/',    'icone' => 'handshake' ),
-		array( 'label' => 'manifesto',           'href' => '/manifesto/',   'icone' => 'scroll-text' ),
-		array( 'label' => 'mudanças',            'href' => '/changelog/',   'icone' => 'history' ),
+		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
-		array( 'label' => 'assine',              'href' => '/feed-rss/',    'icone' => 'rss' ),
+		array( 'label' => 'feed RSS',            'href' => '/feed-rss/',    'icone' => 'rss' ),
 	);
 }
 
@@ -645,6 +578,260 @@ function vc_navegacao(): array {
  */
 function vc_rodape(): array {
 	return array();
+}
+
+/**
+ * Retorna a lista de blogs do blogroll.
+ *
+ * @return array<int, array{nome: string, url: string, dominio: string, favicon: string}>
+ */
+function vc_blogroll_lista(): array {
+	return array(
+		array(
+			'nome'    => 'aline Valek',
+			'url'     => 'https://alinevalek.com.br/',
+			'dominio' => 'alinevalek.com.br',
+			'favicon' => 'alinevalek.com.br.png',
+		),
+		array(
+			'nome'    => 'Amuri',
+			'url'     => 'https://amuri.substack.com/',
+			'dominio' => 'amuri.substack.com',
+			'favicon' => 'amuri.substack.com.png',
+		),
+		array(
+			'nome'    => 'blog do TH',
+			'url'     => 'https://blogdoth.bearblog.dev/blog/',
+			'dominio' => 'blogdoth.bearblog.dev',
+			'favicon' => 'blogdoth.bearblog.dev.png',
+		),
+		array(
+			'nome'    => 'BMRTT',
+			'url'     => 'https://bamoretti.com/',
+			'dominio' => 'bamoretti.com',
+			'favicon' => 'bamoretti.com.ico',
+		),
+		array(
+			'nome'    => 'Bruno Pulis',
+			'url'     => 'https://brunopulis.com',
+			'dominio' => 'brunopulis.com',
+			'favicon' => 'brunopulis.com.svg',
+		),
+		array(
+			'nome'    => 'Cosmoliko',
+			'url'     => 'https://cosmoliko.com/',
+			'dominio' => 'cosmoliko.com',
+			'favicon' => 'cosmoliko.com.ico',
+		),
+		array(
+			'nome'    => 'daniel Santos',
+			'url'     => 'https://danielsantos.org/',
+			'dominio' => 'danielsantos.org',
+			'favicon' => 'danielsantos.org.ico',
+		),
+		array(
+			'nome'    => 'Gustavo Belo',
+			'url'     => 'https://www.gustavobelo.com/',
+			'dominio' => 'gustavobelo.com',
+			'favicon' => 'gustavobelo.com.ico',
+		),
+		array(
+			'nome'    => 'Gustavo Ribeiro',
+			'url'     => 'https://gustavoribeiro.net/blog',
+			'dominio' => 'gustavoribeiro.net',
+			'favicon' => 'gustavoribeiro.net.png',
+		),
+		array(
+			'nome'    => 'Hey! I\'m With the Band',
+			'url'     => 'https://www.heyimwiththeband.com.br/',
+			'dominio' => 'heyimwiththeband.com.br',
+			'favicon' => 'heyimwiththeband.com.br.ico',
+		),
+		array(
+			'nome'    => 'Igor Medeiroz',
+			'url'     => 'https://igormedeiroz.com/',
+			'dominio' => 'igormedeiroz.com',
+			'favicon' => 'igormedeiroz.com.ico',
+		),
+		array(
+			'nome'    => 'Inventando Assunto',
+			'url'     => 'https://www.inventandoassunto.com/',
+			'dominio' => 'inventandoassunto.com',
+			'favicon' => 'inventandoassunto.com.ico',
+		),
+		array(
+			'nome'    => 'Irrelefante',
+			'url'     => 'https://irrelefante.com.br/',
+			'dominio' => 'irrelefante.com.br',
+			'favicon' => 'irrelefante.com.br.png',
+		),
+		array(
+			'nome'    => 'Maira Namba',
+			'url'     => 'https://www.mairanamba.com/',
+			'dominio' => 'mairanamba.com',
+			'favicon' => 'mairanamba.com.png',
+		),
+		array(
+			'nome'    => 'Manual do Usuário',
+			'url'     => 'https://manualdousuario.net',
+			'dominio' => 'manualdousuario.net',
+			'favicon' => 'manualdousuario.net.png',
+		),
+		array(
+			'nome'    => 'Marcos Ramon',
+			'url'     => 'https://marcosramon.net/',
+			'dominio' => 'marcosramon.net',
+			'favicon' => 'marcosramon.net.png',
+		),
+		array(
+			'nome'    => 'meu Tédio',
+			'url'     => 'https://www.meutedio.com/',
+			'dominio' => 'meutedio.com',
+			'favicon' => 'meutedio.com.ico',
+		),
+		array(
+			'nome'    => 'o sol na cabeça',
+			'url'     => 'https://osolnacabeca.com.br/',
+			'dominio' => 'osolnacabeca.com.br',
+			'favicon' => 'osolnacabeca.com.br.png',
+		),
+		array(
+			'nome'    => 'Papacapim',
+			'url'     => 'https://www.papacapim.org/',
+			'dominio' => 'papacapim.org',
+			'favicon' => 'papacapim.org.png',
+		),
+		array(
+			'nome'    => 'pedro.dalbo',
+			'url'     => 'https://pedro.dalbo.me/',
+			'dominio' => 'pedro.dalbo.me',
+			'favicon' => 'pedro.dalbo.me.png',
+		),
+		array(
+			'nome'    => 'prazer, Willian',
+			'url'     => 'https://prazerwillian.blogspot.com/',
+			'dominio' => 'prazerwillian.blogspot.com',
+			'favicon' => 'prazerwillian.blogspot.com.ico',
+		),
+		array(
+			'nome'    => 'rádio escafandro',
+			'url'     => 'https://radioescafandro.com/',
+			'dominio' => 'radioescafandro.com',
+			'favicon' => 'radioescafandro.com.png',
+		),
+		array(
+			'nome'    => 'Rua da Feira 🥬',
+			'url'     => 'https://ruadafeira.varzea.recife.br/',
+			'dominio' => 'ruadafeira.varzea.recife.br',
+			'favicon' => 'ruadafeira.varzea.recife.br.svg',
+		),
+		array(
+			'nome'    => 'Taddone',
+			'url'     => 'https://www.taddone.it/',
+			'dominio' => 'taddone.it',
+			'favicon' => 'taddone.it.png',
+		),
+		array(
+			'nome'    => 'tech Demo',
+			'url'     => 'https://techdemo.bearblog.dev/',
+			'dominio' => 'techdemo.bearblog.dev',
+			'favicon' => 'techdemo.bearblog.dev.png',
+		),
+		array(
+			'nome'    => 'th.blog.br',
+			'url'     => 'https://th.blog.br/',
+			'dominio' => 'th.blog.br',
+			'favicon' => 'th.blog.br.svg',
+		),
+		array(
+			'nome'    => '🛌 Eu não quero sair da cama.',
+			'url'     => 'https://heyimbriel.bearblog.dev/',
+			'dominio' => 'heyimbriel.bearblog.dev',
+			'favicon' => 'heyimbriel.bearblog.dev.png',
+		),
+	);
+}
+
+/**
+ * Retorna uma quantidade N de blogs aleatórios do blogroll.
+ *
+ * @param int $qtd
+ * @return array<int, array{nome: string, url: string, dominio: string, favicon: string}>
+ */
+function vc_blogroll_aleatorios( int $qtd = 4 ): array {
+	$blogs = vc_blogroll_lista();
+	shuffle( $blogs );
+	return array_slice( $blogs, 0, $qtd );
+}
+
+/**
+ * Retorna os posts agrupados por Ano e Mês para o arquivo retrátil da barra lateral.
+ *
+ * @return array<string, array{total: int, meses: array<string, array{nome: string, link: string, total: int, posts: array<int, array{id: int, titulo: string, url: string}>}>}>
+ */
+function vc_arquivo_agrupado(): array {
+	static $arquivo = null;
+	if ( null !== $arquivo ) {
+		return $arquivo;
+	}
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'post',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+
+	$meses_nomes = array(
+		'01' => 'jan.',
+		'02' => 'fev.',
+		'03' => 'mar.',
+		'04' => 'abr.',
+		'05' => 'mai.',
+		'06' => 'jun.',
+		'07' => 'jul.',
+		'08' => 'ago.',
+		'09' => 'set.',
+		'10' => 'out.',
+		'11' => 'nov.',
+		'12' => 'dez.',
+	);
+
+	$arquivo = array();
+
+	foreach ( $posts as $p ) {
+		$ano = get_the_date( 'Y', $p );
+		$mes = get_the_date( 'm', $p );
+
+		if ( ! isset( $arquivo[ $ano ] ) ) {
+			$arquivo[ $ano ] = array(
+				'total' => 0,
+				'meses' => array(),
+			);
+		}
+
+		if ( ! isset( $arquivo[ $ano ]['meses'][ $mes ] ) ) {
+			$arquivo[ $ano ]['meses'][ $mes ] = array(
+				'nome'  => $meses_nomes[ $mes ] ?? $mes,
+				'link'  => get_month_link( (int) $ano, (int) $mes ),
+				'total' => 0,
+				'posts' => array(),
+			);
+		}
+
+		$arquivo[ $ano ]['total']++;
+		$arquivo[ $ano ]['meses'][ $mes ]['total']++;
+		$arquivo[ $ano ]['meses'][ $mes ]['posts'][] = array(
+			'id'     => $p->ID,
+			'titulo' => get_the_title( $p ),
+			'url'    => get_permalink( $p ),
+		);
+	}
+
+	return $arquivo;
 }
 
 /* -------------------------------------------------------------------------
@@ -786,10 +973,14 @@ add_action(
 function vc_icone_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'newspaper',
+		'/microblog/' => 'square-pen',
 		'/notas/'     => 'square-pen',
-		'/videos/'    => 'film',
+		'/videos/'    => 'play',
 		'/sobre/'     => 'user-round',
-		'/biblioteca/' => 'library-big',
+		'/livros/'    => 'book',
+		'/filmes/'    => 'film',
+		'/acervo/'    => 'library-big',
+		'/musica/'    => 'music',
 		'/blogroll/'  => 'handshake',
 		'/manifesto/' => 'scroll-text',
 		'/changelog/' => 'history',
@@ -819,17 +1010,14 @@ function vc_icone_da_url( string $url ): string {
  * clicar não deveria ter de adivinhar nem descobrir depois de já ter saído da
  * página.
  *
- * Os rótulos foram reescritos no próprio menu ("textos", "sobre mim",
- * "biblioteca", "blogroll", "mudanças", "assine") e o problema passou a ser
+ * Os quatro rótulos foram reescritos no próprio menu ("todos os posts", "sobre
+ * mim", "blogs que eu leio", "como o site é feito") e o problema passou a ser
  * resolvido onde ele nasce. A frase não virou enfeite por causa disso: ela
  * continua acrescentando o que não cabe no rótulo — a ORDEM da lista de notas, o
- * feed de cada blog, onde estão as ferramentas.
- *
- * QUANDO O RÓTULO É JARGÃO, A FRASE CARREGA A EXPLICAÇÃO, e `/blogroll/` é esse
- * caso: "blogroll" é termo de ofício e não se deduz do texto do link. Quem
- * precisa de previsibilidade lê "cada um com o feed para assinar" no `title` e
- * no nome acessível, logo depois da palavra. O rótulo identifica, a frase
- * explica — e é essa divisão que faz o rótulo curto continuar servindo.
+ * feed de cada blog, onde estão as ferramentas. O que ela perdeu
+ * foi o direito de repetir o rótulo, e é por isso que a de `/blogroll/` mudou
+ * junto: com o rótulo novo, "os blogs e sites que eu leio" dizia duas vezes a
+ * mesma coisa.
  *
  * A frase NÃO substitui o rótulo visível: ela entra no `title` (aparece ao
  * passar o mouse) e no nome acessível, SEMPRE DEPOIS do texto que está na tela.
@@ -844,10 +1032,14 @@ function vc_icone_da_url( string $url ): string {
 function vc_contexto_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'a lista de todos os textos, do mais novo para o mais antigo',
+		'/microblog/' => 'os textos curtos, sem título, na ordem em que saem',
 		'/notas/'     => 'os textos curtos, sem título, na ordem em que saem',
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
-		'/biblioteca/' => 'o que eu li e assisti: livros, filmes, séries e peças, com a data de cada um',
+		'/livros/'    => 'o que estou lendo, o que já li e a minha estante',
+		'/filmes/'    => 'o que eu assisti no cinema e em casa, com as datas de cada sessão',
+		'/acervo/'    => 'o que eu li e assisti: livros e filmes',
+		'/musica/'    => 'os álbuns, artistas, músicas e podcasts mais ouvidos por ano via spotify',
 		'/blogroll/'  => 'cada um com o feed para assinar',
 		'/manifesto/' => 'por que este site existe e como ele se organiza',
 		'/changelog/' => 'o histórico de mudanças e evolução deste site',
@@ -908,7 +1100,7 @@ function vc_itens_do_menu( string $local ): array {
 	$do_painel     = wp_get_nav_menu_items( $local );
 	$itens         = array();
 
-	$desativados = array( '/videos/', '/colofao/' );
+	$desativados = array( '/colofao/' );
 
 	if ( is_array( $do_painel ) && $do_painel ) {
 		foreach ( $do_painel as $item ) {
@@ -1025,24 +1217,19 @@ function vc_paginacao( int $total, int $atual, string $base = '' ): void {
 }
 
 /* -------------------------------------------------------------------------
+   COMENTÁRIOS: DESLIGADOS
+   ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
    COMENTÁRIOS E CONVERSA: FORMATO ZEN, MINIMALISTA E COM MODERAÇÃO
    ------------------------------------------------------------------------- */
 /*
  * O site tem comentários nativos e suporte a Webmentions/pingbacks da IndieWeb.
  *
  * Princípios do desenho:
- *  1. Sem ruído e sem captchas invasivos. OS AVATARES VOLTARAM: numa menção do
- *     fediverso eles são o que diz quem reagiu, e o endereço da imagem já vem
- *     junto com a menção, sem busca nova.
+ *  1. Sem ruído, sem avatares pesados de terceiros, sem captchas invasivos.
  *  2. Honeypot invisível (campo armadilha para robôs de spam).
  *  3. Moderação humana prévia para quem comenta pela primeira vez.
  *  4. Compatível com Webmentions do fediverso e outros blogs.
- *
- * O CAMPO DE E-MAIL É OPCIONAL, e a trava abaixo é o que garante isso: o
- * formulário pede o e-mail porque ele traz o Gravatar de quem comenta, e a
- * opção `require_name_email` do WordPress fica desligada por filtro para que
- * ninguém seja obrigado a preencher. Um campo opcional que o servidor recusa
- * quando vazio não é opcional.
  */
 add_action(
 	'after_setup_theme',
@@ -1052,24 +1239,11 @@ add_action(
 	}
 );
 
-/*
- * O HONEYPOT, E O FILTRO CERTO PARA ELE.
- *
- * ELE ESTAVA SENDO ADICIONADO NO FILTRO ERRADO, e por isso nunca apareceu na
- * página. O `comment_form_default_fields` monta os campos PADRÃO, e o
- * `comment_form()` os descarta no instante em que o tema passa um array `fields`
- * próprio, que é o caso do `comments.php`. O campo era acrescentado a uma lista
- * que ninguém lia.
- *
- * O `comment_form_fields` recebe a lista FINAL, já com os campos do tema, e é o
- * único ponto por onde o honeypot passa de verdade. O `vc_hp_website` continua
- * sendo conferido no `preprocess_comment` abaixo, e o nome não mudou para não
- * invalidar nada que já esteja por aí.
- */
+// Honeypot anti-spam invisível
 add_filter(
-	'comment_form_fields',
+	'comment_form_default_fields',
 	static function ( array $fields ): array {
-		// Campo invisível, que humanos não preenchem e robôs preenchem.
+		// Adiciona campo invisível que humanos não preenchem
 		$fields['vc_hp_check'] = '<p class="vc-hp-field" style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">'
 			. '<label for="vc_hp_website">se você é humano, deixe este campo em branco</label>'
 			. '<input type="text" name="vc_hp_website" id="vc_hp_website" tabindex="-1" autocomplete="off" value="" />'
@@ -1078,9 +1252,7 @@ add_filter(
 	}
 );
 
-// O E-MAIL É OPCIONAL. Sem esta trava, a opção `require_name_email` do
-// WordPress recusaria todo comentário sem e-mail preenchido, e o campo
-// opcional viraria obrigatório na prática.
+// Não exigir e-mail obrigatoriamente
 add_filter( 'pre_option_require_name_email', '__return_zero' );
 
 // Normalizar URL do autor (adicionar https:// se o usuário digitou sem protocolo)
@@ -1104,47 +1276,6 @@ add_filter(
 	}
 );
 
-/**
- * ANEXOS NÃO ACEITAM COMENTÁRIOS.
- *
- * O WordPress por padrão insere mídias com comment_status = open. Bots de spam
- * usam isso para disparar requisições diretamente para wp-comments-post.php com o ID
- * de imagens. As três regras abaixo fecham essa porta:
- * 1. comments_open responde false para qualquer anexo.
- * 2. wp_insert_attachment_data força comentários e pings fechados em novos uploads.
- * 3. pre_comment_on_post bloqueia na hora qualquer tentativa de comentar em anexo.
- */
-add_filter(
-	'comments_open',
-	static function ( bool $open, $post_id ): bool {
-		$post = get_post( $post_id );
-		if ( $post && 'attachment' === $post->post_type ) {
-			return false;
-		}
-		return $open;
-	},
-	20,
-	2
-);
-
-add_filter(
-	'wp_insert_attachment_data',
-	static function ( array $data ): array {
-		$data['comment_status'] = 'closed';
-		$data['ping_status']    = 'closed';
-		return $data;
-	}
-);
-
-add_action(
-	'pre_comment_on_post',
-	static function ( $comment_post_id ): void {
-		$post = get_post( $comment_post_id );
-		if ( $post && 'attachment' === $post->post_type ) {
-			wp_die( 'comentários não são permitidos em arquivos de mídia.', 'comentários desativados', array( 'response' => 403 ) );
-		}
-	}
-);
 /*
  * AS REGRAS DE URL PRECISAM SER REGRAVADAS quando CPTs ou taxonomias mudam.
  */
@@ -1438,7 +1569,7 @@ function vc_sumario_do_artigo( string $html ): string {
 
 	return substr( $conteudo, 0, $corte ) . $indice . substr( $conteudo, $corte );
 }
-add_filter( 'the_content', 'vc_sumario_do_artigo', 40 );
+// // add_filter( 'the_content', 'vc_sumario_do_artigo', 40 ); // Desativado a pedido do usuario
 
 /**
  * Âncora de URL a partir do texto de um título, sem repetir as já usadas.
@@ -1618,7 +1749,7 @@ add_filter(
  *
  * Isto mexe SÓ na consulta principal da home: o arquivo de um tema e a página
  * `/posts/` têm consulta própria e não passam por aqui, e o painel fica de fora
- * pelo `is_admin()` — no painel, "quatro por página" seria uma lista pela metade
+ * pelo `is_admin()` — no painel, "oito por página" seria uma lista pela metade
  * que ninguém pediu.
  */
 add_action(
@@ -1628,7 +1759,8 @@ add_action(
 			return;
 		}
 
-		$consulta->set( 'posts_per_page', 4 );
+		$consulta->set( 'post_type', array( 'post', defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) );
+		$consulta->set( 'posts_per_page', 12 );
 	}
 );
 
@@ -1848,7 +1980,7 @@ function vc_canonical(): string {
  * que o Google mostra.
  */
 function vc_descricao(): string {
-	$padrao = get_bloginfo( 'description' ) ?: 'Tecnologia, dados e vida: um blog pessoal de Vinicius Oliveira.';
+	$padrao = get_bloginfo( 'description' ) ?: 'Tecnologia, dados e vida — um blog pessoal de Vinicius Oliveira.';
 	$texto  = '';
 
 	if ( is_front_page() ) {
@@ -1857,7 +1989,7 @@ function vc_descricao(): string {
 		 * mostra para quem procura pelo nome do blog, e ali cabe o que o blog
 		 * cobre, não só o que ele é. É a mesma frase do site Astro.
 		 */
-		$texto = 'Tecnologia, dados e vida: blog pessoal de Vinicius Oliveira. Posts sobre tecnologia, AuDHD, leituras e vida em Curitiba.';
+		$texto = 'Tecnologia, dados e vida — blog pessoal de Vinicius Oliveira. Posts sobre tecnologia, AuDHD, leituras e vida em Curitiba.';
 	} elseif ( is_singular() ) {
 		$id = (int) get_queried_object_id();
 
@@ -1900,607 +2032,13 @@ function vc_descricao(): string {
  *
  * A home é a exceção: lá o título é o do site, sem o handle repetido.
  */
-/**
- * Como cada comentário é desenhado.
- *
- * O AVATAR VOLTOU, e ele era recusado de propósito antes ("sem avatares externos por
- * privacidade e leveza", dizia o `comments.php"). O motivo da volta é o federado: numa
- * menção vinda do Fediverso o avatar é a única imagem que diz QUEM reagiu, e sem ele
- * uma curtida e um comentário ficam com a mesma cara. O plugin guarda a foto da fonte
- * no `comment_meta` e a entrega pelo `get_avatar()`, então não há busca externa nova:
- * o endereço já veio junto com a menção.
- *
- * É UMA FUNÇÃO COM NOME, E NÃO UMA CLOSURE NO `comments.php`, por um motivo que só
- * apareceu com o plugin de Webmention instalado: o walker dele decide chamar o
- * callback do tema com `is_string( $args['callback'] )`. Closure não é string, então
- * o callback era IGNORADO e todo comentário caía no desenho padrão do WordPress —
- * sem as classes `post-comment__*` que o CSS do tema estiliza. O nome resolve isso,
- * e de quebra torna o desenho filtrável por outro plugin.
- *
- * @param WP_Comment $comment O comentário.
- * @param array      $args    Argumentos do `wp_list_comments()`.
- * @param int        $depth   Profundidade da resposta.
- */
-function vc_comentario( $comment, $args, $depth ) {
-	/*
-	 * A INTERAÇÃO TEM NOME.
-	 *
-	 * Curtida, repost e menção NÃO SÃO comentários: não têm texto, e sem nomear o que
-	 * aconteceu o leitor vê o nome de uma pessoa e um espaço vazio embaixo, sem saber se
-	 * ela escreveu algo que não carregou ou se apenas reagiu. O verbo diz qual foi a ação.
-	 *
-	 * O POST VEM DA FEDERAÇÃO, e o vocabulário fica em português como o resto do site:
-	 * o plugin chama isto de `like` e `repost`, e quem lê aqui chama de curtir e
-	 * republicar.
-	 */
-	$vc_verbos = array(
-		'like'     => 'curtiu',
-		'repost'   => 'republicou',
-		'bookmark' => 'guardou',
-		'mention'  => 'mencionou',
-	);
-
-	$vc_verbo = $vc_verbos[ get_comment_type() ] ?? '';
-
-						$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
-						?>
-						<<?php echo $tag; ?> id="comment-<?php comment_ID(); ?>" <?php comment_class( 'post-comment', $comment ); ?>>
-							<article class="post-comment__body">
-								<header class="post-comment__meta">
-									<span class="post-comment__avatar"><?php echo get_avatar( $comment, 32 ); ?></span>
-									<strong class="post-comment__author"><?php comment_author_link(); ?></strong>
-									<?php if ( '' !== $vc_verbo ) : ?>
-										<span class="post-comment__verbo"><?php echo esc_html( $vc_verbo ); ?></span>
-									<?php endif; ?>
-									<span class="post-comment__dot" aria-hidden="true">·</span>
-									<time class="post-comment__date" datetime="<?php comment_time( 'c' ); ?>">
-										<?php comment_date( 'd \d\e F \d\e Y' ); ?>
-									</time>
-								</header>
-
-								<?php if ( '0' === $comment->comment_approved ) : ?>
-									<p class="post-comment__moderation">
-										<em>seu comentário foi recebido e aguarda aprovação prévia.</em>
-									</p>
-								<?php endif; ?>
-
-								<?php if ( '' !== trim( (string) $comment->comment_content ) ) : ?>
-								<div class="post-comment__content">
-									<?php comment_text(); ?>
-								</div>
-								<?php endif; ?>
-
-								<div class="post-comment__reply">
-									<?php
-									comment_reply_link(
-										array_merge(
-											$args,
-											array(
-												'depth'     => $depth,
-												'max_depth' => $args['max_depth'],
-												'reply_text' => 'responder',
-											)
-										)
-									);
-									?>
-								</div>
-							</article>
-						<?php
-}
-
-/**
- * O nome da pessoa, e não o handle.
- *
- * O site nomeia quem escreve de duas formas, e as duas estão certas em contextos
- * diferentes: o `display_name` do WordPress é "viniciuscodes", o arroba que identifica
- * o site em todo lugar, e "Vinicius Oliveira" é o nome que aparece na prosa.
- *
- * A FUNÇÃO EXISTE PARA OS DOIS LUGARES QUE PRECISAM CONCORDAR: o h-card do
- * cabeçalho, que diz ao Fediverso quem é o dono do domínio, e o `author` do JSON-LD,
- * que diz ao buscador quem escreveu. Se um dissesse o arroba e o outro o nome,
- * buscador e Fediverso leriam duas pessoas diferentes.
- */
-function vc_nome_do_autor(): string {
-	return 'Vinicius Oliveira';
-}
-
-/* -------------------------------------------------------------------------
-   OS DADOS ESTRUTURADOS
-   ------------------------------------------------------------------------- */
-/**
- * Conta palavras de um texto do editor.
- *
- * POR QUE NÃO `str_word_count()`, E POR QUE NÃO CONTAR DIRETO NO CONTEÚDO.
- *
- * A primeira considera letra só o ASCII, então parte toda palavra acentuada em
- * duas: "não" virava duas palavras. A segunda conta os comentários de bloco do
- * editor (`<!-- wp:paragraph -->`) como se fossem texto, e eles não aparecem na
- * página. Medido num texto deste site: o mesmo conteúdo dava 97 palavras contando
- * os blocos e o número certo sem eles.
- *
- * A expressão regular pede pelo menos uma letra ou um número, em qualquer
- * alfabeto: é o que faz `não`, `café` e `2026` contarem um cada.
- *
- * @param string $conteudo O conteúdo cru, como está no banco.
- * @return int O número de palavras.
- */
-function vc_contar_palavras( string $conteudo ): int {
-	$texto = preg_replace( '/<!--.*?-->/s', ' ', $conteudo );
-	$texto = wp_strip_all_tags( (string) $texto );
-
-	return (int) preg_match_all( '/[\p{L}\p{N}]+/u', $texto );
-}
-
-/**
- * Os dados estruturados do site, em um grafo só.
- *
- * POR QUE UM GRAFO, E NÃO UM BLOCO POR PÁGINA. Um `@graph` é uma lista de nós que
- * se referenciam por `@id`: o texto aponta para o autor, o autor aponta para o
- * site, e nenhum deles repete os dados do outro. Em blocos soltos, o autor teria
- * de ser reescrito inteiro em cada página, e o buscador não teria como saber que
- * os dois "Vinicius Oliveira" são a mesma pessoa.
- *
- * O QUE ELE DECLARA:
- *
- *   Person              quem escreve. O `sameAs` liga o nome aos perfis de fora,
- *                       e é ele que faz o buscador tratar o nome como entidade
- *                       em vez de como texto.
- *   WebSite             o site, com a busca. O `SearchAction` é o que habilita a
- *                       caixa de busca direto no resultado.
- *   WebPage             a página, no tipo que ela é: `AboutPage` no sobre,
- *                       `ContactPage` no contato, `CollectionPage` nas listas.
- *   BreadcrumbList      o caminho até a página. Sem ele, o resultado mostra a
- *                       URL crua em vez de "viniciuscodes.com.br › tema › x".
- *   BlogPosting         o texto longo.
- *   SocialMediaPosting  a nota. É o tipo que o schema.org reserva para publicação
- *                       curta, e descreve o que uma nota é.
- *   ItemList            os itens de uma lista, na ordem em que aparecem.
- *   Comment             a conversa, inclusive a que chega do Fediverso.
- *
- * O PERFIL DO FEDIVERSO NÃO ENTRA NO `sameAs`, e não é esquecimento: o
- * `/.well-known/webfinger` deste site aponta o perfil do ActivityPub para a
- * própria home. Colocá-lo aqui seria um nó apontando para si mesmo, dizendo ao
- * buscador que este site é um perfil de si mesmo.
- *
- * O QUE ELE NÃO DECLARA: `Review` em filme, série ou peça. Não existe nota dada
- * a eles, e um `ratingValue` que a página não mostra é o caminho mais curto para
- * o buscador descartar o bloco inteiro — inclusive o dos livros, que é o único
- * com nota de verdade.
- */
-function vc_dados_estruturados(): void {
-	$vc_site  = home_url( '/' );
-	$vc_id    = (int) get_queried_object_id();
-	$vc_autor = vc_nome_do_autor();
-	$vc_foto  = (string) vc_midia( 'vinicius-profile.webp' );
-	$vc_nota  = defined( 'VC_NOTA' ) ? VC_NOTA : 'nota';
-
-	/* ---------------------------------------------------------------
-	 * O endereço da página, que é a chave de tudo o que vem depois.
-	 * --------------------------------------------------------------- */
-	$vc_pagina_url = $vc_site;
-
-	if ( is_singular() ) {
-		$vc_pagina_url = (string) get_permalink( $vc_id );
-	} elseif ( is_category() || is_tag() || is_tax() ) {
-		$vc_trilha_termo = get_queried_object();
-
-		if ( $vc_trilha_termo instanceof WP_Term ) {
-			$vc_link = get_term_link( $vc_trilha_termo );
-
-			if ( ! is_wp_error( $vc_link ) && '' !== $vc_link ) {
-				$vc_pagina_url = (string) $vc_link;
-			}
-		}
-	} elseif ( is_post_type_archive() ) {
-		$vc_tipo_arquivo = (string) get_query_var( 'post_type' );
-
-		if ( is_array( $vc_tipo_arquivo ) ) {
-			$vc_tipo_arquivo = (string) reset( $vc_tipo_arquivo );
-		}
-
-		$vc_link = get_post_type_archive_link( $vc_tipo_arquivo );
-
-		if ( $vc_link ) {
-			$vc_pagina_url = (string) $vc_link;
-		}
-	}
-
-	$grafo = array();
-
-	/* ---------------------------------------------------------------
-	 * 1 e 2. As duas entidades que valem para o site inteiro.
-	 * --------------------------------------------------------------- */
-	$vc_perfil = array(
-		'@type'  => 'Person',
-		'@id'    => $vc_site . '#autor',
-		'name'   => $vc_autor,
-		'url'    => $vc_site,
-		'sameAs' => array(
-			'https://bsky.app/profile/viniciuscodes.com.br',
-			'https://www.youtube.com/@viniciuscodes',
-			'https://www.linkedin.com/in/viniciuscodes/',
-		),
-	);
-
-	if ( '' !== $vc_foto ) {
-		$vc_perfil['image'] = $vc_foto;
-	}
-
-	$grafo[] = $vc_perfil;
-
-	$grafo[] = array(
-		'@type'           => 'WebSite',
-		'@id'             => $vc_site . '#site',
-		'url'             => $vc_site,
-		'name'            => $vc_autor,
-		'alternateName'   => (string) get_option( 'blogname' ),
-		'description'     => (string) get_option( 'blogdescription' ),
-		'inLanguage'      => (string) get_bloginfo( 'language' ),
-		'publisher'       => array( '@id' => $vc_site . '#autor' ),
-		'potentialAction' => array(
-			'@type'       => 'SearchAction',
-			'target'      => array(
-				'@type'       => 'EntryPoint',
-				'urlTemplate' => $vc_site . '?s={search_term_string}',
-			),
-			'query-input' => 'required name=search_term_string',
-		),
-	);
-
-	/* ---------------------------------------------------------------
-	 * 3 e 4. A trilha e a página.
-	 *
-	 * A trilha só existe quando há mais de um passo: numa página solta ela
-	 * seria "início › esta página", que não é caminho, é eco.
-	 * --------------------------------------------------------------- */
-	$vc_trilha       = array();
-	$vc_nome_pagina  = (string) get_bloginfo( 'name' );
-	$vc_desc_pagina  = '';
-	$vc_tipo_pagina  = 'WebPage';
-
-	/*
-	 * A `/posts/` VEM PRIMEIRO, e a ordem é o motivo de ela estar aqui: ela é uma
-	 * PÁGINA, então `is_singular()` a captura antes de qualquer outra checagem e ela
-	 * sairia como `WebPage`. O que ela é, de fato, é a lista de todos os textos.
-	 */
-	if ( is_page( 'posts' ) ) {
-		$vc_tipo_pagina = 'CollectionPage';
-		$vc_nome_pagina = wp_strip_all_tags( (string) get_the_title( $vc_id ) );
-		$vc_desc_pagina = (string) vc_descricao();
-	} elseif ( is_singular( $vc_nota ) ) {
-		/*
-		 * O NOME DA NOTA É O TEXTO DELA, e não o título que o WordPress gravou para o
-		 * banco. Aquele título é um carimbo de data, e usá-lo aqui faria a trilha do
-		 * buscador dizer 'Nota — 5 de outubro de 2026, 09:00', que é o mecanismo
-		 * aparecendo no resultado.
-		 */
-		$vc_nome_pagina = vc_titulo_da_nota( $vc_id );
-		$vc_desc_pagina = wp_strip_all_tags( (string) get_post_field( 'post_content', $vc_id ) );
-	} elseif ( is_singular() ) {
-		$vc_nome_pagina = wp_strip_all_tags( (string) get_the_title( $vc_id ) );
-		$vc_desc_pagina = (string) vc_descricao();
-	} elseif ( is_category() || is_tag() || is_tax() ) {
-		$vc_obj = get_queried_object();
-
-		if ( $vc_obj instanceof WP_Term ) {
-			$vc_nome_pagina = $vc_obj->name;
-			$vc_desc_pagina = wp_strip_all_tags( (string) $vc_obj->description );
-			$vc_trilha[]    = array( 'nome' => $vc_obj->name, 'url' => $vc_pagina_url );
-		}
-
-		$vc_tipo_pagina = 'CollectionPage';
-	} elseif ( is_post_type_archive() ) {
-		$vc_obj_post = get_post_type_object( (string) get_query_var( 'post_type' ) );
-
-		$vc_nome_pagina = $vc_obj_post ? mb_strtolower( (string) $vc_obj_post->labels->name, 'UTF-8' ) : 'notas';
-		$vc_trilha[]    = array( 'nome' => $vc_nome_pagina, 'url' => $vc_pagina_url );
-		$vc_tipo_pagina = 'CollectionPage';
-	} elseif ( is_search() ) {
-		$vc_tipo_pagina = 'SearchResultsPage';
-		$vc_nome_pagina = 'busca';
-	} elseif ( is_404() ) {
-		return;
-	}
-
-	if ( is_page( 'sobre' ) ) {
-		$vc_tipo_pagina = 'AboutPage';
-	} elseif ( is_page( 'contato' ) ) {
-		$vc_tipo_pagina = 'ContactPage';
-	} elseif ( is_page_template( 'page-templates/acervo.php' ) ) {
-		/*
-		 * A BIBLIOTECA É UMA COLEÇÃO, e o `ItemList` dela sai no corpo da página,
-		 * pelo `page-templates/acervo.php` — é lá que a lista existe. Aqui fica só
-		 * o tipo certo para a página que a contém.
-		 */
-		$vc_tipo_pagina = 'CollectionPage';
-	}
-
-	/* nos textos e nas notas, o segundo passo é o tema */
-	if ( is_singular( 'post' ) || is_singular( $vc_nota ) ) {
-		$vc_temas_do_post = get_the_terms( $vc_id, 'category' );
-
-		if ( is_array( $vc_temas_do_post ) && $vc_temas_do_post ) {
-			$vc_primeiro = $vc_temas_do_post[0];
-			$vc_link     = get_term_link( $vc_primeiro );
-
-			if ( ! is_wp_error( $vc_link ) ) {
-				$vc_trilha[] = array( 'nome' => $vc_primeiro->name, 'url' => (string) $vc_link );
-			}
-		}
-
-		if ( is_singular( $vc_nota ) ) {
-			$vc_arquivo  = get_post_type_archive_link( $vc_nota );
-			$vc_trilha[] = array( 'nome' => 'notas', 'url' => $vc_arquivo ? (string) $vc_arquivo : '' );
-		}
-
-		$vc_trilha[] = array( 'nome' => $vc_nome_pagina, 'url' => $vc_pagina_url );
-	} elseif ( is_page() ) {
-		$vc_trilha[] = array( 'nome' => $vc_nome_pagina, 'url' => $vc_pagina_url );
-	}
-
-	/* a home abre a trilha, e nunca é a trilha inteira */
-	$vc_trilha = array_filter( $vc_trilha, static fn( array $x ): bool => '' !== ( $x['url'] ?? '' ) );
-
-	$vc_id_trilha = '';
-
-	if ( $vc_trilha ) {
-		array_unshift( $vc_trilha, array( 'nome' => 'início', 'url' => $vc_site ) );
-
-		$vc_id_trilha   = $vc_pagina_url . '#trilha';
-		$vc_itens       = array();
-		$vc_posicao     = 0;
-
-		foreach ( $vc_trilha as $vc_passo ) {
-			$vc_posicao++;
-			$vc_itens[] = array(
-				'@type'    => 'ListItem',
-				'position' => $vc_posicao,
-				'name'     => $vc_passo['nome'],
-				'item'     => $vc_passo['url'],
-			);
-		}
-
-		$grafo[] = array(
-			'@type'           => 'BreadcrumbList',
-			'@id'             => $vc_id_trilha,
-			'itemListElement' => $vc_itens,
-		);
-	}
-
-	$vc_pagina = array(
-		'@type'      => $vc_tipo_pagina,
-		'@id'        => $vc_pagina_url . '#pagina',
-		'url'        => $vc_pagina_url,
-		'name'       => $vc_nome_pagina,
-		'inLanguage' => (string) get_bloginfo( 'language' ),
-		'isPartOf'   => array( '@id' => $vc_site . '#site' ),
-	);
-
-	if ( '' !== $vc_desc_pagina ) {
-		$vc_pagina['description'] = $vc_desc_pagina;
-	}
-
-	if ( '' !== $vc_id_trilha ) {
-		$vc_pagina['breadcrumb'] = array( '@id' => $vc_id_trilha );
-	}
-
-	$grafo[] = $vc_pagina;
-
-	/* ---------------------------------------------------------------
-	 * 5. O conteúdo: o texto longo e a nota.
-	 * --------------------------------------------------------------- */
-	if ( is_singular( 'post' ) ) {
-		$vc_temas    = get_the_terms( $vc_id, 'category' );
-		$vc_imagem   = (string) vc_imagem_social( $vc_id );
-		$vc_conteudo = get_post_field( 'post_content', $vc_id );
-
-		$vc_post = array(
-			'@type'            => 'BlogPosting',
-			'@id'              => $vc_pagina_url . '#texto',
-			'mainEntityOfPage' => array( '@id' => $vc_pagina_url . '#pagina' ),
-			'url'              => $vc_pagina_url,
-			'headline'         => wp_strip_all_tags( (string) get_the_title( $vc_id ) ),
-			'description'      => (string) vc_descricao(),
-			'datePublished'    => (string) get_the_date( DATE_W3C, $vc_id ),
-			'dateModified'     => (string) get_the_modified_date( DATE_W3C, $vc_id ),
-			'inLanguage'       => (string) get_bloginfo( 'language' ),
-			'author'           => array( '@id' => $vc_site . '#autor' ),
-			'publisher'        => array( '@id' => $vc_site . '#autor' ),
-			'isPartOf'         => array( '@id' => $vc_pagina_url . '#pagina' ),
-			/*
-			 * PALAVRA É O QUE TEM LETRA OU NÚMERO, e a conta é por expressão regular
-			 * porque `str_word_count()` NÃO SERVE EM PORTUGUÊS: ela considera letra só
-			 * o ASCII, então parte toda palavra acentuada em duas. Medido: "não" virava
-			 * duas palavras, e um texto inteiro saía com o dobro da contagem.
-			 */
-			'wordCount'        => vc_contar_palavras( (string) $vc_conteudo ),
-		);
-
-		if ( '' !== $vc_imagem ) {
-			$vc_post['image'] = $vc_imagem;
-		}
-
-		if ( is_array( $vc_temas ) && $vc_temas ) {
-			$vc_post['articleSection'] = array_map( static fn( WP_Term $t ): string => $t->name, $vc_temas );
-		}
-
-		$grafo[]      = $vc_post;
-		$vc_id_texto  = $vc_pagina_url . '#texto';
-		$vc_comentarios = null;
-	} elseif ( is_singular( $vc_nota ) ) {
-		$vc_conteudo = (string) get_post_field( 'post_content', $vc_id );
-
-		$grafo[] = array(
-			'@type'            => 'SocialMediaPosting',
-			'@id'              => $vc_pagina_url . '#nota',
-			'mainEntityOfPage' => array( '@id' => $vc_pagina_url . '#pagina' ),
-			'url'              => $vc_pagina_url,
-			'headline'         => vc_titulo_da_nota( $vc_id ),
-			'articleBody'      => wp_strip_all_tags( (string) $vc_conteudo ),
-			'datePublished'    => (string) get_the_date( DATE_W3C, $vc_id ),
-			'dateModified'     => (string) get_the_modified_date( DATE_W3C, $vc_id ),
-			'inLanguage'       => (string) get_bloginfo( 'language' ),
-			'author'           => array( '@id' => $vc_site . '#autor' ),
-			'isPartOf'         => array( '@id' => $vc_site . '#site' ),
-		);
-	}
-
-	/* ---------------------------------------------------------------
-	 * 6. A conversa. Só comentário: reação do Fediverso ("curtiu",
-	 * "republicou") não é comentário, e declará-la como tal seria dizer
-	 * ao buscador que alguém escreveu o que ninguém escreveu.
-	 * --------------------------------------------------------------- */
-	if ( is_singular() ) {
-		$vc_lista_comentarios = get_comments(
-			array(
-				'post_id' => $vc_id,
-				'status'  => 'approve',
-				'type'    => 'comment',
-				'order'   => 'ASC',
-			)
-		);
-
-		$vc_conversa = array();
-
-		foreach ( $vc_lista_comentarios as $vc_c ) {
-			$vc_no = array(
-				'@type'         => 'Comment',
-				'@id'           => $vc_pagina_url . '#comment-' . $vc_c->comment_ID,
-				'text'          => wp_strip_all_tags( (string) $vc_c->comment_content ),
-				'datePublished' => (string) mysql2date( DATE_W3C, $vc_c->comment_date_gmt, false ),
-				'url'           => $vc_pagina_url . '#comment-' . $vc_c->comment_ID,
-			);
-
-			$vc_quem = array( '@type' => 'Person', 'name' => (string) $vc_c->comment_author );
-
-			if ( '' !== (string) $vc_c->comment_author_url ) {
-				$vc_quem['url'] = (string) $vc_c->comment_author_url;
-			}
-
-			$vc_no['author'] = $vc_quem;
-
-			$grafo[]       = $vc_no;
-			$vc_conversa[] = array( '@id' => $vc_no['@id'] );
-		}
-
-		if ( $vc_conversa ) {
-			foreach ( $grafo as $vc_i => $vc_no ) {
-				if ( isset( $vc_no['@type'] ) && in_array( $vc_no['@type'], array( 'BlogPosting', 'SocialMediaPosting' ), true ) ) {
-					$grafo[ $vc_i ]['commentCount'] = count( $vc_conversa );
-					$grafo[ $vc_i ]['comment']      = $vc_conversa;
-				}
-			}
-		}
-	}
-
-	/* ---------------------------------------------------------------
-	 * 7. A lista, nas páginas que são lista.
-	 *
-	 * A `/posts/` PRECISA DE CONSULTA PRÓPRIA: o `wp_head` roda antes de o
-	 * template montar o `WP_Query` dele, então no momento em que este código
-	 * roda a lista ainda não existe. A consulta é a mesma do
-	 * `page-templates/lista-de-posts.php`, e por isso ela está repetida aqui
-	 * em vez de deduzida.
-	 * --------------------------------------------------------------- */
-	$vc_e_lista = is_archive() || is_page( 'posts' );
-
-	if ( $vc_e_lista && ! is_404() ) {
-		$vc_objetos = array();
-
-		if ( is_page( 'posts' ) ) {
-			$vc_objetos = get_posts(
-				array(
-					'post_type'      => 'post',
-					'post_status'    => 'publish',
-					'posts_per_page' => -1,
-					'orderby'        => 'date',
-					'order'          => 'DESC',
-				)
-			);
-		} else {
-			global $wp_query;
-
-			if ( isset( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
-				$vc_objetos = $wp_query->posts;
-			}
-		}
-
-		$vc_itens_lista = array();
-		$vc_posicao     = 0;
-
-		foreach ( $vc_objetos as $vc_obj ) {
-			if ( ! $vc_obj instanceof WP_Post ) {
-				continue;
-			}
-
-			$vc_posicao++;
-
-			$vc_elemento = array(
-				'@type'    => 'ListItem',
-				'position' => $vc_posicao,
-				'url'      => (string) get_permalink( $vc_obj ),
-				'name'     => wp_strip_all_tags( (string) get_the_title( $vc_obj ) ),
-			);
-
-			$vc_itens_lista[] = $vc_elemento;
-		}
-
-		if ( $vc_itens_lista ) {
-			$grafo[] = array(
-				'@type'           => 'ItemList',
-				'@id'             => $vc_pagina_url . '#lista',
-				'numberOfItems'   => count( $vc_itens_lista ),
-				'itemListOrder'   => 'https://schema.org/ItemListOrderDescending',
-				'itemListElement' => $vc_itens_lista,
-			);
-
-			foreach ( $grafo as $vc_i => $vc_no ) {
-				if ( isset( $vc_no['@type'] ) && 'CollectionPage' === $vc_no['@type'] ) {
-					$grafo[ $vc_i ]['mainEntity'] = array( '@id' => $vc_pagina_url . '#lista' );
-				}
-			}
-		}
-	}
-
-	echo '<script type="application/ld+json">'
-		. wp_json_encode(
-			array(
-				'@context' => 'https://schema.org',
-				'@graph'   => $grafo,
-			),
-			JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG
-		)
-		. '</script>' . "\n";
-}
-add_action( 'wp_head', 'vc_dados_estruturados' );
-
-
 add_filter( 'document_title_separator', static fn(): string => '·' );
 
 add_filter(
 	'document_title_parts',
 	static function ( array $partes ): array {
 		if ( is_front_page() || is_home() ) {
-			return array( 'title' => 'Vinicius Oliveira (@viniciuscodes)' );
-		}
-
-		/*
-		 * O ARQUIVO DE NOTAS ENTRA EM MINÚSCULA, como o `<h1>` da página e como
-		 * todos os outros títulos do site. Este pedaço vem do rótulo do post type,
-		 * e o rótulo é "Notas" — maiúsculo porque é assim que ele aparece no
-		 * painel, onde é nome de menu e não texto de leitura.
-		 */
-		if ( is_post_type_archive( defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) ) {
-			$partes['title'] = mb_strtolower( (string) ( $partes['title'] ?? '' ), 'UTF-8' );
-		}
-
-		/*
-		 * NA PÁGINA DE UMA NOTA, O TÍTULO É O TEXTO DELA, e não o rótulo interno.
-		 * Um `<title>` não pode ser vazio, e o rótulo era o que preenchia o campo: o
-		 * resultado é que a nota chegava ao Google como data. Ver `vc_titulo_da_nota()`.
-		 */
-		if ( is_singular( defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) ) {
-			$partes['title'] = vc_titulo_da_nota( (int) get_queried_object_id() );
+			return array( 'title' => '@viniciuscodes' );
 		}
 
 		$partes['site'] = '@viniciuscodes';
@@ -2683,7 +2221,7 @@ add_action(
 		$manifesto = array(
 			'name'             => 'viniciuscodes',
 			'short_name'       => 'viniciuscodes',
-			'description'      => get_bloginfo( 'description' ) ?: 'Tecnologia, dados e vida: um blog pessoal de Vinicius Oliveira.',
+			'description'      => get_bloginfo( 'description' ) ?: 'Tecnologia, dados e vida — um blog pessoal de Vinicius Oliveira.',
 			'start_url'        => '/',
 			'scope'            => '/',
 			'display'          => 'standalone',
@@ -2774,6 +2312,277 @@ add_filter(
 );
 
 /**
+ * Simplifica as colunas da tela de comentários (edit-comments.php),
+ * removendo colunas técnicas de plugins (como Comment-Type e Protocol)
+ * para dar espaço de leitura ao texto do comentário.
+ *
+ * @param array<string, string> $columns
+ * @return array<string, string>
+ */
+add_filter(
+	'manage_edit-comments_columns',
+	static function ( array $columns ): array {
+		unset( $columns['comment_type'], $columns['comment-type'], $columns['protocol'], $columns['response_protocol'] );
+
+		// Também garante remoção caso o plugin use o rótulo exato "Comment-Type" ou "Protocol"
+		foreach ( $columns as $key => $label ) {
+			$clean_label = strtolower( trim( wp_strip_all_tags( (string) $label ) ) );
+			if ( in_array( $clean_label, array( 'comment-type', 'protocol', 'tipo de comentário', 'protocolo' ), true ) ) {
+				unset( $columns[ $key ] );
+			}
+		}
+
+		return $columns;
+	},
+	999
+);
+
+/**
+ * Agrupa comentários, respostas e tréplicas em fios de conversa (threads)
+ * na tela de Comentários do WP Admin (edit-comments.php), para que o comentário
+ * raiz venha primeiro e suas respostas/tréplicas apareçam logo abaixo, em ordem
+ * cronológica da conversa, com recuo visual de nível.
+ *
+ * @param WP_Comment[] $comments
+ * @return WP_Comment[]
+ */
+add_filter(
+	'the_comments',
+	static function ( array $comments, WP_Comment_Query $query ): array {
+		if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+			return $comments;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-comments' !== $screen->id ) {
+			return $comments;
+		}
+
+		// Não reordenar se for uma consulta apenas de contagem ou IDs
+		if ( ! empty( $query->query_vars['count'] ) || 'ids' === $query->query_vars['fields'] ) {
+			return $comments;
+		}
+
+		// Evita loop infinito ao buscar pais/filhos faltantes na página atual
+		static $reorganizando = false;
+		if ( $reorganizando || empty( $comments ) ) {
+			return $comments;
+		}
+		$reorganizando = true;
+
+		// Mapa de comentários indexado por ID
+		$by_id = array();
+		foreach ( $comments as $c ) {
+			if ( $c instanceof WP_Comment ) {
+				$by_id[ (int) $c->comment_ID ] = $c;
+			}
+		}
+
+		// 1. Garantir que se uma resposta está na página, o ancestral (pai/avô) também esteja
+		foreach ( array_values( $by_id ) as $c ) {
+			$parent_id = (int) $c->comment_parent;
+			$guard     = 0;
+			while ( $parent_id > 0 && $guard < 10 ) {
+				if ( ! isset( $by_id[ $parent_id ] ) ) {
+					$parent_obj = get_comment( $parent_id );
+					if ( $parent_obj instanceof WP_Comment ) {
+						$by_id[ $parent_id ] = $parent_obj;
+						$parent_id           = (int) $parent_obj->comment_parent;
+					} else {
+						break;
+					}
+				} else {
+					$parent_id = (int) $by_id[ $parent_id ]->comment_parent;
+				}
+				$guard++;
+			}
+		}
+
+		// 2. Buscar também respostas/tréplicas filhas dos comentários presentes para não quebrar a conversa
+		$post_ids = array();
+		foreach ( $by_id as $c ) {
+			$post_ids[ (int) $c->comment_post_ID ] = true;
+		}
+		if ( ! empty( $post_ids ) ) {
+			$status_atual = isset( $_REQUEST['comment_status'] ) ? sanitize_key( wp_unslash( $_REQUEST['comment_status'] ) ) : 'all';
+			if ( ! in_array( $status_atual, array( 'spam', 'trash' ), true ) ) {
+				$extras = get_comments(
+					array(
+						'post__in' => array_keys( $post_ids ),
+						'status'   => array( 'approve', 'hold' ),
+						'orderby'  => 'comment_date_gmt',
+						'order'    => 'ASC',
+						'number'   => 200,
+					)
+				);
+				foreach ( $extras as $ex ) {
+					if ( $ex instanceof WP_Comment && ! isset( $by_id[ (int) $ex->comment_ID ] ) ) {
+						// Só inclui se pertencer a alguma árvore já listada na página
+						$pid   = (int) $ex->comment_parent;
+						$check = 0;
+						while ( $pid > 0 && $check < 10 ) {
+							if ( isset( $by_id[ $pid ] ) ) {
+								$by_id[ (int) $ex->comment_ID ] = $ex;
+								break;
+							}
+							$p_obj = get_comment( $pid );
+							$pid   = ( $p_obj instanceof WP_Comment ) ? (int) $p_obj->comment_parent : 0;
+							$check++;
+						}
+					}
+				}
+			}
+		}
+
+		// 3. Construir árvore de pais -> filhos
+		$children_map = array();
+		$roots        = array();
+
+		foreach ( $by_id as $id => $c ) {
+			$pid = (int) $c->comment_parent;
+			if ( $pid > 0 && isset( $by_id[ $pid ] ) && $pid !== $id ) {
+				$children_map[ $pid ][] = $c;
+			} else {
+				$roots[] = $c;
+			}
+		}
+
+		// Função auxiliar para descobrir a data mais recente dentro de uma conversa (thread)
+		$get_thread_latest_time = static function ( WP_Comment $node ) use ( &$get_thread_latest_time, &$children_map ): int {
+			$latest = strtotime( $node->comment_date_gmt ?: $node->comment_date ) ?: 0;
+			$id     = (int) $node->comment_ID;
+			if ( ! empty( $children_map[ $id ] ) ) {
+				foreach ( $children_map[ $id ] as $child ) {
+					$child_time = $get_thread_latest_time( $child );
+					if ( $child_time > $latest ) {
+						$latest = $child_time;
+					}
+				}
+			}
+			return $latest;
+		};
+
+		// Ordenar as conversas (raízes) pela atividade mais recente (descendente)
+		usort(
+			$roots,
+			static function ( WP_Comment $a, WP_Comment $b ) use ( $get_thread_latest_time ): int {
+				return $get_thread_latest_time( $b ) <=> $get_thread_latest_time( $a );
+			}
+		);
+
+		// Ordenar respostas dentro de cada conversa em ordem cronológica (ascendente: pergunta -> resposta -> tréplica)
+		foreach ( $children_map as $pid => &$list ) {
+			usort(
+				$list,
+				static function ( WP_Comment $a, WP_Comment $b ): int {
+					$ta = strtotime( $a->comment_date_gmt ?: $a->comment_date ) ?: 0;
+					$tb = strtotime( $b->comment_date_gmt ?: $b->comment_date ) ?: 0;
+					return $ta <=> $tb;
+				}
+			);
+		}
+		unset( $list );
+
+		// 4. Achatar a árvore em lista sequencial guardando metadados de profundidade para o CSS/JS
+		$ordered     = array();
+		$thread_meta = array();
+
+		$flatten = static function ( WP_Comment $node, int $depth, int $root_id ) use ( &$flatten, &$children_map, &$ordered, &$thread_meta ): void {
+			$id       = (int) $node->comment_ID;
+			$has_kids = ! empty( $children_map[ $id ] );
+
+			$ordered[]           = $node;
+			$thread_meta[ $id ] = array(
+				'depth'    => min( $depth, 4 ),
+				'root_id'  => $root_id,
+				'has_kids' => $has_kids,
+				'is_me'    => ( (int) $node->user_id > 0 && (int) $node->user_id === get_current_user_id() )
+					|| ( stripos( (string) $node->comment_author_email, 'vinicius' ) !== false )
+					|| ( strtolower( (string) $node->comment_author ) === 'viniciuscodes' ),
+			);
+
+			if ( $has_kids ) {
+				foreach ( $children_map[ $id ] as $child ) {
+					$flatten( $child, $depth + 1, $root_id );
+				}
+			}
+		};
+
+		foreach ( $roots as $root ) {
+			$flatten( $root, 0, (int) $root->comment_ID );
+		}
+
+		$GLOBALS['vc_admin_comment_threads'] = $thread_meta;
+		$reorganizando                       = false;
+
+		return $ordered;
+	},
+	10,
+	2
+);
+
+add_action(
+	'admin_footer-edit-comments.php',
+	static function () {
+		$thread_meta = $GLOBALS['vc_admin_comment_threads'] ?? array();
+		if ( empty( $thread_meta ) ) {
+			return;
+		}
+		?>
+		<script id="vc-admin-comments-threads-js">
+		(function() {
+			const meta = <?php echo wp_json_encode( $thread_meta ); ?>;
+			Object.keys(meta).forEach(function(id) {
+				const row = document.getElementById('comment-' + id);
+				if (!row) return;
+
+				const info = meta[id];
+				if (info.depth === 0) {
+					row.classList.add('vc-thread-root');
+				} else {
+					row.classList.add('vc-thread-reply', 'vc-depth-' + info.depth);
+				}
+
+				if (info.has_kids) {
+					row.classList.add('vc-has-replies');
+				}
+				if (info.is_me) {
+					row.classList.add('vc-comment-mine');
+				}
+
+				// Adiciona um selo claro de "↳ sua resposta" ou "↳ tréplica" no topo do comentário filho
+				if (info.depth > 0) {
+					const commentCell = row.querySelector('td.column-comment');
+					if (commentCell && !commentCell.querySelector('.vc-thread-badge')) {
+						const badge = document.createElement('div');
+						badge.className = 'vc-thread-badge';
+						if (info.is_me) {
+							badge.textContent = info.depth === 1 ? '↳ sua resposta' : '↳ sua réplica';
+						} else {
+							badge.textContent = info.depth === 1 ? '↳ resposta' : '↳ tréplica';
+						}
+
+						// Se houver o parágrafo padrão "Em resposta a Fulano.", incorpora o nome no badge
+						const submittedOn = commentCell.querySelector('.submitted-on');
+						if (submittedOn) {
+							const parentLink = submittedOn.querySelector('a');
+							if (parentLink && parentLink.textContent) {
+								badge.textContent += ' para ' + parentLink.textContent.trim();
+								submittedOn.style.display = 'none';
+							}
+						}
+
+						commentCell.insertBefore(badge, commentCell.firstChild);
+					}
+				}
+			});
+		})();
+		</script>
+		<?php
+	}
+);
+
+/**
  * Ajusta visualmente o painel e o editor de blocos:
  * - Caixa de temas/categorias com altura confortável, sem rolagem apertada
  * - Rótulos e itens em minúsculas (lowercase), sem atrito visual
@@ -2829,6 +2638,49 @@ add_action(
 				font-style: italic !important;
 				color: #4b5563 !important;
 			}
+
+			/* Hierarquia tipográfica clara no editor de blocos (Gutenberg) */
+			.editor-styles-wrapper .wp-block-post-title,
+			.editor-styles-wrapper h1.editor-post-title__input {
+				font-size: clamp(2rem, 4.4vw, 2.9rem) !important;
+				font-weight: 700 !important;
+				line-height: 1.15 !important;
+				margin-bottom: 1rem !important;
+			}
+
+			.editor-styles-wrapper h2,
+			.editor-styles-wrapper h2.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h2 {
+				font-size: 1.6rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 2.2em !important;
+				margin-bottom: 0.6em !important;
+			}
+
+			.editor-styles-wrapper h3,
+			.editor-styles-wrapper h3.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h3 {
+				font-size: 1.3rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 2.2em !important;
+				margin-bottom: 0.6em !important;
+			}
+
+			.editor-styles-wrapper h4,
+			.editor-styles-wrapper h4.wp-block-heading,
+			.editor-styles-wrapper .wp-block-heading h4 {
+				font-size: 1.1rem !important;
+				font-weight: 600 !important;
+				line-height: 1.25 !important;
+				letter-spacing: -0.01em !important;
+				margin-top: 1.8em !important;
+				margin-bottom: 0.5em !important;
+			}
+
 		</style>
 		<?php
 	}
@@ -2838,7 +2690,6 @@ add_action(
    CONEXÕES HIPERTEXTUAIS AUTOMÁTICAS (LINKS CITADOS E BACKLINKS)
    ------------------------------------------------------------------------- */
 require_once get_theme_file_path( 'inc/post-connections.php' );
-require_once get_theme_file_path( 'inc/editor-clean.php' );
 
 /* -------------------------------------------------------------------------
    PRESERVAR ANIMAÇÃO DE ARQUIVOS GIF
@@ -2894,90 +2745,47 @@ add_filter(
 );
 
 /* -------------------------------------------------------------------------
-   CURTIDAS ANÔNIMAS (BRINDE / FEEDBACK SIMPLES)
+   REDIRECIONAMENTOS DE ROTAS PODADAS (301 PERMANENTE)
    ------------------------------------------------------------------------- */
 add_action(
-	'rest_api_init',
-	static function (): void {
-		register_rest_route(
-			'vinicius/v1',
-			'/curtir/(?P<id>\d+)',
-			array(
-				'methods'             => 'POST',
-				'callback'            => static function ( WP_REST_Request $request ) {
-					$post_id = (int) $request->get_param( 'id' );
-					if ( ! $post_id || 'publish' !== get_post_status( $post_id ) ) {
-						return new WP_Error( 'post_invalido', 'Post não encontrado', array( 'status' => 404 ) );
-					}
+	'template_redirect',
+	static function () {
+		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
 
-					$curtidas = (int) get_post_meta( $post_id, '_vc_curtidas', true );
-					$curtidas++;
-					update_post_meta( $post_id, '_vc_curtidas', $curtidas );
+		// Redireciona categoria órfã /tema/54/ para /tema/weeknotes/
+		if ( preg_match( '#^/tema/54(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/tema/weeknotes/' ), 301 );
+			exit;
+		}
 
-					return rest_ensure_response(
-						array(
-							'sucesso'  => true,
-							'curtidas' => $curtidas,
-						)
-					);
-				},
-				'permission_callback' => '__return_true',
-			)
-		);
+		// Redireciona notas, microblog ou vídeos para /posts/
+		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/posts/' ), 301 );
+			exit;
+		}
+
+		// Redireciona páginas de catálogo/acervo/changelog/manifesto extintas para /posts/
+		if ( preg_match( '#^/(livros|filmes|acervo|changelog|manifesto)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/posts/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /canais/ ou /youtube/ para /blogroll/
+		if ( preg_match( '#^/(canais|youtube)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/blogroll/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /musica/ para /
+		if ( preg_match( '#^/musica(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/' ), 301 );
+			exit;
+		}
 	}
 );
 
 
-/* -------------------------------------------------------------------------
 
-   AS NOTAS
-
-   ------------------------------------------------------------------------- */
-
-/*
-
- * O post curto, sem título, que vive em `/notas/`.
-
- * Três arquivos, três responsabilidades: o registro do post type, o admin
-
- * (publicação rápida e a lista enxuta) e o feed próprio.
-
- *
-
- * A ORDEM importa: o `cpt-notas.php` define a constante `VC_NOTA`, que os
-
- * outros dois usam. Cada um deles também requer o anterior sozinho, então a
-
- * ordem aqui é conveniência, não dependência.
-
- */
-
-require_once get_theme_file_path( 'inc/cpt-notas.php' );
-
-/*
- * O acervo e um tipo de post, e nao mais uma lista dentro do conteudo da
- * pagina. O comentario acima explica por que o `nota` virou arquivo proprio;
- * o acervo seguiu o mesmo caminho quando cresceu.
- */
-require_once get_theme_file_path( 'inc/cpt-obras.php' );
-
-require_once get_theme_file_path( 'inc/notas-admin.php' );
-
-require_once get_theme_file_path( 'inc/notas-feed.php' );
-
-/* -------------------------------------------------------------------------
-   O ACERVO NO PAINEL
-   ------------------------------------------------------------------------- */
-/*
- * A tela que edita os livros, filmes, séries e teatro — a lista que a página
- * `/acervo/` publica.
- *
- * O ARQUIVO É CARREGADO AQUI, e não só dentro do admin, porque `admin_menu` e
- * `admin_post_*` são GANCHOS: quem quer ser chamado por eles precisa estar
- * carregado antes de eles acontecerem. Um `require` que só rodasse em tela de
- * painel chegaria tarde, e o menu não existiria.
- *
- * Nada aqui roda no site: o arquivo só define funções e registra ganchos de
- * painel.
- */
-require_once get_theme_file_path( 'inc/acervo-admin.php' );
+add_action('wp_enqueue_scripts', function() {
+    wp_enqueue_style('vc-substack-stage2', get_theme_file_uri('assets/substack-stage2.css'), array(), '1.0.7');
+}, 999);

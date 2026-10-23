@@ -1,24 +1,6 @@
 <?php
 /**
- * A lista de textos. É o mesmo bloco na página inicial, na listagem e no
- * arquivo de um tema.
- *
- * Reproduz o `PostList.astro` nas opções que o site usa para variar a lista sem
- * escrever outra:
- *
- *   get_template_part( 'template-parts/lista-de-textos', null, array(
- *       'mostrar_temas' => false,   // dentro de um tema, ele se repetiria
- *   ) );
- *
- * NENHUMA LISTA IMPRIME O COMEÇO DO TEXTO. Data e título bastam para decidir se
- * vale entrar, e o parágrafo de abertura é o próprio início do artigo: repetido
- * embaixo do título, ele se lê duas vezes. A home já era assim, o arquivo de um
- * tema passou a ser, e com isso a lista ficou igual em toda parte do site.
- *
- * O `data-temas` em cada linha é o que permite filtrar sem sair da página: traz
- * os slugs dos temas do post, separados por espaço, e o script da listagem
- * compara com o tema do botão apertado. Sai sempre, e não só na listagem, para
- * que a linha não precise saber onde está sendo usada.
+ * A lista de textos estilo Substack / Feed Editorial.
  *
  * @package ViniciusCodes
  */
@@ -26,9 +8,10 @@
 $vc_opcoes = wp_parse_args(
 	$args ?? array(),
 	array(
-		'mostrar_meta'  => true,
-		'mostrar_temas' => true,
-		'vazio'         => 'nada por aqui ainda.',
+		'mostrar_meta'   => true,
+		'mostrar_temas'  => true,
+		'mostrar_resumo' => true,
+		'vazio'          => 'nada por aqui ainda.',
 	)
 );
 
@@ -37,7 +20,7 @@ if ( ! have_posts() ) {
 	return;
 }
 ?>
-<ul class="post-list">
+<div class="substack-feed">
 	<?php
 	while ( have_posts() ) :
 		the_post();
@@ -49,59 +32,42 @@ if ( ! have_posts() ) {
 		foreach ( $vc_temas as $vc_tema ) {
 			$vc_slugs[] = $vc_tema['slug'];
 		}
-		?>
-		<li class="post-item" data-temas="<?php echo esc_attr( implode( ' ', $vc_slugs ) ); ?>">
-			<?php if ( $vc_opcoes['mostrar_meta'] ) : ?>
-				<p class="post-item__meta">
-					<?php
-					/*
-					 * O TEMA VEM ANTES DA DATA, e a ordem é a mensagem. A data abrindo
-					 * a linha puxava o olho para a cronologia: lia-se "publicado em
-					 * 25/09" antes de saber sobre o que era o texto. Numa lista, o que
-					 * o leitor procura é o assunto; quando foi escrito é orientação, e
-					 * orientação vai no fim.
-					 *
-					 * O tema anda nesta linha porque é metadado sobre o texto: diz aonde
-					 * ele pertence. O ponto antes de cada parte é desenhado pelo CSS na
-					 * parte que ele introduz, e não como um <span> solto — assim uma
-					 * linha quebrada nunca termina num ponto órfão.
-					 */
-					?>
-					<?php if ( $vc_opcoes['mostrar_temas'] ) : ?>
-						<?php foreach ( $vc_temas as $vc_tema ) : ?>
-							<span class="post-item__meta__part">
-								<a href="<?php echo esc_url( vc_url_do_tema( $vc_tema['slug'] ) ); ?>">
-									<span class="meta-icon" aria-hidden="true">
-										<?php echo vc_icone( $vc_tema['icone'], 15 ); ?>
-									</span>
-									<span><?php echo esc_html( $vc_tema['nome'] ); ?></span>
-								</a>
-							</span>
-						<?php endforeach; ?>
-					<?php endif; ?>
 
-					<?php
-					/*
-					 * A DATA SAIU DA LINHA, e a lista inteira é a razão.
-					 *
-					 * Ela já está em ordem cronológica: a data repetia, item por item, o
-					 * que a posição na lista já diz. E num site que publica quando tem o
-					 * que dizer, ela transformava o topo da lista num carimbo da data do
-					 * silêncio.
-					 *
-					 * O `<time>` com o `datetime` também sai: o endereço do texto está no
-					 * link ao lado, e é por ele que buscador e leitor de tela chegam à
-					 * data completa, na página do texto.
-					 */
-					?>
+		$vc_words = str_word_count( wp_strip_all_tags( get_the_content() ) );
+		$vc_tempo = max( 1, round( $vc_words / 200 ) );
+
+		$vc_data_fmt = mb_strtoupper( get_the_date( 'M j, Y', $vc_id ), 'UTF-8' );
+		$vc_resumo = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 34, '…' );
+		?>
+		<article id="post-<?php echo (int) $vc_id; ?>" class="substack-feed__item" style="padding: 2.2rem 0; border-bottom: 1px solid var(--borda, #f0f0f0);">
+			<div class="substack-feed__meta" style="font-family: 'Atkinson Hyperlegible Next', sans-serif; font-size: var(--text-sm); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cor-meta, #757575); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+				<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>"><?php echo esc_html( $vc_data_fmt ); ?></time>
+				
+				<?php if ( ! empty( $vc_temas ) && $vc_opcoes['mostrar_temas'] ) : ?>
+					<span>&bull;</span>
+					<a href="<?php echo esc_url( '/tema/' . $vc_temas[0]['slug'] . '/' ); ?>" style="color: inherit; text-decoration: none;">
+						<?php echo esc_html( mb_strtolower( $vc_temas[0]['nome'], 'UTF-8' ) ); ?>
+					</a>
+				<?php endif; ?>
+			</div>
+
+			<h2 class="substack-feed__title" style="font-family: 'Atkinson Hyperlegible Next', sans-serif; font-size: var(--text-xl); font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 0.6rem 0;">
+				<a href="<?php the_permalink(); ?>" style="color: var(--cor-texto, #292929); text-decoration: none;">
+					<?php the_title(); ?>
+				</a>
+			</h2>
+
+			<?php if ( ! empty( $vc_resumo ) ) : ?>
+				<p class="substack-feed__excerpt" style="font-family: 'Atkinson Hyperlegible Next', sans-serif; font-size: var(--text-base); line-height: 1.65; color: var(--cor-meta, #757575); margin: 0 0 0.8rem 0;">
+					<?php echo esc_html( $vc_resumo ); ?>
 				</p>
 			<?php endif; ?>
 
-			<h2 class="post-item__title">
-				<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-			</h2>
-		</li>
+			<div class="substack-feed__footer" style="font-family: 'Atkinson Hyperlegible Next', sans-serif; font-size: var(--text-sm); color: var(--cor-meta, #757575);">
+				<span><?php echo (int) $vc_tempo; ?> min de leitura</span>
+			</div>
+		</article>
 		<?php
 	endwhile;
 	?>
-</ul>
+</div>

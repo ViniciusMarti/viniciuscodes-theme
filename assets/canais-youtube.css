@@ -1,0 +1,215 @@
+/* ============================================================
+   viniciuscodes — canais do youtube (organizados por categorias)
+   
+   Carregada exclusivamente na página de Canais do YouTube.
+   Linguagem visual: Flat Soft Wash (bloco ultraleve sem borda),
+   tokens nativos, estética minimalista e harmoniosa com o tema.
+   ============================================================ */
+
+.canais__header {
+  margin-bottom: 2.5rem;
+}
+
+.canais__intro {
+  margin-bottom: 1.5rem;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.canais__meta-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.canais__contador {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ---------- Categorias / Seções Macro ---------- */
+.canais__categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.canais__secao {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.canais__secao-cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.canais__secao-tit-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.canais__secao-titulo {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.canais__secao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+}
+
+.canais__secao-qtd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--paper-alt, rgba(0, 0, 0, 0.05));
+  border-radius: 10px;
+}
+
+[data-theme='dark'] .canais__secao-qtd {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.canais__secao-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ink-mute);
+  line-height: 1.5;
+}
+
+/* ---------- Grade de Canais ---------- */
+.canais__lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 1060px) {
+  .canais__lista {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+}
+
+/* Card no estilo Flat Soft Wash */
+.canal-card {
+  margin: 0;
+  min-width: 0;
+}
+
+.canal-card__link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  min-width: 0;
+  background: var(--paper-alt, rgba(0, 0, 0, 0.03));
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.canal-card__link:hover {
+  background: var(--paper-card, rgba(0, 0, 0, 0.06));
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+[data-theme='dark'] .canal-card__link {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme='dark'] .canal-card__link:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.canal-card__avatar-wrap {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--paper-card);
+}
+
+.canal-card__avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.canal-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.canal-card__nome {
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.canal-card__handle {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.canal-card__externo {
+  flex-shrink: 0;
+  color: var(--ink-mute);
+  opacity: 0.35;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.canal-card__link:hover .canal-card__externo {
+  opacity: 1;
+  color: var(--green);
+}
+
+.canais__prose {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}

@@ -1,0 +1,286 @@
+/* ---------------------------------------------------------------
+ * O CATÁLOGO: abas, filtros e o cartão em grade
+ *
+ * O QUE FOI ACRESCENTADO, E O QUE FOI REAPROVEITADO. Capa, cartão, grade, placa,
+ * contagem e resumo já existiam nesta folha, escritos para a página antiga, e
+ * continuam sendo usados sem uma linha nova. O que está aqui é só o que a página
+ * antiga não tinha: a barra de abas, os campos de filtro, e a nota em estrelas.
+ *
+ * AS ABAS SÃO LINKS, e por isso o desenho é de link e não de botão: um sublinhado
+ * na atual, em vez de um fundo preenchido. Aba que parece botão promete trocar o
+ * painel sem sair do lugar; esta troca de página, e o desenho não deve mentir.
+ * ------------------------------------------------------------- */
+
+/*
+ * AS ABAS SAO PILULAS, e nao links sublinhados.
+ *
+ * A PRIMEIRA VERSAO DESENHOU UM MENU, e o problema nao era so de contraste: um
+ * link sublinhado promete "ir para outro lugar", enquanto uma pilula promete
+ * "escolher entre estas opcoes". Sao cinco tipos do mesmo acervo, e a segunda
+ * leitura e a certa.
+ *
+ * O DESENHO VEM DO PROPRIO SITE. As pilulas de tipo da pagina antiga do acervo
+ * usavam borda, fundo de cartao e o estado escolhido em verde; e o mesmo desenho,
+ * com o alvo maior, para cinco itens caberem lado a lado no celular.
+ *
+ * O ALVO TEM 40px DE ALTURA. A pilula original tinha 29px, que passa no desktop e
+ * falha no dedo. Com `min-height` o texto fica centrado e a area clicavel cobre o
+ * que se ve — e nao so a linha do texto.
+ */
+.acervo__abas {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 1.75rem 0 0;
+}
+
+.acervo__aba {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 0.4rem 1rem;
+	border: 1px solid var(--line-strong);
+	border-radius: 999px;
+	background: var(--paper-card);
+	color: var(--ink-soft);
+	font-size: 0.88rem;
+	line-height: 1.2;
+	text-decoration: none;
+	transition: border-color 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+}
+
+.acervo__aba:hover {
+	border-color: var(--green);
+	color: var(--green-deep);
+	background: var(--paper-alt);
+}
+
+.acervo__aba:focus-visible {
+	outline: 2px solid var(--green);
+	outline-offset: 2px;
+}
+
+/*
+ * O ESTADO ESCOLHIDO E O UNICO PREENCHIDO. Bordas verdes em todas deixariam as
+ * cinco iguais e a escolha invisivel; o fundo verde-claro e o texto escuro marcam
+ * a atual sem precisar de seta nem de negrito em tudo.
+ */
+.acervo__aba--atual {
+	border-color: var(--green);
+	background: var(--green-wash);
+	color: var(--green-deep);
+	font-weight: 600;
+}
+
+.acervo__aba--atual:hover {
+	background: var(--green-wash);
+}
+
+/* ---------------------------------------------------------------
+ * Os filtros
+ * ------------------------------------------------------------- */
+
+/*
+ * A BARRA DE FILTROS É UM FORMULÁRIO, e por isso ela não estiliza `input` solto:
+ * cada campo é uma etiqueta com o rótulo em cima, do mesmo jeito que o resto do
+ * site trata formulário. Rótulo visível e não `placeholder` — um campo que só se
+ * explica pelo texto de exemplo fica sem explicação nenhuma no instante em que a
+ * pessoa digita.
+ */
+.acervo__filtros {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 0.85rem 1.1rem;
+	margin: 1.5rem 0 0;
+}
+
+.acervo__campo {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	min-width: 0;
+}
+
+.acervo__campo-rotulo {
+	color: var(--ink-mute);
+	font-size: 0.74rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.acervo__campo select,
+.acervo__campo input[type="search"] {
+	min-height: 38px;
+	padding: 0.35rem 0.6rem;
+	background: var(--paper-card);
+	color: var(--ink);
+	border: 1px solid var(--field-border);
+	border-radius: var(--radius);
+	font: inherit;
+	font-size: 0.92rem;
+}
+
+.acervo__campo--busca {
+	flex: 1 1 12rem;
+}
+
+.acervo__campo--busca input {
+	width: 100%;
+}
+
+.acervo__aplicar,
+.acervo__limpar {
+	min-height: 38px;
+	padding: 0 1rem;
+	border-radius: var(--radius);
+	font: inherit;
+	font-size: 0.9rem;
+	cursor: pointer;
+}
+
+.acervo__aplicar {
+	background: var(--green);
+	color: var(--on-accent);
+	border: 1px solid var(--green-deep);
+}
+
+.acervo__aplicar:hover {
+	background: var(--green-deep);
+}
+
+.acervo__limpar {
+	display: inline-flex;
+	align-items: center;
+	color: var(--ink-mute);
+	border: 1px solid var(--line-strong);
+	background: var(--paper-card);
+	text-decoration: none;
+}
+
+.acervo__limpar:hover {
+	color: var(--ink);
+}
+
+/*
+ * COM JAVASCRIPT, O BOTÃO SAI. O envio acontece ao mudar qualquer campo, e um
+ * botão que não precisa ser apertado é um botão que só ocupa lugar. Quem chega sem
+ * script continua com ele — é o que faz o filtro funcionar em qualquer navegador.
+ */
+.acervo__filtros[data-js="1"] .acervo__aplicar {
+	display: none;
+}
+
+.acervo__resultado {
+	margin: 1.5rem 0 1.75rem;
+	color: var(--ink-mute);
+	font-size: 0.88rem;
+}
+
+/* ---------------------------------------------------------------
+ * A nota, em estrelas
+ * ------------------------------------------------------------- */
+
+.acervo__nota {
+	color: var(--green);
+	letter-spacing: 0.08em;
+	font-size: 0.86rem;
+}
+
+.acervo__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0.35rem 0 0;
+	color: var(--ink-mute);
+	font-size: 0.82rem;
+}
+
+.acervo__carta-titulo {
+	margin: 0.7rem 0 0;
+	font-size: 0.95rem;
+	font-weight: 600;
+	line-height: 1.35;
+}
+
+.acervo__carta-titulo a {
+	color: var(--ink);
+	text-decoration: none;
+}
+
+.acervo__carta-titulo a:hover {
+	color: var(--green);
+	text-decoration: underline;
+}
+
+.acervo__livro-autor {
+	margin: 0.25rem 0 0;
+	color: var(--ink-mute);
+	font-size: 0.85rem;
+}
+
+.acervo__livro-resumo {
+	margin: 0.5rem 0 0;
+	color: var(--ink-soft);
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+
+/* o selo de revisto fica sobre a capa */
+.acervo__capa {
+	position: relative;
+}
+
+.acervo__capa .acervo__vezes {
+	position: absolute;
+	top: 0.4rem;
+	right: 0.4rem;
+	padding: 0.1rem 0.4rem;
+	background: var(--paper);
+	color: var(--ink);
+	border: 1px solid var(--line-strong);
+	border-radius: 999px;
+	font-size: 0.7rem;
+	line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------
+ * O estado e o gênero no cartão
+ * ------------------------------------------------------------- */
+
+/*
+ * O ESTADO É O RÓTULO MAIS IMPORTANTE DO CARTÃO, e por isso ele é o único que
+ * ganha cor. Um livro lido, um na estante e um abandonado são capas do mesmo
+ * tamanho na mesma grade: sem uma marca, a grade não conta nada sobre eles.
+ *
+ * A COR MUDA COM O ESTADO porque a diferença entre "lido" e "na estante" não é de
+ * grau, é de natureza. Verde para o que está em curso, cinza para o que espera,
+ * e o tom apagado para o que foi largado.
+ */
+.acervo__estado {
+	margin: 0.5rem 0 0;
+	font-size: 0.72rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--green-deep);
+}
+
+.acervo__carta[data-estado="na-estante"] .acervo__estado,
+.acervo__carta[data-estado="quero-ler"] .acervo__estado,
+.acervo__carta[data-estado="quero-ver"] .acervo__estado {
+	color: var(--ink-mute);
+}
+
+.acervo__carta[data-estado="abandonado"] .acervo__estado {
+	color: var(--ink-mute);
+	opacity: 0.75;
+}
+
+.acervo__genero {
+	margin: 0.2rem 0 0;
+	font-size: 0.74rem;
+	color: var(--ink-mute);
+	line-height: 1.35;
+}

@@ -1,6 +1,6 @@
 <?php
 /**
- * A apresentação da home: retrato, frase de abertura e um parágrafo.
+ * A apresentação da home: retrato, frase de abertura e dois parágrafos.
  *
  * Ela morava solta no `index.php`, e isso trazia um problema que apareceu na
  * prática: o `index.php` é o arquivo de último recurso da hierarquia, então a
@@ -11,16 +11,9 @@
  * Como parte de template, quem decide se ela aparece é o `index.php`
  * (`is_home()`), e o arquivo de fallback fica com uma responsabilidade só: a lista.
  *
- * UM PARÁGRAFO, E NÃO DOIS. A home tinha dois parágrafos de bio antes de
- * qualquer coisa que a pessoa fosse ler, e o custo disso apareceu na medição da
- * própria home: eram quatro blocos disputando a primeira tela (retrato com bio,
- * grade de temas, lista de textos e lista de notas). O segundo parágrafo — as
- * cidades onde morei, o mochilão — continua no `/sobre/`, que é onde alguém vai
- * procurá-lo; na home ele só empurrava a lista para baixo.
- *
- * O `#temas` do último parágrafo aponta para a seção de temas da home, que vive
- * no `index.php` e agora fica no FIM da página, depois das listas. As duas
- * pontas continuam sendo a mesma home, e é por isso que a âncora funciona.
+ * O `#temas` do último parágrafo aponta para a seção de temas da home, que
+ * vive no `index.php` — as duas pontas são a mesma home, e é por isso que a
+ * âncora funciona.
  *
  * @package ViniciusCodes
  */
@@ -36,19 +29,21 @@ $vc_retrato_id = attachment_url_to_postid( vc_midia( 'vinicius-profile.webp' ) )
 ?>
 <section class="hero">
 	<div class="hero__intro">
-		<?php
-		if ( $vc_retrato_id ) {
-			echo wp_get_attachment_image(
-				$vc_retrato_id,
-				'medium',
-				false,
-				array(
-					'class' => 'hero__photo',
-					'alt'   => 'Vinicius Oliveira, sorrindo, ao ar livre',
-				)
-			);
-		}
-		?>
+		<?php if ( $vc_retrato_id ) : ?>
+			<div class="hero__photo-wrap">
+				<?php
+				echo wp_get_attachment_image(
+					$vc_retrato_id,
+					'medium',
+					false,
+					array(
+						'class' => 'hero__photo',
+						'alt'   => 'Vinicius Oliveira, sorrindo, ao ar livre',
+					)
+				);
+				?>
+			</div>
+		<?php endif; ?>
 
 		<div class="hero__text">
 			<h1 class="hero__title">escrevo sobre tecnologia, viagens e AuDHD.</h1>
@@ -59,10 +54,15 @@ $vc_retrato_id = attachment_url_to_postid( vc_midia( 'vinicius-profile.webp' ) )
 				pela estrada e pelo meu namorado.
 			</p>
 
+			<p class="hero__lede">
+				já morei em Manaus e Porto Velho, fiz um mochilão de 6 meses pelo Brasil e conheço
+				mais da metade dos estados do país. por aqui, compartilho minha trajetória em dados,
+				projetos pessoais e os aprendizados de viver com curiosidade e propósito.
+			</p>
+
 			<p class="hero__lede hero__lede--links">
 				leia o <a href="<?php echo esc_url( home_url( '/manifesto/' ) ); ?>">manifesto</a>,
-				veja o <a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre mim</a>
-				ou explore os <a href="#temas">temas</a> no fim da página.
+				explore os temas na barra lateral ou veja as publicações recentes abaixo:
 			</p>
 		</div>
 	</div>
