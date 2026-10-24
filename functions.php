@@ -2724,3 +2724,13 @@ add_action(
 add_action('wp_enqueue_scripts', function() {
     wp_enqueue_style('vc-substack-stage2', get_theme_file_uri('assets/substack-stage2.css'), array('vc-fontes'), vc_asset_ver( 'assets/substack-stage2.css' ));
 }, 999);
+// Preload das fontes self-hosted (evita o "flash" de troca de fonte no primeiro acesso).
+add_action( 'wp_head', function () {
+	foreach ( array( 'normal', 'italic' ) as $estilo ) {
+		if ( 'italic' === $estilo ) { continue; }
+		printf(
+			"<link rel=\"preload\" href=\"%s\" as=\"font\" type=\"font/woff2\" crossorigin>\n",
+			esc_url( get_theme_file_uri( 'assets/fonts/atkinson-hyperlegible-next-' . $estilo . '-latin.woff2' ) )
+		);
+	}
+}, 1 );
