@@ -42,3 +42,25 @@
     column-gap: 0.9rem;
   }
 }
+
+/* Imagem do mesmo tamanho do bloco de texto: topo alinhado à data, base ao "min de leitura". */
+.substack-feed--imagens .substack-feed__item--com-imagem {
+  align-items: stretch;
+}
+
+.substack-feed--imagens .substack-feed__item--com-imagem .substack-feed__imagem {
+  position: relative;
+  aspect-ratio: auto;
+  min-height: 96px;
+}
+
+.substack-feed--imagens .substack-feed__item--com-imagem .substack-feed__imagem img {
+  position: absolute;
+  inset: 0;
+}
+
+/* O destaque continua com a imagem larga no topo. */
+.substack-feed--imagens .substack-feed__item--destaque .substack-feed__imagem {
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+}
