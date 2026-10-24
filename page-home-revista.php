@@ -47,11 +47,6 @@ $consulta = new WP_Query(
 				</div>
 
 				<h2 class="substack-feed__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
-
-				<?php if ( ! empty( $vc_resumo ) ) : ?>
-					<p class="substack-feed__excerpt"><?php echo esc_html( $vc_resumo ); ?></p>
-				<?php endif; ?>
-
 				<div class="substack-feed__footer"><span><?php echo (int) $vc_tempo; ?> min de leitura</span></div>
 			</div>
 
