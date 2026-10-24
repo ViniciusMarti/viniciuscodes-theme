@@ -1197,7 +1197,7 @@ function vc_paginacao( int $total, int $atual, string $base = '' ): void {
 		'prev_next' => false,
 		'total'     => $total,
 		'current'   => $atual,
-		'mid_size'  => 4,
+		'mid_size'  => 1,
 	);
 
 	if ( '' !== $base ) {

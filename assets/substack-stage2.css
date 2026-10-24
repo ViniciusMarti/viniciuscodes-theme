@@ -1945,47 +1945,63 @@ ol.children {
   paginam e não carregam a folha do filtro.
 */
 .paginacao {
-  margin-top: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
 }
 
 .paginacao__lista {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  gap: 0.4rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .paginacao__botao {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 38px;
-  min-height: 38px;
-  padding: 0 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--color-meta);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .paginacao__botao:hover:not(.paginacao__botao--off) {
-  border-color: var(--green);
-  color: var(--ink);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 
 .paginacao__botao[aria-current='page'] {
-  border-color: var(--green);
-  background: var(--green-wash);
-  color: var(--green-deep);
-  font-weight: 600;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.paginacao__botao:visited:not([aria-current=" page]) {
+ color: var(--color-meta);
+}
+
+.paginacao__botao.dots {
+  min-width: 24px;
+  padding: 0;
+  cursor: default;
 }
 
 /*
@@ -1993,7 +2009,7 @@ ol.children {
   desenhada: sem ela o pager mudaria de largura a cada troca de página.
 */
 .paginacao__botao--off {
-  opacity: 0.45;
+  opacity: 0.35;
   cursor: default;
 }
 
@@ -2001,6 +2017,11 @@ ol.children {
   .paginacao__botao {
     min-height: 44px;
   }
+}
+
+@media (max-width: 480px) {
+  .paginacao__lista { gap: 0.2rem; }
+  .paginacao__botao { min-width: 36px; padding: 0 0.4rem; }
 }
 
   margin-bottom: 0;
