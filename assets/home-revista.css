@@ -64,3 +64,18 @@
   aspect-ratio: 16 / 9;
   min-height: 0;
 }
+/* Mobile: toda imagem fica acima do título, igual ao primeiro texto. */
+@media (max-width: 600px) {
+  .substack-feed--imagens .substack-feed__item--com-imagem {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .substack-feed--imagens .substack-feed__item--com-imagem .substack-feed__imagem {
+    order: -1;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 1rem;
+  }
+}
