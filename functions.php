@@ -2759,3 +2759,9 @@ function vc_imagem_do_texto( int $post_id, string $tamanho = 'medium', string $c
 
 	return '';
 }
+// Tema sazonal temporário de Halloween (remover após 31/10 ou desativar apagando o arquivo assets/halloween.css)
+add_action( 'wp_enqueue_scripts', function () {
+	if ( file_exists( get_theme_file_path( 'assets/halloween.css' ) ) ) {
+		wp_enqueue_style( 'vc-halloween', get_theme_file_uri( 'assets/halloween.css' ), array( 'vc-substack-stage2' ), vc_asset_ver( 'assets/halloween.css' ) );
+	}
+}, 1001 );

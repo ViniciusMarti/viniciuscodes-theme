@@ -1,0 +1,57 @@
+/* ==========================================================================
+   TEMA TEMPORÁRIO DE HALLOWEEN (Até 01/11)
+   Para desativar: basta apagar este arquivo ou remover o enqueue em functions.php.
+   ========================================================================== */
+
+/* 1. Teia sutil de aranha no canto superior direito do topo */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 130px;
+  height: 130px;
+  background-image: radial-gradient(circle at 100% 0%, transparent 20%, var(--color-border) 21%, transparent 22%),
+                    radial-gradient(circle at 100% 0%, transparent 40%, var(--color-border) 41%, transparent 42%),
+                    radial-gradient(circle at 100% 0%, transparent 60%, var(--color-border) 61%, transparent 62%),
+                    radial-gradient(circle at 100% 0%, transparent 80%, var(--color-border) 81%, transparent 82%),
+                    linear-gradient(215deg, transparent 48%, var(--color-border) 49%, var(--color-border) 51%, transparent 52%),
+                    linear-gradient(240deg, transparent 48%, var(--color-border) 49%, var(--color-border) 51%, transparent 52%);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 99;
+}
+
+/* 2. Pequena abóbora ao lado do nome do autor no cabeçalho */
+.masthead__brand span::after {
+  content: " 🎃";
+  font-size: 0.9em;
+  display: inline-block;
+  transform-origin: center bottom;
+  animation: balanco-abobora 3s ease-in-out infinite;
+}
+
+@keyframes balanco-abobora {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+/* 3. Fantasminha no rodapé */
+.colophon__copy::after {
+  content: " 👻";
+  display: inline-block;
+  opacity: 0.7;
+}
+
+/* 4. Sutil detalhe laranja nas tags/tópicos ao passar o mouse */
+.topics-bar a:hover,
+.substack-feed__tag:hover {
+  color: #ff7518;
+}
+
+/* 5. Destaque de texto (seleção) em tom abóbora/outono */
+::selection {
+  background-color: rgba(255, 117, 24, 0.28);
+  color: inherit;
+}
