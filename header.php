@@ -195,7 +195,6 @@ $vc_img_info = vc_detalhes_imagem_social( $vc_imagem );
 		</a>
 
 		<nav class="masthead__nav">
-			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>">posts</a>
 			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
 			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>">viagens</a>
 			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogroll</a>

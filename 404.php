@@ -56,7 +56,6 @@ $vc_endereco = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_
 
 		<p>o que costuma ajudar:</p>
 		<ul>
-			<li>a <a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>">lista de todos os textos</a>, do mais recente ao mais antigo;</li>
 			<li>o <a href="<?php echo esc_url( home_url( '/' ) ); ?>">início</a>, com os posts recentes e os temas na barra lateral.</li>
 		</ul>
 

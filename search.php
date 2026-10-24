@@ -124,7 +124,7 @@ $vc_assuntos = array_values(
 		</ul>
 
 		<p class="section__foot">
-			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>">ver todos os textos →</a>
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>">ver todos os textos →</a>
 		</p>
 	</section>
 <?php endif; ?>

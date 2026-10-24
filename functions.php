@@ -592,7 +592,6 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
  */
 function vc_navegacao(): array {
 	return array(
-		array( 'label' => 'posts',               'href' => '/posts/',       'icone' => 'newspaper' ),
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
 		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
@@ -1798,8 +1797,8 @@ add_action(
 			return;
 		}
 
-		$consulta->set( 'post_type', array( 'post', defined( 'VC_NOTA' ) ? VC_NOTA : 'nota' ) );
-		$consulta->set( 'posts_per_page', 12 );
+		$consulta->set( 'post_type', 'post' );
+		$consulta->set( 'posts_per_page', 10 );
 	}
 );
 
@@ -2693,15 +2692,25 @@ add_action(
 			exit;
 		}
 
-		// Redireciona notas, microblog ou vídeos para /posts/
-		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
-			wp_safe_redirect( home_url( '/posts/' ), 301 );
+		// Redireciona /posts/ (inclusive paginação /posts/page/N/) e /home-revista/ para a home
+		if ( preg_match( '#^/(posts|home-revista)/page/(\d+)(/.*)?$#i', $uri, $m ) ) {
+			wp_safe_redirect( home_url( '/page/' . (int) $m[2] . '/' ), 301 );
+			exit;
+		}
+		if ( preg_match( '#^/(posts|home-revista)(/.*)?(\?.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/' ), 301 );
 			exit;
 		}
 
-		// Redireciona páginas de catálogo/acervo/changelog/manifesto extintas para /posts/
+		// Redireciona notas, microblog ou vídeos para a home
+		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/' ), 301 );
+			exit;
+		}
+
+		// Redireciona páginas de catálogo/acervo/changelog/manifesto extintas para a home
 		if ( preg_match( '#^/(livros|filmes|acervo|changelog|manifesto)(/.*)?$#i', $uri ) ) {
-			wp_safe_redirect( home_url( '/posts/' ), 301 );
+			wp_safe_redirect( home_url( '/' ), 301 );
 			exit;
 		}
 
@@ -2734,12 +2743,6 @@ add_action( 'wp_head', function () {
 		);
 	}
 }, 1 );
-// Home Revista (teste): CSS só no template dedicado.
-add_action( 'wp_enqueue_scripts', function () {
-	if ( is_page_template( 'page-home-revista.php' ) ) {
-		wp_enqueue_style( 'vc-home-revista', get_theme_file_uri( 'assets/home-revista.css' ), array( 'vc-substack-stage2' ), vc_asset_ver( 'assets/home-revista.css' ) );
-	}
-}, 1000 );
 /**
  * HTML da imagem de um texto: a de destaque, se houver; senão a primeira <img> do conteúdo.
  *
