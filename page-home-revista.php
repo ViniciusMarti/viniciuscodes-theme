@@ -2,73 +2,70 @@
 /**
  * Template Name: Home Revista (teste)
  *
- * Home de exemplo em blocos, estilo revista, com a imagem de destaque.
+ * Home de exemplo: mesmo feed da home atual (coluna única, meta, título,
+ * resumo e tempo de leitura), com a imagem de destaque de cada texto.
  *
  * @package ViniciusCodes
  */
 
 get_header();
 
-// O destaque é o texto mais recente que tem imagem de destaque.
-$destaque = get_posts(
-	array(
-		'post_type'           => 'post',
-		'post_status'         => 'publish',
-		'posts_per_page'      => 1,
-		'meta_key'            => '_thumbnail_id',
-		'ignore_sticky_posts' => true,
-		'fields'              => 'ids',
-	)
-);
-
 $consulta = new WP_Query(
 	array(
 		'post_type'           => 'post',
 		'post_status'         => 'publish',
 		'posts_per_page'      => 10,
-		'post__not_in'        => $destaque,
+		'paged'               => max( 1, (int) get_query_var( 'paged' ) ),
 		'ignore_sticky_posts' => true,
 	)
 );
-
-if ( $destaque ) {
-	array_unshift( $consulta->posts, get_post( $destaque[0] ) );
-	$consulta->post_count = count( $consulta->posts );
-}
-
-$indice = 0;
 ?>
-<section class="home-revista" aria-label="Últimos textos">
+<div class="substack-feed substack-feed--imagens">
 	<?php
+	$indice = 0;
 	while ( $consulta->have_posts() ) :
 		$consulta->the_post();
-		$classe  = 0 === $indice ? 'cartao cartao--destaque' : 'cartao';
-		$tem_img = has_post_thumbnail();
-		$tamanho = 0 === $indice ? 'large' : 'medium_large';
-		$temas   = get_the_category();
+
+		$vc_id    = (int) get_the_ID();
+		$vc_temas = vc_temas_do_post( $vc_id );
+		$vc_tempo = max( 1, round( str_word_count( wp_strip_all_tags( get_the_content() ) ) / 200 ) );
+		$vc_data  = mb_strtoupper( get_the_date( 'M j, Y', $vc_id ), 'UTF-8' );
+		$vc_resumo = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 34, '…' );
+		$vc_img   = has_post_thumbnail();
+		$vc_dest  = ( 0 === $indice && 1 === max( 1, (int) get_query_var( 'paged' ) ) && $vc_img );
 		?>
-		<article class="<?php echo esc_attr( $classe . ( $tem_img ? '' : ' cartao--sem-imagem' ) ); ?>">
-			<a class="cartao__link" href="<?php the_permalink(); ?>">
-				<?php if ( $tem_img ) : ?>
-					<div class="cartao__midia">
-						<?php the_post_thumbnail( $tamanho, array( 'class' => 'cartao__img', 'loading' => 0 === $indice ? 'eager' : 'lazy' ) ); ?>
-					</div>
-				<?php endif; ?>
-				<div class="cartao__corpo">
-					<?php if ( ! empty( $temas ) ) : ?>
-						<span class="cartao__tema"><?php echo esc_html( $temas[0]->name ); ?></span>
+		<article id="post-<?php echo (int) $vc_id; ?>" class="substack-feed__item<?php echo $vc_img ? ' substack-feed__item--com-imagem' : ''; ?><?php echo $vc_dest ? ' substack-feed__item--destaque' : ''; ?>">
+			<div class="substack-feed__texto">
+				<div class="substack-feed__meta">
+					<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>"><?php echo esc_html( $vc_data ); ?></time>
+					<?php if ( ! empty( $vc_temas ) ) : ?>
+						<span>&bull;</span>
+						<a href="<?php echo esc_url( '/tema/' . $vc_temas[0]['slug'] . '/' ); ?>" class="substack-feed__tag"><?php echo esc_html( mb_strtolower( $vc_temas[0]['nome'], 'UTF-8' ) ); ?></a>
 					<?php endif; ?>
-					<h2 class="cartao__titulo"><?php the_title(); ?></h2>
-					<p class="cartao__resumo"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 0 === $indice ? 34 : 18 ) ); ?></p>
-					<time class="cartao__data" datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
 				</div>
-			</a>
+
+				<h2 class="substack-feed__title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+
+				<?php if ( ! empty( $vc_resumo ) ) : ?>
+					<p class="substack-feed__excerpt"><?php echo esc_html( $vc_resumo ); ?></p>
+				<?php endif; ?>
+
+				<div class="substack-feed__footer"><span><?php echo (int) $vc_tempo; ?> min de leitura</span></div>
+			</div>
+
+			<?php if ( $vc_img ) : ?>
+				<a class="substack-feed__imagem" href="<?php the_permalink(); ?>" tabindex="-1" aria-hidden="true">
+					<?php the_post_thumbnail( $vc_dest ? 'large' : 'medium', array( 'loading' => 0 === $indice ? 'eager' : 'lazy', 'alt' => '' ) ); ?>
+				</a>
+			<?php endif; ?>
 		</article>
 		<?php
 		++$indice;
 	endwhile;
-	wp_reset_postdata();
 	?>
-</section>
+</div>
 <?php
+vc_paginacao( (int) $consulta->max_num_pages, max( 1, (int) get_query_var( 'paged' ) ) );
+wp_reset_postdata();
+
 get_footer();
