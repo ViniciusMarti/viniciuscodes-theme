@@ -1915,8 +1915,6 @@ ol.children {
   background: var(--green-wash);
   color: var(--green-deep);
 }
-  }
-}
 
 /* ---------- back to top ---------- */
 
@@ -1945,9 +1943,8 @@ ol.children {
   paginam e não carregam a folha do filtro.
 */
 .paginacao {
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--color-border);
+  margin-top: 0;
+  padding: 1.75rem 0 0.5rem;
 }
 
 .paginacao__lista {
