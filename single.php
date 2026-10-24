@@ -63,7 +63,6 @@ while ( have_posts() ) :
 		 * texto: ele é o objeto sobre o qual o texto fala, e não deve herdar o
 		 * ritmo dos parágrafos nem o enfeite de link do corpo.
 		 */
-		get_template_part( 'template-parts/card', 'livro' );
 		get_template_part( 'template-parts/card', 'local' );
 		?>
 

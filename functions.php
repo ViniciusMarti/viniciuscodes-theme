@@ -256,23 +256,6 @@ function vc_temas_do_post( int $post_id ): array {
 }
 
 /**
- * A ficha do livro resenhado, ou null quando o texto não é uma resenha.
- *
- * @return array<string, mixed>|null
- */
-function vc_livro( int $post_id ): ?array {
-	$bruto = get_post_meta( $post_id, '_vinicius_livro', true );
-
-	if ( ! is_string( $bruto ) || '' === $bruto ) {
-		return null;
-	}
-
-	$ficha = json_decode( $bruto, true );
-
-	return is_array( $ficha ) && ! empty( $ficha['titulo'] ) ? $ficha : null;
-}
-
-/**
  * A ficha do lugar avaliado, ou null quando o texto não avalia lugar nenhum.
  *
  * Gemea da `vc_livro()`, e guardada do mesmo jeito (JSON numa string só). A
