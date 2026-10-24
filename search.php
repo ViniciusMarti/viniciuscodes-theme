@@ -55,8 +55,6 @@ $vc_assuntos = array_values(
 );
 ?>
 <header class="term-header">
-	<p class="term-header__kind">busca no site</p>
-
 	<h1 class="term-header__name">
 		<?php echo '' !== $vc_termo ? esc_html( $vc_termo ) : 'nenhuma palavra procurada'; ?>
 	</h1>

@@ -44,6 +44,7 @@ if ( false === strpos( $vc_titulo, '@viniciuscodes' ) ) {
 }
 
 $vc_imagem = vc_imagem_social( $vc_id );
+$vc_img_info = vc_detalhes_imagem_social( $vc_imagem );
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -100,6 +101,10 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	<meta property="og:description" content="<?php echo esc_attr( $vc_descricao ); ?>" />
 	<meta property="og:url" content="<?php echo esc_url( $vc_singular ? get_permalink( $vc_id ) : home_url( add_query_arg( array() ) ) ); ?>" />
 	<meta property="og:image" content="<?php echo esc_url( $vc_imagem ); ?>" />
+	<meta property="og:image:secure_url" content="<?php echo esc_url( $vc_img_info['secure_url'] ); ?>" />
+	<meta property="og:image:width" content="<?php echo (int) $vc_img_info['width']; ?>" />
+	<meta property="og:image:height" content="<?php echo (int) $vc_img_info['height']; ?>" />
+	<meta property="og:image:type" content="<?php echo esc_attr( $vc_img_info['type'] ); ?>" />
 	<meta property="og:image:alt" content="<?php echo esc_attr( $vc_titulo ); ?>" />
 	<meta property="og:locale" content="pt_BR" />
 
@@ -107,6 +112,7 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	<meta name="twitter:title" content="<?php echo esc_attr( $vc_titulo ); ?>" />
 	<meta name="twitter:description" content="<?php echo esc_attr( $vc_descricao ); ?>" />
 	<meta name="twitter:image" content="<?php echo esc_url( $vc_imagem ); ?>" />
+	<meta name="twitter:image:alt" content="<?php echo esc_attr( $vc_titulo ); ?>" />
 
 	<?php
 	/*
@@ -119,7 +125,8 @@ $vc_imagem = vc_imagem_social( $vc_id );
 	 * os dois gerava duas etiquetas iguais no `<head>`.
 	 */
 	?>
-	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=3" type="image/svg+xml" />
+	<link rel="icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=4" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>?v=4" />
 	<meta name="theme-color" content="#f8f6f0" media="(prefers-color-scheme: light)" />
 	<meta name="theme-color" content="#141715" media="(prefers-color-scheme: dark)" />
 
@@ -159,7 +166,7 @@ $vc_imagem = vc_imagem_social( $vc_id );
 			/* armazenamento indisponível: fica a paleta padrão */
 		}
 	</script>
-	<script>try{if(localStorage.getItem('vc_sidebar_state')==='collapsed'){document.documentElement.setAttribute('data-sidebar','collapsed')}}catch(e){}</script>
+	
 </head>
 
 <body <?php body_class(); ?>>
@@ -180,31 +187,31 @@ $vc_imagem = vc_imagem_social( $vc_id );
  * porque ela está acima da dobra em todas as páginas.
  */
 ?>
-<header class="masthead masthead--substack" style="padding: 12px 20px; border-bottom: 1px solid var(--borda, #eaeaea); background: var(--fundo, #fff); position: sticky; top: 0; z-index: 100;">
-	<div class="masthead__top" style="max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; width: 100%;">
-		<a class="masthead__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;">
-			<img src="<?php echo esc_url( home_url( '/wp-content/uploads/2026/10/favicon-circle-150x150.png' ) ); ?>" alt="" width="36" height="36" style="border-radius: 50%; object-fit: cover;" />
-			<span style="font-weight: 700; font-size: var(--text-base); letter-spacing: -0.01em;">Vinicius Oliveira</span>
+<header class="masthead masthead--substack">
+	<div class="masthead__top">
+		<a class="masthead__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>" alt="" width="36" height="36" />
+			<span>Vinicius Oliveira</span>
 		</a>
 
-		<nav class="masthead__nav" style="display: flex; align-items: center; gap: 14px; font-size: var(--text-sm);">
-			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">posts</a>
-			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">sobre</a>
-			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">viagens</a>
-			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">blogroll</a>
-			<a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>" style="color: var(--cor-meta, #757575); text-decoration: none;">contato</a>
-			<a href="<?php echo esc_url( home_url( '/feed.xml' ) ); ?>" class="btn-rss-pill" style="background-color: var(--color-accent); color: #fff !important; padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: var(--text-xs); text-decoration: none;">rss</a>
-			
-			<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro" style="background: none; border: none; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; color: var(--cor-meta, #757575);">
-				<span class="theme-toggle__icon theme-toggle__icon--light"><?php echo vc_icone( 'sun', 16 ); ?></span>
-				<span class="theme-toggle__icon theme-toggle__icon--dark"><?php echo vc_icone( 'moon', 16 ); ?></span>
-			</button>
+		<nav class="masthead__nav">
+			<a href="<?php echo esc_url( home_url( '/posts/' ) ); ?>">posts</a>
+			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
+			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>">viagens</a>
+			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogroll</a>
+			<a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">contato</a>
+			<a href="<?php echo esc_url( home_url( '/feed.xml' ) ); ?>" class="btn-rss-pill">rss</a>
 		</nav>
+
+		<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro">
+			<span class="theme-toggle__icon theme-toggle__icon--light"><?php echo vc_icone( 'sun', 16 ); ?></span>
+			<span class="theme-toggle__icon theme-toggle__icon--dark"><?php echo vc_icone( 'moon', 16 ); ?></span>
+		</button>
 	</div>
 </header>
 
-<div class="topics-bar" style="border-bottom: 1px solid var(--borda, #eaeaea); background: var(--fundo, #fff); position: relative; z-index: 90;">
-	<div style="max-width: 900px; margin: 0 auto; padding: 8px 20px; display: flex; gap: 16px; align-items: center; justify-content: center; font-size: var(--text-sm); overflow: visible; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;">
+<div class="topics-bar">
+	<div class="topics-bar__inner">
 		<?php
 		// 1. Busca todas as categorias com posts calculados em tempo real
 		$vc_todos_temas = get_categories( array(
@@ -214,77 +221,66 @@ $vc_imagem = vc_imagem_social( $vc_id );
 			'hide_empty' => true,
 		) );
 
-		// 2. Separa os Top 5 e o Restante para o menu "Mais"
+		// 2. Separa os Top 5 e o Restante
 		$vc_top_5 = array_slice( $vc_todos_temas, 0, 5 );
 		$vc_resto = array_slice( $vc_todos_temas, 5 );
 
+		// Renderiza os Top 5 (sempre visíveis no desktop e mobile)
 		foreach ( $vc_top_5 as $vc_t ) :
 			$vc_href = '/tema/' . $vc_t->slug . '/';
 			$vc_icone_svg = vc_icone( vc_icone_do_tema( $vc_t->slug ), 15 );
 		?>
-			<a href="<?php echo esc_url( $vc_href ); ?>" style="display: inline-flex; align-items: center; gap: 6px; color: var(--cor-meta, #757575); text-decoration: none; font-weight: 500; white-space: nowrap;">
-				<span style="display: inline-flex; align-items: center; opacity: 0.85;"><?php echo $vc_icone_svg; ?></span>
+			<a class="topics-bar__item" href="<?php echo esc_url( $vc_href ); ?>">
+				<span class="topics-bar__icon"><?php echo $vc_icone_svg; ?></span>
 				<span><?php echo esc_html( mb_strtolower( (string) $vc_t->name, 'UTF-8' ) ); ?></span>
 			</a>
 		<?php endforeach; ?>
 
-		<?php if ( ! empty( $vc_resto ) ) : ?>
-			<!-- Dropdown Elegante "Mais Temas" -->
-			<div class="topics-dropdown-wrap" style="position: relative; display: inline-block;">
-				<button type="button" class="topics-dropdown-btn" id="topicsDropdownBtn" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--borda, #eaeaea); border-radius: 14px; padding: 3px 10px; font-size: var(--text-xs); color: var(--cor-meta, #757575); cursor: pointer; font-family: inherit;">
-					<span>mais</span>
-					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s;"><path d="m6 9 6 6 6-6"/></svg>
-				</button>
+		<?php
+		// Renderiza os demais temas direto na barra (visíveis no mobile; ocultos no desktop)
+		foreach ( $vc_resto as $vc_r_item ) :
+			$vc_r_item_href = '/tema/' . $vc_r_item->slug . '/';
+			$vc_r_item_icone = vc_icone( vc_icone_do_tema( $vc_r_item->slug ), 15 );
+		?>
+			<a class="topics-bar__item topics-bar__item--resto" href="<?php echo esc_url( $vc_r_item_href ); ?>">
+				<span class="topics-bar__icon"><?php echo $vc_r_item_icone; ?></span>
+				<span><?php echo esc_html( mb_strtolower( (string) $vc_r_item->name, 'UTF-8' ) ); ?></span>
+			</a>
+		<?php endforeach; ?>
 
-				<div class="topics-dropdown-menu" id="topicsDropdownMenu" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; background: var(--fundo, #ffffff); border: 1px solid var(--borda, #eaeaea); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 6px 0; min-width: 190px; z-index: 1000;">
+		<?php if ( ! empty( $vc_resto ) ) : ?>
+			<!-- Dropdown exclusivo para Desktop -->
+			<details class="topics-dropdown-details">
+				<summary class="topics-dropdown-summary">
+					<span>mais</span>
+					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topics-arrow"><path d="m6 9 6 6 6-6"/></svg>
+				</summary>
+
+				<div class="topics-dropdown-menu">
 					<?php foreach ( $vc_resto as $vc_r ) :
 						$vc_r_href = '/tema/' . $vc_r->slug . '/';
 						$vc_r_icone = vc_icone( vc_icone_do_tema( $vc_r->slug ), 14 );
 					?>
-						<a href="<?php echo esc_url( $vc_r_href ); ?>" style="display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; color: var(--cor-texto, #292929); text-decoration: none; font-size: var(--text-sm); transition: background 0.15s;">
-							<span style="display: inline-flex; align-items: center; gap: 8px;">
-								<span style="opacity: 0.8;"><?php echo $vc_r_icone; ?></span>
+						<a class="topics-dropdown-item" href="<?php echo esc_url( $vc_r_href ); ?>">
+							<span class="topics-dropdown-item__left">
+								<span class="topics-dropdown-item__icon"><?php echo $vc_r_icone; ?></span>
 								<span><?php echo esc_html( mb_strtolower( (string) $vc_r->name, 'UTF-8' ) ); ?></span>
 							</span>
-							<span style="font-size: var(--text-xs); color: var(--cor-meta, #757575); background: rgba(127,127,127,0.1); border-radius: 10px; padding: 1px 6px;"><?php echo (int) $vc_r->count; ?></span>
+							<span class="topics-dropdown-item__count"><?php echo (int) $vc_r->count; ?></span>
 						</a>
 					<?php endforeach; ?>
 				</div>
-			</div>
+			</details>
 		<?php endif; ?>
 	</div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-	var btn = document.getElementById('topicsDropdownBtn');
-	var menu = document.getElementById('topicsDropdownMenu');
-	if (!btn || !menu) return;
 
-	btn.addEventListener('click', function(e) {
-		e.stopPropagation();
-		var isHidden = menu.style.display === 'none';
-		menu.style.display = isHidden ? 'block' : 'none';
-		btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
-		var arrow = btn.querySelector('svg');
-		if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : 'none';
-	});
-
-	document.addEventListener('click', function(e) {
-		if (!menu.contains(e.target) && e.target !== btn) {
-			menu.style.display = 'none';
-			btn.setAttribute('aria-expanded', 'false');
-			var arrow = btn.querySelector('svg');
-			if (arrow) arrow.style.transform = 'none';
-		}
-	});
-});
-</script>
 
 <div class="sidebar-backdrop" data-sidebar-close aria-hidden="true"></div>
 
 <div class="layout">
-	<?php get_template_part( 'template-parts/sidebar' ); ?>
+	
 
 	<main class="content" id="conteudo">
 		<div class="content__inner">

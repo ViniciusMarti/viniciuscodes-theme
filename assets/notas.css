@@ -44,7 +44,7 @@
 
 /* Sem fita adesiva decorativa */
 .post-item--nota::before {
-  display: none !important;
+  display: none;
 }
 
 [data-theme='dark'] .post-item--nota {
@@ -56,7 +56,7 @@
 }
 
 [data-theme='dark'] .post-item--nota::before {
-  display: none !important;
+  display: none;
 }
 
 .nota__cabecalho {
@@ -397,7 +397,7 @@
    que não tem mais borda nem fundo.
 
    O ESTADO "GOSTEI" PRECISA SER ANULADO AQUI. O `global.css` troca fundo e
-   borda em `.post-like__btn--liked` com `!important`, e nesta forma não existe
+   borda em `.post-like__btn--liked` com ``, e nesta forma não existe
    nem fundo nem borda: sem estas linhas, gostar faria aparecer uma pílula
    cor-de-rosa do nada no meio da lista, e o item mudaria de altura no instante
    do clique.
@@ -411,6 +411,6 @@
 .post-item--nota .nota__acoes .post-like__btn--compacto,
 .post-item--nota .nota__acoes .post-like__btn--compacto.post-like__btn--liked {
   padding: 0;
-  border-color: transparent !important;
-  background: transparent !important;
+  border-color: transparent;
+  background: transparent;
 }

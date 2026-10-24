@@ -54,8 +54,6 @@ if ( $vc_termo instanceof WP_Term ) {
 }
 ?>
 <header class="term-header">
-	<p class="term-header__kind"><?php echo esc_html( $vc_tipo ); ?></p>
-
 	<h1 class="term-header__name">
 		<?php if ( $vc_termo instanceof WP_Term ) : ?>
 			<span class="term-header__icon" aria-hidden="true">
@@ -67,9 +65,7 @@ if ( $vc_termo instanceof WP_Term ) {
 		<?php endif; ?>
 	</h1>
 
-	<?php if ( $vc_termo instanceof WP_Term && '' !== trim( (string) $vc_termo->description ) ) : ?>
-		<div class="term-header__desc"><?php echo wpautop( wp_kses_post( $vc_termo->description ) ); ?></div>
-	<?php endif; ?>
+	
 </header>
 
 <?php

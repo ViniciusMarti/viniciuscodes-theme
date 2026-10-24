@@ -30,7 +30,7 @@
 $vc_numero = vc_nota_numero();
 $vc_autor  = (string) get_the_author();
 $vc_login  = (string) get_the_author_meta( 'user_login' );
-$vc_avatar = vc_midia( 'vinicius-profile.webp' );
+$vc_avatar = get_theme_file_uri( 'assets/icons/favicon.svg' );
 ?>
 <div class="nota__cartao">
 	<p class="nota__cabecalho">

@@ -25,6 +25,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 $vc_style_path = __DIR__ . '/style.css';
 define( 'VC_VERSAO', file_exists( $vc_style_path ) ? (string) filemtime( $vc_style_path ) : '1791744180000' );
 
+/**
+ * Retorna o carimbo dinâmico de modificação do arquivo (cache-busting dinâmico granular).
+ * Se o arquivo específico foi editado, o navegador baixa a versão nova na hora sem afetar os outros.
+ */
+function vc_asset_ver( string $caminho_relativo ): string {
+	$caminho_completo = get_theme_file_path( $caminho_relativo );
+	return file_exists( $caminho_completo ) ? (string) filemtime( $caminho_completo ) : VC_VERSAO;
+}
+
 /* -------------------------------------------------------------------------
    RECURSOS DO TEMA
    ------------------------------------------------------------------------- */
@@ -54,22 +63,7 @@ add_action(
 		 * foi exatamente o problema que a versão Astro levou tempo para resolver.
 		 */
 		add_theme_support( 'editor-styles' );
-		add_editor_style( array( 'assets/global.css', 'assets/editor-style.css' ) );
-	}
-);
-
-/**
- * Força o carregamento do editor-style.css no iframe e no canvas do Gutenberg
- */
-add_action(
-	'enqueue_block_editor_assets',
-	static function () {
-		wp_enqueue_style(
-			'vc-editor-headings',
-			get_theme_file_uri( 'assets/editor-style.css' ),
-			array( 'wp-edit-blocks' ),
-			VC_VERSAO
-		);
+		add_editor_style( 'assets/editor-style.css' );
 	}
 );
 
@@ -89,8 +83,8 @@ add_action(
 		 * os templates repetem a mesma estrutura e os mesmos nomes de classe dos
 		 * componentes Astro, então o CSS que já existia desenha a página.
 		 */
-		wp_enqueue_style( 'vc-fontes', get_theme_file_uri( 'assets/fonts.css' ), array(), VC_VERSAO );
-		wp_enqueue_style( 'vc-global', get_theme_file_uri( 'assets/global.css' ), array( 'vc-fontes' ), VC_VERSAO );
+		wp_enqueue_style( 'vc-fontes', get_theme_file_uri( 'assets/fonts.css' ), array(), vc_asset_ver( 'assets/fonts.css' ) );
+		// vc-global unificado no vc-substack-stage2
 
 		/*
 		 * `true` no último argumento carrega no rodapé. Os dois
@@ -98,7 +92,7 @@ add_action(
 		 * dependem de clique, então atrasá-los não custa nada e não bloqueia a
 		 * primeira pintura.
 		 */
-		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), VC_VERSAO, true );
+		wp_enqueue_script( 'vc-site', get_theme_file_uri( 'assets/site.js' ), array(), vc_asset_ver( 'assets/site.js' ), true );
 
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
@@ -362,6 +356,51 @@ function vc_imagem_social( int $post_id = 0 ): string {
 }
 
 /** Data longa, no formato do site: "25 de setembro de 2026". */
+
+/**
+ * Obtém dimensões e tipo MIME da imagem social para WhatsApp, Twitter e Telegram.
+ * Sem og:image:width, og:image:height e og:image:type, WhatsApp não reserva o espaço
+ * e frequentemente renderiza apenas o quadrado pequeno ao invés do card grande (large summary).
+ */
+function vc_detalhes_imagem_social( string $url ): array {
+	$info = array(
+		'url'        => $url,
+		'secure_url' => str_starts_with( $url, 'https://' ) ? $url : str_replace( 'http://', 'https://', $url ),
+		'width'      => 1200,
+		'height'     => 630,
+		'type'       => 'image/jpeg',
+	);
+
+	if ( empty( $url ) ) {
+		return $info;
+	}
+
+	$uploads = wp_upload_dir();
+	$theme_url = get_theme_file_uri();
+	$theme_dir = get_theme_file_path();
+
+	$caminho_local = '';
+
+	if ( str_starts_with( $url, $uploads['baseurl'] ) ) {
+		$rel = substr( $url, strlen( $uploads['baseurl'] ) );
+		$caminho_local = $uploads['basedir'] . $rel;
+	} elseif ( str_starts_with( $url, $theme_url ) ) {
+		$rel = substr( $url, strlen( $theme_url ) );
+		$caminho_local = $theme_dir . $rel;
+	}
+
+	if ( $caminho_local && file_exists( $caminho_local ) ) {
+		$sz = @getimagesize( $caminho_local );
+		if ( $sz && ! empty( $sz[0] ) && ! empty( $sz[1] ) ) {
+			$info['width']  = (int) $sz[0];
+			$info['height'] = (int) $sz[1];
+			$info['type']   = (string) $sz['mime'];
+		}
+	}
+
+	return $info;
+}
+
 function vc_data_longa( ?int $post_id = null ): string {
 	/*
 	 * O mês é escrito aqui, e não pedido ao WordPress, porque este site está
@@ -1244,7 +1283,7 @@ add_filter(
 	'comment_form_default_fields',
 	static function ( array $fields ): array {
 		// Adiciona campo invisível que humanos não preenchem
-		$fields['vc_hp_check'] = '<p class="vc-hp-field" style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">'
+		$fields['vc_hp_check'] = '<p class="vc-hp-field" aria-hidden="true">'
 			. '<label for="vc_hp_website">se você é humano, deixe este campo em branco</label>'
 			. '<input type="text" name="vc_hp_website" id="vc_hp_website" tabindex="-1" autocomplete="off" value="" />'
 			. '</p>';
@@ -1468,7 +1507,7 @@ function vc_lightbox_das_imagens( array $bloco ): array {
 
 	$bloco['attrs']['lightbox'] = array( 'enabled' => true );
 
-	wp_enqueue_style( 'vc-lightbox', get_theme_file_uri( 'assets/lightbox.css' ), array( 'vc-global' ), VC_VERSAO );
+	wp_enqueue_style( 'vc-lightbox', get_theme_file_uri( 'assets/lightbox.css' ), array( 'vc-global' ), vc_asset_ver( 'assets/lightbox.css' ) );
 
 	return $bloco;
 }
@@ -2177,7 +2216,7 @@ add_action(
 			? array( 'wp-data' )
 			: array();
 
-		wp_enqueue_script( 'vc-painel', get_theme_file_uri( 'assets/painel.js' ), $dependencias, VC_VERSAO, true );
+		wp_enqueue_script( 'vc-painel', get_theme_file_uri( 'assets/painel.js' ), $dependencias, vc_asset_ver( 'assets/painel.js' ), true );
 	}
 );
 
@@ -2582,110 +2621,6 @@ add_action(
 	}
 );
 
-/**
- * Ajusta visualmente o painel e o editor de blocos:
- * - Caixa de temas/categorias com altura confortável, sem rolagem apertada
- * - Rótulos e itens em minúsculas (lowercase), sem atrito visual
- */
-add_action(
-	'admin_head',
-	static function () {
-		?>
-		<style>
-			/* Editor clássico e metaboxes padrão */
-			#categorydiv .categorydiv,
-			#categorydiv .tabs-panel {
-				max-height: 280px;
-				border-radius: 6px;
-			}
-			#categorydiv .selectit,
-			#categorychecklist label {
-				text-transform: lowercase;
-				font-size: 13px;
-			}
-
-			/* Editor de blocos (Gutenberg) - painel lateral de categorias / taxonomia */
-			.editor-sidebar .components-panel__body-title,
-			.editor-sidebar .components-panel__body-title button {
-				text-transform: lowercase;
-			}
-			.editor-sidebar [data-taxonomy="category"] .components-tree-grid,
-			.editor-sidebar [data-taxonomy="category"] .components-panel__row,
-			.editor-sidebar .editor-post-taxonomies__hierarchical-terms-list {
-				max-height: 320px;
-				padding: 4px 2px;
-			}
-			.editor-sidebar [data-taxonomy="category"] label,
-			.editor-sidebar .editor-post-taxonomies__hierarchical-terms-choice label,
-			.editor-sidebar .editor-post-taxonomies__hierarchical-terms-choice .components-checkbox-control__label {
-				text-transform: lowercase !important;
-				font-size: 13px;
-				letter-spacing: normal;
-			}
-			.editor-sidebar .editor-post-taxonomies__hierarchical-terms-choice {
-				margin-bottom: 6px;
-			}
-
-			/* Bloco de citação (Quote) no editor Gutenberg */
-			.editor-styles-wrapper blockquote,
-			.editor-styles-wrapper .wp-block-quote,
-			.wp-block-post-content blockquote,
-			.wp-block-quote {
-				margin-left: 0 !important;
-				margin-right: 0 !important;
-				padding: 0.4em 0 0.4em 1.4em !important;
-				border-left: 3px solid #22c55e !important;
-				font-style: italic !important;
-				color: #4b5563 !important;
-			}
-
-			/* Hierarquia tipográfica clara no editor de blocos (Gutenberg) */
-			.editor-styles-wrapper .wp-block-post-title,
-			.editor-styles-wrapper h1.editor-post-title__input {
-				font-size: clamp(2rem, 4.4vw, 2.9rem) !important;
-				font-weight: 700 !important;
-				line-height: 1.15 !important;
-				margin-bottom: 1rem !important;
-			}
-
-			.editor-styles-wrapper h2,
-			.editor-styles-wrapper h2.wp-block-heading,
-			.editor-styles-wrapper .wp-block-heading h2 {
-				font-size: 1.6rem !important;
-				font-weight: 600 !important;
-				line-height: 1.25 !important;
-				letter-spacing: -0.01em !important;
-				margin-top: 2.2em !important;
-				margin-bottom: 0.6em !important;
-			}
-
-			.editor-styles-wrapper h3,
-			.editor-styles-wrapper h3.wp-block-heading,
-			.editor-styles-wrapper .wp-block-heading h3 {
-				font-size: 1.3rem !important;
-				font-weight: 600 !important;
-				line-height: 1.25 !important;
-				letter-spacing: -0.01em !important;
-				margin-top: 2.2em !important;
-				margin-bottom: 0.6em !important;
-			}
-
-			.editor-styles-wrapper h4,
-			.editor-styles-wrapper h4.wp-block-heading,
-			.editor-styles-wrapper .wp-block-heading h4 {
-				font-size: 1.1rem !important;
-				font-weight: 600 !important;
-				line-height: 1.25 !important;
-				letter-spacing: -0.01em !important;
-				margin-top: 1.8em !important;
-				margin-bottom: 0.5em !important;
-			}
-
-		</style>
-		<?php
-	}
-);
-
 /* -------------------------------------------------------------------------
    CONEXÕES HIPERTEXTUAIS AUTOMÁTICAS (LINKS CITADOS E BACKLINKS)
    ------------------------------------------------------------------------- */
@@ -2787,5 +2722,5 @@ add_action(
 
 
 add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_style('vc-substack-stage2', get_theme_file_uri('assets/substack-stage2.css'), array(), '1.0.7');
+    wp_enqueue_style('vc-substack-stage2', get_theme_file_uri('assets/substack-stage2.css'), array('vc-fontes'), vc_asset_ver( 'assets/substack-stage2.css' ));
 }, 999);

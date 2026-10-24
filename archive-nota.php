@@ -61,7 +61,7 @@ $vc_feed      = get_post_type_archive_feed_link( $vc_post_type );
 			$vc_autor  = (string) get_the_author();
 			$vc_tempo  = function_exists( 'vc_nota_tempo_relativo' ) ? vc_nota_tempo_relativo( $vc_id ) : get_the_date();
 			$vc_slugs  = function_exists( 'vc_nota_slugs_de_tema' ) ? vc_nota_slugs_de_tema( $vc_id ) : '';
-			$vc_avatar = function_exists( 'vc_midia' ) ? vc_midia( 'vinicius-profile.webp' ) : '';
+			$vc_avatar = get_theme_file_uri( 'assets/icons/favicon.svg' );
 			$vc_autor_url = get_author_posts_url( (int) get_the_author_meta( 'ID' ) );
 			?>
 			<li id="nota-<?php echo (int) $vc_id; ?>" <?php post_class( 'post-item post-item--nota h-entry' ); ?> data-temas="<?php echo esc_attr( $vc_slugs ); ?>">

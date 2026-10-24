@@ -8,10 +8,7 @@
 get_header();
 ?>
 
-<header class="article__header" style="margin-bottom: 2.5rem;">
-	<p style="font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-meta); margin-bottom: 0.5rem;">arquivo de textos</p>
-	<h1 class="article__title" style="font-size: var(--text-2xl); font-weight: 700; letter-spacing: -0.01em; margin: 0;">todos os textos</h1>
-</header>
+<header class="article__header"><h1 class="article__title">todos os textos</h1></header>
 
 <?php
 $paged = max( 1, (int) get_query_var( 'paged' ) );
