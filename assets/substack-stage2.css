@@ -1994,7 +1994,7 @@ ol.children {
   font-weight: 700;
 }
 
-.paginacao__botao:visited:not([aria-current=" page]) {
+.paginacao__botao:visited {
  color: var(--color-meta);
 }
 
