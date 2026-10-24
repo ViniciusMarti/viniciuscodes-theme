@@ -2734,3 +2734,9 @@ add_action( 'wp_head', function () {
 		);
 	}
 }, 1 );
+// Home Revista (teste): CSS só no template dedicado.
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_page_template( 'page-home-revista.php' ) ) {
+		wp_enqueue_style( 'vc-home-revista', get_theme_file_uri( 'assets/home-revista.css' ), array( 'vc-substack-stage2' ), vc_asset_ver( 'assets/home-revista.css' ) );
+	}
+}, 1000 );

@@ -1,0 +1,153 @@
+﻿/* Home Revista (teste): blocos com imagem de destaque. Usa os tokens de substack-stage2.css. */
+.home-revista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  width: min(1080px, calc(100vw - 2.5rem));
+  margin-left: 50%;
+  transform: translateX(-50%);
+  padding: 1.5rem 0 3rem;
+}
+
+.home-revista .cartao {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.home-revista .cartao:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+.home-revista .cartao__link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.home-revista .cartao__midia {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--color-code-bg);
+}
+
+.home-revista .cartao__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.home-revista .cartao:hover .cartao__img {
+  transform: scale(1.04);
+}
+
+.home-revista .cartao__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.1rem 1.2rem;
+  flex: 1;
+}
+
+.home-revista .cartao__tema {
+  color: var(--color-accent-text);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.home-revista .cartao__titulo {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.home-revista .cartao__resumo {
+  margin: 0;
+  color: var(--color-meta);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.home-revista .cartao__data {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  color: var(--color-meta);
+  font-size: var(--text-xs);
+}
+
+/* Cartão sem imagem de destaque: só texto, com faixa de cor no topo. */
+.home-revista .cartao--sem-imagem {
+  border-top: 4px solid var(--color-accent);
+}
+
+/* Destaque: ocupa a largura toda, imagem grande com texto sobreposto. */
+.home-revista .cartao--destaque {
+  grid-column: 1 / -1;
+  position: relative;
+}
+
+.home-revista .cartao--destaque .cartao__link {
+  position: relative;
+  min-height: 380px;
+  justify-content: flex-end;
+}
+
+.home-revista .cartao--destaque .cartao__midia {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+
+.home-revista .cartao--destaque .cartao__midia::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.05) 70%);
+}
+
+.home-revista .cartao--destaque .cartao__corpo {
+  position: relative;
+  flex: 0 0 auto;
+  max-width: 720px;
+  padding: 2rem;
+  color: #fff;
+}
+
+.home-revista .cartao--destaque .cartao__tema,
+.home-revista .cartao--destaque .cartao__resumo,
+.home-revista .cartao--destaque .cartao__data {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.home-revista .cartao--destaque .cartao__titulo {
+  font-size: var(--text-2xl);
+  line-height: 1.15;
+}
+
+.home-revista .cartao--destaque.cartao--sem-imagem .cartao__link {
+  min-height: 0;
+}
+
+.home-revista .cartao--destaque.cartao--sem-imagem .cartao__corpo,
+.home-revista .cartao--destaque.cartao--sem-imagem .cartao__tema,
+.home-revista .cartao--destaque.cartao--sem-imagem .cartao__resumo,
+.home-revista .cartao--destaque.cartao--sem-imagem .cartao__data {
+  color: var(--color-text);
+}
+
+@media (max-width: 600px) {
+  .home-revista { grid-template-columns: 1fr; }
+  .home-revista .cartao--destaque .cartao__link { min-height: 320px; }
+  .home-revista .cartao--destaque .cartao__corpo { padding: 1.25rem; }
+  .home-revista .cartao--destaque .cartao__titulo { font-size: var(--text-xl); }
+}
