@@ -31,8 +31,10 @@ $consulta = new WP_Query(
 		$vc_tempo = max( 1, round( str_word_count( wp_strip_all_tags( get_the_content() ) ) / 200 ) );
 		$vc_data  = mb_strtoupper( get_the_date( 'M j, Y', $vc_id ), 'UTF-8' );
 		$vc_resumo = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 34, '…' );
-		$vc_img   = has_post_thumbnail();
-		$vc_dest  = ( 0 === $indice && 1 === max( 1, (int) get_query_var( 'paged' ) ) && $vc_img );
+		$vc_pri   = ( 0 === $indice && 1 === max( 1, (int) get_query_var( 'paged' ) ) );
+		$vc_html  = vc_imagem_do_texto( $vc_id, $vc_pri ? 'large' : 'medium', 0 === $indice ? 'eager' : 'lazy' );
+		$vc_img   = '' !== $vc_html;
+		$vc_dest  = ( $vc_pri && $vc_img );
 		?>
 		<article id="post-<?php echo (int) $vc_id; ?>" class="substack-feed__item<?php echo $vc_img ? ' substack-feed__item--com-imagem' : ''; ?><?php echo $vc_dest ? ' substack-feed__item--destaque' : ''; ?>">
 			<div class="substack-feed__texto">
@@ -55,7 +57,7 @@ $consulta = new WP_Query(
 
 			<?php if ( $vc_img ) : ?>
 				<a class="substack-feed__imagem" href="<?php the_permalink(); ?>" tabindex="-1" aria-hidden="true">
-					<?php the_post_thumbnail( $vc_dest ? 'large' : 'medium', array( 'loading' => 0 === $indice ? 'eager' : 'lazy', 'alt' => '' ) ); ?>
+					<?php echo $vc_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</a>
 			<?php endif; ?>
 		</article>

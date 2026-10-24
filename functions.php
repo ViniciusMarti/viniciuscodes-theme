@@ -2740,3 +2740,36 @@ add_action( 'wp_enqueue_scripts', function () {
 		wp_enqueue_style( 'vc-home-revista', get_theme_file_uri( 'assets/home-revista.css' ), array( 'vc-substack-stage2' ), vc_asset_ver( 'assets/home-revista.css' ) );
 	}
 }, 1000 );
+/**
+ * HTML da imagem de um texto: a de destaque, se houver; senão a primeira <img> do conteúdo.
+ *
+ * @param int    $post_id ID do texto.
+ * @param string $tamanho Tamanho registrado do WordPress.
+ * @param string $carga   `eager` ou `lazy`.
+ * @return string HTML da <img> ou string vazia.
+ */
+function vc_imagem_do_texto( int $post_id, string $tamanho = 'medium', string $carga = 'lazy' ): string {
+	$atributos = array( 'loading' => $carga, 'alt' => '' );
+
+	if ( has_post_thumbnail( $post_id ) ) {
+		return (string) get_the_post_thumbnail( $post_id, $tamanho, $atributos );
+	}
+
+	$conteudo = (string) get_post_field( 'post_content', $post_id );
+	if ( ! preg_match( '/<img\b[^>]*>/i', $conteudo, $tag ) ) {
+		return '';
+	}
+
+	if ( preg_match( '/wp-image-(\d+)/', $tag[0], $id ) ) {
+		$html = wp_get_attachment_image( (int) $id[1], $tamanho, false, $atributos );
+		if ( '' !== $html ) {
+			return $html;
+		}
+	}
+
+	if ( preg_match( '/\bsrc=["\']([^"\']+)["\']/i', $tag[0], $src ) ) {
+		return sprintf( '<img src="%s" alt="" loading="%s" decoding="async">', esc_url( $src[1] ), esc_attr( $carga ) );
+	}
+
+	return '';
+}
