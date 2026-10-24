@@ -75,7 +75,7 @@ const VC_NOTA_VERSAO = '2';
 const VC_NOTA_CONTADOR = 'vc_notas_contador';
 
 /** A meta onde o número de cada nota fica guardado. */
-const VC_NOTA_META_NUMERO = '_vc_nota_numero';
+// VC_NOTA_META_NUMERO removido
 
 /**
  * Registra o post type.
@@ -283,70 +283,8 @@ function vc_notas_incluir_no_fediverso( $lista ) {
 add_filter( 'option_activitypub_support_post_types', 'vc_notas_incluir_no_fediverso' );
 add_filter( 'option_webmention_support_post_types', 'vc_notas_incluir_no_fediverso' );
 
-/**
- * Dá um número à nota — uma vez só, na primeira vez que ela é publicada.
- *
- * O NÚMERO É UM IDENTIFICADOR, então ele é gravado e nunca recalculado: ver o
- * comentário do `VC_NOTA_CONTADOR`. A consequência de gravar é que a ordem de
- * publicação é a ordem das chamadas — uma nota publicada hoje com data de dois
- * meses atrás leva o número de hoje. É o comportamento certo para um
- * identificador e o errado para uma data, e é de propósito: a data já está na
- * nota, e o número não precisa concordar com ela.
- *
- * POR QUE `save_post_` E NÃO `transition_post_status`: rascunho não gasta
- * número da fila. Quando o rascunho vira publicado, o `save_post` roda de novo
- * e o número é dado ali; a checagem da meta garante que a segunda gravação não
- * dê um número novo.
- *
- * @param int $post_id O post que acabou de ser gravado.
- */
-function vc_notas_numerar( $post_id ) {
-	$post_id = (int) $post_id;
-
-	if ( VC_NOTA !== get_post_type( $post_id ) ) {
-		return;
-	}
-
-	if ( 'publish' !== get_post_status( $post_id ) ) {
-		return;
-	}
-
-	if ( '' !== (string) get_post_meta( $post_id, VC_NOTA_META_NUMERO, true ) ) {
-		return;
-	}
-
-	$vc_numero = max( 1, (int) get_option( VC_NOTA_CONTADOR, 1 ) );
-
-	/*
-	 * O contador é incrementado ANTES de o número ir para o post. Se algo
-	 * falhar no meio, o resultado é um número furado — visível e inofensivo —,
-	 * e nunca duas notas com o mesmo número, que é o erro que estraga o
-	 * identificador.
-	 */
-	update_option( VC_NOTA_CONTADOR, $vc_numero + 1 );
-	update_post_meta( $post_id, VC_NOTA_META_NUMERO, $vc_numero );
-}
-add_action( 'save_post_' . VC_NOTA, 'vc_notas_numerar' );
-
-/**
- * O número de uma nota, ou 0 quando ela ainda não tem.
- *
- * Zero é resposta legítima: nota gravada antes deste recurso existir, ou por um
- * importador que escreveu direto na tabela. Quem chama decide o que fazer com o
- * zero — os templates, por ora, simplesmente não imprimem o número. Uma nota
- * antiga ganha o número na primeira vez que for salva de novo.
- *
- * @param int|WP_Post|null $vc_post O post (ou o ID), ou null para o atual.
- * @return int O número, ou 0.
- */
 function vc_nota_numero( $vc_post = null ) {
-	$vc_post = get_post( $vc_post );
-
-	if ( ! $vc_post ) {
-		return 0;
-	}
-
-	return (int) get_post_meta( $vc_post->ID, VC_NOTA_META_NUMERO, true );
+	return 0;
 }
 
 /**
