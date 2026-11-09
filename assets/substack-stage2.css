@@ -2188,6 +2188,65 @@ ol.children {
   color: var(--color-accent);
 }
 
+.upvote-wrap {
+  display: inline-flex;
+}
+
+.upvote-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 38px;
+  padding: 0.4rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.upvote-button svg {
+  color: #e05252;
+  transition: transform 0.2s ease;
+}
+
+.upvote-button:hover {
+  background: var(--color-bg);
+  border-color: #f8b4b4;
+  color: #c81e1e;
+}
+
+.upvote-button:hover svg {
+  transform: scale(1.15);
+}
+
+.upvote-button.upvoted {
+  background: #fdf2f2;
+  border-color: #f8b4b4;
+  color: #c81e1e;
+}
+
+.upvote-button.upvoted svg {
+  fill: #e05252;
+  stroke: #e05252;
+}
+
+[data-theme='dark'] .upvote-button.upvoted {
+  background: rgba(224, 82, 82, 0.15);
+  border-color: rgba(224, 82, 82, 0.4);
+  color: #fca5a5;
+}
+
+.upvote-count {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
 .post-share__btn--primary {
   background: var(--color-accent);
   border-color: var(--color-accent);
