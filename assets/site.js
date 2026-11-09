@@ -116,4 +116,63 @@
 			});
 		}
 	}
+
+		/* ----------------------------------------------------------- curtidas / upvote */
+	var upvoteButtons = document.querySelectorAll('[data-upvote-id]');
+
+	upvoteButtons.forEach(function (btn) {
+		var postId = btn.getAttribute('data-upvote-id');
+		if (!postId) {
+			return;
+		}
+
+		var labelEl = btn.querySelector('.upvote-label');
+		var jaCurtiu = false;
+		try {
+			jaCurtiu = '1' === localStorage.getItem('vco-upvote-' + postId);
+		} catch (e) {}
+
+		if (jaCurtiu) {
+			btn.classList.add('upvoted');
+			if (labelEl) {
+				labelEl.textContent = 'curtido';
+			}
+		}
+
+		btn.addEventListener('click', function (e) {
+			e.preventDefault();
+			if (btn.classList.contains('upvoted')) {
+				return;
+			}
+
+			btn.classList.add('upvoted');
+			if (labelEl) {
+				labelEl.textContent = 'curtido';
+			}
+
+			try {
+				localStorage.setItem('vco-upvote-' + postId, '1');
+			} catch (e) {}
+
+			fetch('/wp-json/vinicius/v1/curtir/' + postId, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+				.then(function (res) {
+					return res.json();
+				})
+				.then(function (dados) {
+					if (dados && typeof dados.curtidas !== 'undefined') {
+						var countEl = btn.querySelector('.upvote-count');
+						if (countEl) {
+							countEl.textContent = dados.curtidas;
+						}
+					}
+				})
+				.catch(function () {});
+		});
+	});
+
 })();

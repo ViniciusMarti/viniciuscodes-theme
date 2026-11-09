@@ -995,7 +995,6 @@ function vc_icone_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'newspaper',
 		'/microblog/' => 'square-pen',
-		'/notas/'     => 'square-pen',
 		'/videos/'    => 'play',
 		'/sobre/'     => 'user-round',
 		'/livros/'    => 'book',
@@ -1054,7 +1053,6 @@ function vc_contexto_da_url( string $url ): string {
 	$mapa = array(
 		'/posts/'     => 'a lista de todos os textos, do mais novo para o mais antigo',
 		'/microblog/' => 'os textos curtos, sem título, na ordem em que saem',
-		'/notas/'     => 'os textos curtos, sem título, na ordem em que saem',
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
 		'/livros/'    => 'o que estou lendo, o que já li e a minha estante',
@@ -2062,7 +2060,9 @@ add_filter(
 			return array( 'title' => '@viniciuscodes' );
 		}
 
-		$partes['site'] = '@viniciuscodes';
+
+		$partes['title'] = mb_strtolower( (string) ( $partes['title'] ?? '' ), 'UTF-8' );
+		$partes['site']  = '@viniciuscodes';
 
 		return $partes;
 	}
@@ -2685,7 +2685,7 @@ add_action(
 			exit;
 		}
 
-		// Redireciona notas, microblog ou vídeos para a home
+		// Redireciona notas, microblog ou vídeos extintos para a home
 		if ( preg_match( '#^/(notas|microblog|videos?)(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/' ), 301 );
 			exit;
@@ -2759,3 +2759,43 @@ function vc_imagem_do_texto( int $post_id, string $tamanho = 'medium', string $c
 
 	return '';
 }
+
+
+
+
+
+
+
+/* -------------------------------------------------------------------------
+   CURTIDAS ANÔNIMAS (UPVOTE)
+   ------------------------------------------------------------------------- */
+add_action(
+	'rest_api_init',
+	static function (): void {
+		register_rest_route(
+			'vinicius/v1',
+			'/curtir/(?P<id>\d+)',
+			array(
+				'methods'             => 'POST',
+				'callback'            => static function ( WP_REST_Request $request ) {
+					$post_id = (int) $request->get_param( 'id' );
+					if ( ! $post_id || 'publish' !== get_post_status( $post_id ) ) {
+						return new WP_Error( 'post_invalido', 'Post não encontrado', array( 'status' => 404 ) );
+					}
+
+					$curtidas = (int) get_post_meta( $post_id, '_vc_curtidas', true );
+					$curtidas++;
+					update_post_meta( $post_id, '_vc_curtidas', $curtidas );
+
+					return rest_ensure_response(
+						array(
+							'sucesso'  => true,
+							'curtidas' => $curtidas,
+						)
+					);
+				},
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
+);
