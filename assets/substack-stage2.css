@@ -656,7 +656,7 @@ figure.wp-block-gallery,
   flex-shrink: 0;
 }
 
-/* Rodapê Editorial Minimalista */
+/* Rodapê Editorial Minimalista (2 Colunas) */
 .colophon {
   border-top: 1px solid var(--color-border);
   background-color: var(--color-bg);
@@ -666,21 +666,28 @@ figure.wp-block-gallery,
 }
 
 .colophon__inner {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 3rem 1.5rem 3.5rem;
+  padding: 3rem 1.25rem 3.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  align-items: center;
+  gap: 2rem;
+  text-align: left;
+}
+
+.colophon__info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  text-align: center;
+  align-items: flex-start;
+  gap: 0.9rem;
 }
 
 .colophon__nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.5rem 0.75rem;
 }
 
@@ -705,7 +712,52 @@ figure.wp-block-gallery,
   margin: 0;
   color: var(--color-meta);
   font-size: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.colophon__selo {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.colophon__selo-link {
+  display: inline-block;
+  line-height: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.colophon__selo-link:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.colophon__selo-img {
+  display: block;
+  width: 100%;
+  max-width: 210px;
+  height: auto;
+  border-radius: 6px;
+}
+
+@media (max-width: 650px) {
+  .colophon__inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .colophon__info {
+    align-items: center;
+  }
+
+  .colophon__nav {
+    justify-content: center;
+  }
+
+  .colophon__selo {
+    justify-content: center;
+  }
 }
 
 .colophon__badges {
