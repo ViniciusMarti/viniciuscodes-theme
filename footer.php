@@ -25,21 +25,10 @@
 		</nav>
 
 		<p class="colophon__copy">
-			&copy; <?php echo esc_html( date_i18n( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?> &middot; Feito à mão em Curitiba.
+			&copy; <?php echo esc_html( date_i18n( 'Y' ) ); ?> @viniciuscodes &middot; Feito à mão em Curitiba.<br>
+			Todos os conteúdos pessoais são escritos inteiramente por mim. Utilizo IA como ferramenta para estruturar conteúdos técnicos, aprofundar ideias e potencializar o que eu já escreveria. O layout deste site também foi desenvolvido com auxílio de IA, sob minha supervisão direta e com foco total na melhor experiência de leitura e acessibilidade para pessoas neurodivergentes.
 		</p>
 
-		<div class="colophon__badges">
-			<a class="colophon__badge colophon__badge--entreblogs" href="https://entreblogs.com.br" target="_blank" rel="noopener noreferrer" title="Entreblogs — Comunidade de blogagem coletiva" aria-label="Entreblogs — Comunidade de blogagem coletiva (abre em nova aba)">
-				<span>entreblogs</span>
-			</a>
-
-			<a class="colophon__badge colophon__badge--not-by-ai" href="https://notbyai.fyi" target="_blank" rel="noopener noreferrer" title="Written by Human, Not By AI" aria-label="Written by Human, Not By AI (abre em nova aba)">
-				<picture class="not-by-ai-picture">
-					<source class="not-by-ai-source-dark" srcset="<?php echo esc_url( get_theme_file_uri( 'assets/icons/not-by-ai-white.svg' ) ); ?>" media="(prefers-color-scheme: dark)">
-					<img class="not-by-ai-img" src="<?php echo esc_url( get_theme_file_uri( 'assets/icons/not-by-ai-black.svg' ) ); ?>" data-dark-src="<?php echo esc_url( get_theme_file_uri( 'assets/icons/not-by-ai-white.svg' ) ); ?>" data-light-src="<?php echo esc_url( get_theme_file_uri( 'assets/icons/not-by-ai-black.svg' ) ); ?>" alt="Written by Human, Not By AI" width="105" height="34" loading="lazy" decoding="async" />
-				</picture>
-			</a>
-		</div>
 	</div>
 </footer>
 
