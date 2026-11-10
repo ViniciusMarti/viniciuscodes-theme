@@ -187,6 +187,7 @@
   min-height: var(--wp--lightbox-image-height);
   width: var(--wp--lightbox-image-width);
   height: var(--wp--lightbox-image-height);
+  object-fit: contain;
 }
 .wp-lightbox-overlay .wp-block-image figcaption {
   display: none;

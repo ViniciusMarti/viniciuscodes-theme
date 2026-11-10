@@ -473,8 +473,8 @@ figure.wp-block-gallery,
 .wp-block-gallery figure img,
 .wp-block-gallery .wp-block-image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   border-radius: 6px;
   margin: 0;
 }
@@ -562,18 +562,15 @@ figure.wp-block-gallery,
 .prose .wp-block-gallery .wp-block-image {
   margin: 0;
   padding: 0;
-  aspect-ratio: 1;
-  overflow: hidden;
   border-radius: 6px;
   min-width: 0;
   width: 100%;
-  height: 100%;
 }
 
 .prose .wp-block-gallery img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   border-radius: 6px;
   margin: 0;
 }
@@ -1859,18 +1856,9 @@ ol.children {
   display: block;
   width: 100%;
   height: auto;
+  object-fit: contain;
   margin: 0;
   border-radius: var(--radius);
-}
-
-.prose .wp-block-gallery.is-cropped figure,
-.prose .wp-block-gallery.is-cropped .wp-block-image {
-  aspect-ratio: 1;
-}
-
-.prose .wp-block-gallery.is-cropped img {
-  height: 100%;
-  object-fit: cover;
 }
 
 /* Inline styles on these blocks set explicit pixel widths; without a cap
