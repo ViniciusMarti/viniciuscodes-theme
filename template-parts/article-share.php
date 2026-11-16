@@ -55,7 +55,7 @@ $vc_whats  = 'https://wa.me/?text=' . rawurlencode( $vc_titulo . "\n" . $vc_url 
 
 		<button type="button" class="post-share__btn" data-share-copy hidden>
 			<?php echo vc_icone( 'link', 16 ); ?>
-			copiar link
+			copiar endereço
 		</button>
 	</div>
 

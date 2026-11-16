@@ -24,7 +24,7 @@ if ( empty( $vc_relacionadas ) ) {
 	return;
 }
 ?>
-<nav class="related" aria-label="posts relacionados">
+<nav class="related" aria-label="textos relacionados">
 	<h2 class="section-title">continue lendo</h2>
 
 	<ul class="related__list">

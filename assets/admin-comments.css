@@ -1,0 +1,228 @@
+﻿/**
+ * Estilização e hierarquia visual para moderação de comentários em conversas (threads) no wp-admin.
+ * Sem estilos inline e sem uso de !important.
+ */
+
+:root {
+	--vc-admin-border-thread: #cbd5e1;
+	--vc-admin-border-subtle: #e2e8f0;
+	--vc-admin-bg-thread-d2: #fafbfc;
+	--vc-admin-bg-thread-d3: #f6f8fa;
+	--vc-admin-bg-thread-deep: #f0f3f6;
+	--vc-admin-accent-reply: #6366f1;
+	--vc-admin-accent-author: #4338ca;
+	--vc-admin-author-bg: #e0e7ff;
+	--vc-admin-author-border: #c7d2fe;
+}
+
+/* -------------------------------------------------------------------------
+   1. AGRUPAMENTO E SEPARAÇÃO CLARA ENTRE CONVERSAS
+   ------------------------------------------------------------------------- */
+/* Comentário inicial (raiz da conversa) recebe separador nítido */
+.wp-list-table.comments tbody tr.vc-is-root:not(:first-child) {
+	border-top: 3px solid var(--vc-admin-border-thread);
+}
+
+.wp-list-table.comments tbody tr.vc-is-root {
+	background-color: #ffffff;
+}
+
+/* Réplicas internas recebem separação pontilhada suave */
+.wp-list-table.comments tbody tr.vc-is-reply {
+	border-top: 1px dashed var(--vc-admin-border-subtle);
+}
+
+/* Fundo sutil nas respostas de acordo com a profundidade */
+.wp-list-table.comments tbody tr.vc-is-reply.vc-depth-2 {
+	background-color: var(--vc-admin-bg-thread-d2);
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply.vc-depth-3 {
+	background-color: var(--vc-admin-bg-thread-d3);
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply.vc-depth-4,
+.wp-list-table.comments tbody tr.vc-is-reply.vc-depth-5 {
+	background-color: var(--vc-admin-bg-thread-deep);
+}
+
+/* -------------------------------------------------------------------------
+   2. COLUNA DO AUTOR NAS RESPOSTAS (ENXUTA E ELEGANTE)
+   ------------------------------------------------------------------------- */
+.wp-list-table.comments tbody tr.vc-is-reply .column-author {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply .column-author strong {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply .column-author strong::before {
+	content: "↳";
+	color: #94a3b8;
+	font-weight: 700;
+	margin-right: 2px;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-3 .column-author strong::before {
+	content: "↳↳";
+}
+
+.wp-list-table.comments tbody tr.vc-depth-4 .column-author strong::before,
+.wp-list-table.comments tbody tr.vc-depth-5 .column-author strong::before {
+	content: "↳↳↳";
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply .column-author img.avatar {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+/* Oculta metadados técnicos pesados (email, site, IP) nas réplicas, revelando suavemente ao passar o mouse */
+.wp-list-table.comments tbody tr.vc-is-reply .column-author a {
+	display: none;
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply .column-author:hover a {
+	display: block;
+	font-size: 11px;
+	line-height: 1.4;
+	color: #64748b;
+}
+
+/* -------------------------------------------------------------------------
+   3. COLUNA DE COMENTÁRIO (INDENTAÇÃO, LINHA GUIA E CONTEXTO)
+   ------------------------------------------------------------------------- */
+.wp-list-table.comments tbody tr.vc-is-reply .column-comment {
+	position: relative;
+	padding-left: 24px;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-3 .column-comment {
+	padding-left: 40px;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-4 .column-comment {
+	padding-left: 56px;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-5 .column-comment {
+	padding-left: 72px;
+}
+
+/* Linha guia vertical conectando a réplica */
+.wp-list-table.comments tbody tr.vc-is-reply .column-comment::before {
+	content: "";
+	position: absolute;
+	left: 8px;
+	top: 10px;
+	bottom: 10px;
+	width: 2px;
+	background-color: #cbd5e1;
+	border-radius: 1px;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-3 .column-comment::before {
+	left: 24px;
+	background-color: #94a3b8;
+}
+
+.wp-list-table.comments tbody tr.vc-depth-4 .column-comment::before,
+.wp-list-table.comments tbody tr.vc-depth-5 .column-comment::before {
+	left: 40px;
+	background-color: #64748b;
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply.bypostauthor .column-comment::before {
+	background-color: var(--vc-admin-accent-reply);
+}
+
+/* Pill discreto de contexto: quem está sendo respondido e o trecho */
+.wp-list-table.comments .vc-reply-context {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin: 2px 0 8px 0;
+	padding: 3px 8px;
+	background-color: #f1f5f9;
+	border-left: 2px solid var(--vc-admin-accent-reply);
+	border-radius: 4px;
+	font-size: 11px;
+	line-height: 1.4;
+	color: #475569;
+}
+
+.wp-list-table.comments .vc-reply-arrow {
+	font-weight: 700;
+	color: var(--vc-admin-accent-reply);
+	font-size: 13px;
+	line-height: 1;
+}
+
+.wp-list-table.comments .vc-reply-label {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+	color: #64748b;
+}
+
+.wp-list-table.comments .vc-reply-author {
+	color: #0f172a;
+	font-weight: 600;
+}
+
+.wp-list-table.comments .vc-reply-quote {
+	color: #475569;
+	font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+   4. DESTAQUE DOS COMENTÁRIOS DO AUTOR/ADMIN
+   ------------------------------------------------------------------------- */
+.wp-list-table.comments tbody tr.bypostauthor {
+	border-left: 3px solid var(--vc-admin-accent-reply);
+}
+
+.wp-list-table.comments tbody tr.bypostauthor .column-author strong {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.wp-list-table.comments tbody tr.bypostauthor .column-author strong::after {
+	content: "Você";
+	display: inline-block;
+	padding: 1px 6px;
+	font-size: 10px;
+	font-weight: 600;
+	background-color: var(--vc-admin-author-bg);
+	color: var(--vc-admin-accent-author);
+	border: 1px solid var(--vc-admin-author-border);
+	border-radius: 10px;
+	line-height: 1.3;
+}
+
+/* -------------------------------------------------------------------------
+   5. COLUNA DE RESPOSTA (POST) REDUZIDA NAS RÉPLICAS
+   ------------------------------------------------------------------------- */
+.wp-list-table.comments tbody tr.vc-is-reply .column-response {
+	opacity: 0.3;
+	transition: opacity 0.15s ease-in-out;
+}
+
+.wp-list-table.comments tbody tr.vc-is-reply .column-response:hover {
+	opacity: 1;
+}
+
+/* Espaçamento refinado das ações da linha */
+.wp-list-table.comments .row-actions {
+	padding-top: 6px;
+}

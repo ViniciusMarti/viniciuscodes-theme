@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * A página inicial: fluxo paginado de publicações do blog com imagens.
  *

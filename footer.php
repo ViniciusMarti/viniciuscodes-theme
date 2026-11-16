@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * O pé de toda página.
  *
@@ -18,16 +18,16 @@
 			<nav class="colophon__nav" aria-label="Navegação secundária do rodapé">
 				<a class="colophon__link" href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
 				<span class="colophon__sep" aria-hidden="true">·</span>
-				<a class="colophon__link" href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogroll</a>
+				<a class="colophon__link" href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogs que leio</a>
 				<span class="colophon__sep" aria-hidden="true">·</span>
 				<a class="colophon__link" href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">contato</a>
 				<span class="colophon__sep" aria-hidden="true">·</span>
-				<a class="colophon__link" href="<?php echo esc_url( home_url( '/feed.xml' ) ); ?>" title="Feed RSS">feed rss</a>
+				<a class="colophon__link" href="<?php echo esc_url( home_url( '/assinar/' ) ); ?>" title="Assinar por RSS ou E-mail (alimentador de textos para acompanhar novas publicações sem depender de algoritmos)">assinar por rss</a>
 			</nav>
 
 			<p class="colophon__copy">
 				&copy; <?php echo esc_html( date_i18n( 'Y' ) ); ?> @viniciuscodes &middot; Feito à mão em Curitiba.<br>
-				Todos os conteúdos pessoais são escritos inteiramente por mim. Utilizo IA como ferramenta para estruturar conteúdos técnicos, aprofundar ideias e potencializar o que eu já escreveria. O layout deste site também foi desenvolvido com auxílio de IA, sob minha supervisão direta e com foco total na melhor experiência de leitura e acessibilidade para pessoas neurodivergentes.
+				Escrito por mim, auxiliado por IA. <a class="colophon__link" href="<?php echo esc_url( home_url( '/sobre/#colofao' ) ); ?>">Como este site é feito</a>.
 			</p>
 		</div>
 

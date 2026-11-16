@@ -102,15 +102,15 @@
 			botaoCopiar.hidden = false;
 			botaoCopiar.addEventListener('click', function () {
 				if (!navigator.clipboard) {
-					avisar('não deu para copiar o link');
+					avisar('não deu para copiar o endereço');
 					return;
 				}
 				navigator.clipboard.writeText(urlDoTexto).then(
 					function () {
-						avisar('link copiado!');
+						avisar('endereço copiado!');
 					},
 					function () {
-						avisar('não deu para copiar o link');
+						avisar('não deu para copiar o endereço');
 					}
 				);
 			});

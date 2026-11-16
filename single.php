@@ -82,7 +82,7 @@ while ( have_posts() ) :
 						<div class="post-connections__group">
 							<h3 class="post-connections__title">
 								<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( 'arrow-up-right', 15 ); ?></span>
-								<span>posts citados neste texto</span>
+								<span>textos citados neste texto</span>
 							</h3>
 							<ul class="post-connections__list">
 								<?php foreach ( $vc_citados as $vc_link ) : ?>
@@ -96,7 +96,7 @@ while ( have_posts() ) :
 						<div class="post-connections__group">
 							<h3 class="post-connections__title">
 								<span class="meta-icon" aria-hidden="true"><?php echo vc_icone( 'link', 15 ); ?></span>
-								<span>posts que citam este texto</span>
+								<span>textos que citam este texto</span>
 							</h3>
 							<ul class="post-connections__list">
 								<?php foreach ( $vc_backlinks as $vc_bl ) : ?>

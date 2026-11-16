@@ -327,9 +327,9 @@ add_action( 'template_redirect', 'vc_atalho_biblioteca', 1 );
  */
 function vc_obras_generos() {
 	return array(
-		'thriller e suspense',
+		'suspense e mistério',
 		'ficção contemporânea e lgbtqia+',
-		'fantasia e sci-fi',
+		'fantasia e ficção científica',
 		'clássicos e filosofia',
 		'neurodivergência e psicologia',
 		'engenharia de dados e negócios',

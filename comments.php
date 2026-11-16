@@ -24,7 +24,7 @@ if ( post_password_required() ) {
 				array(
 					'style'       => 'ol',
 					'short_ping'  => true,
-					'avatar_size' => 0, // Sem avatares externos por privacidade e leveza
+					'avatar_size' => 36,
 					'format'      => 'html5',
 					'callback'    => function ( $comment, $args, $depth ) {
 						$tag = ( 'div' === $args['style'] ) ? 'div' : 'li';

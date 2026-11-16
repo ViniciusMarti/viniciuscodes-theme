@@ -91,11 +91,11 @@ function vc_acervo_campos(): array {
 			'so_livro' => true,
 		),
 		'amazon'  => array(
-			'rotulo'   => 'link de compra',
+			'rotulo'   => 'endereço de compra',
 			'so_livro' => false,
 		),
 		'resenha' => array(
-			'rotulo'   => 'link da resenha',
+			'rotulo'   => 'endereço da resenha',
 			'so_livro' => false,
 		),
 		'status'  => array(

@@ -52,7 +52,7 @@ $vc_canais_youtube = array(
 <article data-page="blogroll">
 	<header class="term-header">
 		<h1 class="term-header__name"><?php the_title(); ?></h1>
-		<p class="term-header__desc">blogs e páginas pessoais que eu acompanho pela internet.</p>
+		<p class="term-header__desc">blogs e páginas pessoais que eu acompanho pela internet (o tradicional <em>blogroll</em> — lista de recomendações de leitura).</p>
 	</header>
 
 	<ul class="blogroll-list">

@@ -576,9 +576,9 @@ function vc_temas_ordenados( bool $hide_empty = true ): array {
 function vc_navegacao(): array {
 	return array(
 		array( 'label' => 'sobre mim',           'href' => '/sobre/',       'icone' => 'user-round' ),
-		array( 'label' => 'blogroll',            'href' => '/blogroll/',    'icone' => 'handshake' ),
+		array( 'label' => 'blogs que leio',      'href' => '/blogroll/',    'icone' => 'handshake' ),
 		array( 'label' => 'contato',             'href' => '/contato/',     'icone' => 'mail' ),
-		array( 'label' => 'feed RSS',            'href' => '/feed-rss/',    'icone' => 'rss' ),
+		array( 'label' => 'assinar por rss',     'href' => '/feed-rss/',    'icone' => 'rss' ),
 	);
 }
 
@@ -1058,13 +1058,13 @@ function vc_contexto_da_url( string $url ): string {
 		'/livros/'    => 'o que estou lendo, o que já li e a minha estante',
 		'/filmes/'    => 'o que eu assisti no cinema e em casa, com as datas de cada sessão',
 		'/acervo/'    => 'o que eu li e assisti: livros e filmes',
-		'/musica/'    => 'os álbuns, artistas, músicas e podcasts mais ouvidos por ano via spotify',
-		'/blogroll/'  => 'cada um com o feed para assinar',
+		'/musica/'    => 'os álbuns, artistas, músicas e programas em áudio (podcasts) mais ouvidos por ano via spotify',
+		'/blogroll/'  => 'cada um com o alimentador RSS para assinar',
 		'/manifesto/' => 'por que este site existe e como ele se organiza',
 		'/changelog/' => 'o histórico de mudanças e evolução deste site',
 		'/contato/'   => 'como falar comigo',
-		'/feed.xml'   => 'assinar os posts em um leitor de feed',
-		'/feed-rss/'  => 'todos os endereços do site para assinar em um leitor de feeds',
+		'/feed.xml'   => 'assinar os textos em um leitor de RSS (alimentador de textos)',
+		'/feed-rss/'  => 'todos os endereços do site para assinar em um leitor de RSS',
 	);
 
 	$caminho = (string) wp_parse_url( $url, PHP_URL_PATH );
@@ -1280,7 +1280,7 @@ add_filter(
 	static function ( array $commentdata ): array {
 		// Se o campo honeypot foi preenchido, é um bot de spam
 		if ( ! empty( $_POST['vc_hp_website'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			wp_die( 'comentário identificado como spam pelo filtro automatizado.', 'spam detectado', array( 'response' => 403 ) );
+			wp_die( 'comentário identificado como mensagem indesejada (spam) pelo filtro automatizado.', 'mensagem indesejada detectada', array( 'response' => 403 ) );
 		}
 
 		// Se o autor digitou site/blog sem protocolo (ex.: viniciuscodes.com.br), adiciona https://
@@ -2008,14 +2008,14 @@ function vc_descricao(): string {
 		 * mostra para quem procura pelo nome do blog, e ali cabe o que o blog
 		 * cobre, não só o que ele é. É a mesma frase do site Astro.
 		 */
-		$texto = 'Tecnologia, dados e vida — blog pessoal de Vinicius Oliveira. Posts sobre tecnologia, AuDHD, leituras e vida em Curitiba.';
+		$texto = 'Tecnologia, dados e vida — blog pessoal de Vinicius Oliveira. Textos sobre tecnologia, autismo e TDAH (AuDHD), leituras e vida em Curitiba.';
 	} elseif ( is_singular() ) {
 		$id = (int) get_queried_object_id();
 
 		if ( is_page_template( 'page-templates/lista-de-posts.php' ) ) {
 			$total = (int) wp_count_posts( 'post' )->publish;
 			/* translators: %d: número de textos publicados. */
-			$texto = sprintf( 'Os %d posts do blog pessoal de Vinicius Oliveira, do mais recente para o mais antigo.', $total );
+			$texto = sprintf( 'Os %d textos do blog pessoal de Vinicius Oliveira, do mais recente para o mais antigo.', $total );
 		} else {
 			$texto = (string) get_the_excerpt( $id );
 
@@ -2302,7 +2302,7 @@ function vc_render_dashboard_zen() {
 			um espaço calmo para suas ideias e histórias.
 		</p>
 		<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="button button-primary button-hero" style="background: #2d5a3e; border-color: #2d5a3e; text-shadow: none; box-shadow: none; border-radius: 6px; text-transform: lowercase; font-weight: 500;">
-			escrever novo post
+			escrever novo texto
 		</a>
 	</div>
 	<?php
@@ -2607,6 +2607,7 @@ add_action(
    CONEXÕES HIPERTEXTUAIS AUTOMÁTICAS (LINKS CITADOS E BACKLINKS)
    ------------------------------------------------------------------------- */
 require_once get_theme_file_path( 'inc/post-connections.php' );
+require_once get_theme_file_path( 'inc/admin-comments.php' );
 
 /* -------------------------------------------------------------------------
    PRESERVAR ANIMAÇÃO DE ARQUIVOS GIF
@@ -2669,10 +2670,29 @@ add_action(
 	static function () {
 		$uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' );
 
-		// Redireciona categoria órfã /tema/54/ para /tema/weeknotes/
-		if ( preg_match( '#^/tema/54(/.*)?$#i', $uri ) ) {
-			wp_safe_redirect( home_url( '/tema/weeknotes/' ), 301 );
-			exit;
+		// Redireciona slugs antigos de categorias (/tema/...) para os novos slugs em português (301)
+		$mapa_temas_301 = array(
+			'54'                        => 'notas-da-semana',
+			'weeknotes'                 => 'notas-da-semana',
+			'engenharia-de-dados'       => 'ciencia-de-dados',
+			'data-science'              => 'ciencia-de-dados',
+			'criacao-conteudo-indieweb' => 'web-independente',
+			'indieweb'                  => 'web-independente',
+			'vibe-coding-ia'            => 'programacao-com-ia',
+			'vibe-coding-e-ia'          => 'programacao-com-ia',
+			'pets'                      => 'cachorros',
+			'produtividade-saudavel'    => 'produtividade',
+		);
+		if ( preg_match( '#^/tema/([^/?\#]+)(/.*)?$#i', $uri, $m_tema ) ) {
+			$slug_antigo = strtolower( $m_tema[1] );
+			if ( isset( $mapa_temas_301[ $slug_antigo ] ) ) {
+				$sufixo = $m_tema[2] ?? '/';
+				if ( '' === $sufixo ) {
+					$sufixo = '/';
+				}
+				wp_safe_redirect( home_url( '/tema/' . $mapa_temas_301[ $slug_antigo ] . $sufixo ), 301 );
+				exit;
+			}
 		}
 
 		// Redireciona /posts/ (inclusive paginação /posts/page/N/) e /home-revista/ para a home
@@ -2780,7 +2800,7 @@ add_action(
 				'callback'            => static function ( WP_REST_Request $request ) {
 					$post_id = (int) $request->get_param( 'id' );
 					if ( ! $post_id || 'publish' !== get_post_status( $post_id ) ) {
-						return new WP_Error( 'post_invalido', 'Post não encontrado', array( 'status' => 404 ) );
+						return new WP_Error( 'post_invalido', 'Texto não encontrado', array( 'status' => 404 ) );
 					}
 
 					$curtidas = (int) get_post_meta( $post_id, '_vc_curtidas', true );

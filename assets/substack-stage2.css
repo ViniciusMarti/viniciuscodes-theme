@@ -96,7 +96,7 @@ html, body {
 .content {
   max-width: 100%;
   margin: 0;
-  padding: 2.5rem 0;
+  padding: 1.5rem 0 2.5rem 0;
 }
 
 .content__inner {
@@ -853,7 +853,7 @@ details.topics-dropdown-details {
    CABEÇALHO RESPONSIVO UNIFICADO (DESKTOP E MOBILE)
    ========================================================================== */
 .masthead--substack {
-  padding: 12px 20px;
+  padding: 8px 20px;
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-bg);
   position: sticky;
@@ -1011,7 +1011,7 @@ details.topics-dropdown-details {
 .topics-bar__inner {
   max-width: 900px;
   margin: 0 auto;
-  padding: 8px 20px;
+  padding: 5px 20px;
   display: flex;
   gap: 16px;
   align-items: center;
@@ -2889,3 +2889,17 @@ ol.children {
   }
 }
 
+﻿
+﻿
+
+﻿
+
+/* Ajuste da barra fixa com a Admin Bar do WordPress ativa */
+body.admin-bar .masthead--substack {
+  top: 32px;
+}
+@media screen and (max-width: 782px) {
+  body.admin-bar .masthead--substack {
+    top: 46px;
+  }
+}

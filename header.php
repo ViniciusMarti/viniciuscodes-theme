@@ -197,9 +197,9 @@ $vc_img_info = vc_detalhes_imagem_social( $vc_imagem );
 		<nav class="masthead__nav">
 			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
 			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>">viagens</a>
-			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogroll</a>
+			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogs que leio</a>
 			<a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">contato</a>
-			<a href="<?php echo esc_url( home_url( '/feed.xml' ) ); ?>" class="btn-rss-pill">rss</a>
+			<a href="<?php echo esc_url( home_url( '/assinar/' ) ); ?>" class="btn-rss-pill" title="Assinar por RSS (alimentador de textos para acompanhar novas publicações sem depender de algoritmos)">assinar (rss)</a>
 		</nav>
 
 		<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro">

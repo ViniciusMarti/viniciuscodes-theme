@@ -67,10 +67,10 @@ $vc_assuntos = array_values(
 			printf(
 				'%d %s.',
 				$vc_total,
-				1 === $vc_total ? 'post encontrado' : 'posts encontrados'
+				1 === $vc_total ? 'texto encontrado' : 'textos encontrados'
 			);
 		} else {
-			echo 'nenhum post encontrado.';
+			echo 'nenhum texto encontrado.';
 		}
 		?>
 	</p>
@@ -117,7 +117,7 @@ $vc_assuntos = array_values(
 					<a class="card" href="<?php echo esc_url( '/tema/' . $vc_tema->slug . '/' ); ?>">
 						<span class="card__icon" aria-hidden="true"><?php echo vc_icone( vc_icone_do_tema( $vc_tema->slug ), 24 ); ?></span>
 						<p class="card__title"><?php echo esc_html( $vc_tema->name ); ?></p>
-						<p class="card__meta"><?php echo esc_html( $vc_tema->count . ( 1 === $vc_tema->count ? ' post' : ' posts' ) ); ?></p>
+						<p class="card__meta"><?php echo esc_html( $vc_tema->count . ( 1 === $vc_tema->count ? ' texto' : ' textos' ) ); ?></p>
 					</a>
 				</li>
 			<?php endforeach; ?>

@@ -68,7 +68,7 @@ $vc_atributos = sprintf( 'href="%s" rel="noopener noreferrer"', esc_url( $vc_lin
 			<?php if ( '' !== $vc_link ) : ?>
 				<p class="book-review__action">
 					<a class="book-review__button" <?php echo $vc_atributos; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
-						<?php echo esc_html( (string) ( $vc_local['botao'] ?? 'ver o endereço no Google Maps' ) ); ?><span class="book-review__sr"> (link externo)</span>
+						<?php echo esc_html( (string) ( $vc_local['botao'] ?? 'ver o endereço no Google Maps' ) ); ?><span class="book-review__sr"> (endereço externo)</span>
 						<span aria-hidden="true"> ↗</span>
 					</a>
 				</p>

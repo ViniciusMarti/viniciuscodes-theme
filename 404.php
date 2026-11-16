@@ -56,10 +56,10 @@ $vc_endereco = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_
 
 		<p>o que costuma ajudar:</p>
 		<ul>
-			<li>o <a href="<?php echo esc_url( home_url( '/' ) ); ?>">início</a>, com os posts recentes e os temas na barra lateral.</li>
+			<li>o <a href="<?php echo esc_url( home_url( '/' ) ); ?>">início</a>, com os textos recentes e os temas na barra lateral.</li>
 		</ul>
 
-		<p>se você chegou aqui por um link meu, me avisa: <a href="mailto:contato@viniciuscodes.com.br">contato@viniciuscodes.com.br</a>.</p>
+		<p>se você chegou aqui por um endereço meu, me avisa: <a href="mailto:contato@viniciuscodes.com.br">contato@viniciuscodes.com.br</a>.</p>
 	</div>
 </article>
 
