@@ -2819,3 +2819,27 @@ add_action(
 		);
 	}
 );
+
+/**
+ * Google Analytics 4 (GA4) — G-YNWV5PYP90
+ * Carrega apenas para visitantes (não administradores logados).
+ */
+add_action(
+	'wp_head',
+	function () {
+		if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		?>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-YNWV5PYP90"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-YNWV5PYP90');
+		</script>
+		<?php
+	},
+	1
+);
