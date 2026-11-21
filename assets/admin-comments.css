@@ -226,3 +226,32 @@
 .wp-list-table.comments .row-actions {
 	padding-top: 6px;
 }
+
+/* -------------------------------------------------------------------------
+   6. WIDGET DASHBOARD ZEN (index.php no wp-admin)
+   ------------------------------------------------------------------------- */
+.vc-dashboard-zen {
+	padding: 12px 6px;
+}
+
+.vc-dashboard-zen__desc {
+	font-size: 15px;
+	color: #555555;
+	margin-bottom: 18px;
+}
+
+.wp-core-ui .button-primary.vc-dashboard-zen__btn {
+	background: #2d5a3e;
+	border-color: #2d5a3e;
+	text-shadow: none;
+	box-shadow: none;
+	border-radius: 6px;
+	text-transform: lowercase;
+	font-weight: 500;
+}
+
+.wp-core-ui .button-primary.vc-dashboard-zen__btn:hover,
+.wp-core-ui .button-primary.vc-dashboard-zen__btn:focus {
+	background: #244831;
+	border-color: #244831;
+}

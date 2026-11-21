@@ -213,7 +213,7 @@ add_filter( 'get_comment_text', 'vc_adicionar_contexto_replica_admin', 20, 2 );
  * @param string $hook Gancho da página atual do painel.
  */
 function vc_enfileirar_estilos_comentarios_admin( string $hook ): void {
-	if ( 'edit-comments.php' !== $hook ) {
+	if ( ! in_array( $hook, array( 'edit-comments.php', 'index.php' ), true ) ) {
 		return;
 	}
 

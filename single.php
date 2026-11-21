@@ -22,7 +22,7 @@ while ( have_posts() ) :
 			<h1 class="article__title p-name"><?php the_title(); ?></h1>
 
 			<div class="article__meta">
-				<a class="u-url" href="<?php the_permalink(); ?>" style="display:none;"><?php the_permalink(); ?></a>
+				<a class="u-url" href="<?php the_permalink(); ?>" hidden><?php the_permalink(); ?></a>
 				<time class="dt-published" datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $vc_id ) ); ?>"><?php echo esc_html( vc_data_longa( $vc_id ) ); ?></time>
 				<?php if ( get_the_modified_time( 'U', $vc_id ) > get_the_time( 'U', $vc_id ) ) : ?>
 					<span class="article__meta-sep" aria-hidden="true">·</span>
@@ -30,7 +30,7 @@ while ( have_posts() ) :
 						atualizado em <time class="dt-updated" datetime="<?php echo esc_attr( get_the_modified_date( DATE_W3C, $vc_id ) ); ?>"><?php echo esc_html( vc_data_modificada_longa( $vc_id ) ); ?></time>
 					</span>
 				<?php endif; ?>
-				<span class="p-author h-card" style="display:none;">
+				<span class="p-author h-card" hidden>
 					<a class="u-url p-name" rel="author" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php echo esc_html( get_the_author() ); ?></a>
 				</span>
 			</div>

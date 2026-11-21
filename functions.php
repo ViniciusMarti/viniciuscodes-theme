@@ -615,10 +615,10 @@ function vc_blogroll_lista(): array {
 			'favicon' => 'alinevalek.com.br.png',
 		),
 		array(
-			'nome'    => 'Amuri',
-			'url'     => 'https://amuri.substack.com/',
-			'dominio' => 'amuri.substack.com',
-			'favicon' => 'amuri.substack.com.png',
+			'nome'    => 'arantchans',
+			'url'     => 'https://www.arantchans.com/',
+			'dominio' => 'arantchans.com',
+			'favicon' => 'arantchans.com.ico',
 		),
 		array(
 			'nome'    => 'blog do TH',
@@ -651,22 +651,16 @@ function vc_blogroll_lista(): array {
 			'favicon' => 'danielsantos.org.ico',
 		),
 		array(
-			'nome'    => 'Gustavo Belo',
-			'url'     => 'https://www.gustavobelo.com/',
-			'dominio' => 'gustavobelo.com',
-			'favicon' => 'gustavobelo.com.ico',
+			'nome'    => 'Deniac',
+			'url'     => 'https://deniac.com/',
+			'dominio' => 'deniac.com',
+			'favicon' => 'deniac.com.png',
 		),
 		array(
 			'nome'    => 'Gustavo Ribeiro',
 			'url'     => 'https://gustavoribeiro.net/blog',
 			'dominio' => 'gustavoribeiro.net',
 			'favicon' => 'gustavoribeiro.net.png',
-		),
-		array(
-			'nome'    => 'Hey! I\'m With the Band',
-			'url'     => 'https://www.heyimwiththeband.com.br/',
-			'dominio' => 'heyimwiththeband.com.br',
-			'favicon' => 'heyimwiththeband.com.br.ico',
 		),
 		array(
 			'nome'    => 'Igor Medeiroz',
@@ -685,6 +679,12 @@ function vc_blogroll_lista(): array {
 			'url'     => 'https://irrelefante.com.br/',
 			'dominio' => 'irrelefante.com.br',
 			'favicon' => 'irrelefante.com.br.png',
+		),
+		array(
+			'nome'    => 'Limonada',
+			'url'     => 'https://limaoquenada.blogspot.com/',
+			'dominio' => 'limaoquenada.blogspot.com',
+			'favicon' => 'limaoquenada.blogspot.com.ico',
 		),
 		array(
 			'nome'    => 'Maira Namba',
@@ -717,28 +717,10 @@ function vc_blogroll_lista(): array {
 			'favicon' => 'osolnacabeca.com.br.png',
 		),
 		array(
-			'nome'    => 'Papacapim',
-			'url'     => 'https://www.papacapim.org/',
-			'dominio' => 'papacapim.org',
-			'favicon' => 'papacapim.org.png',
-		),
-		array(
-			'nome'    => 'pedro.dalbo',
-			'url'     => 'https://pedro.dalbo.me/',
-			'dominio' => 'pedro.dalbo.me',
-			'favicon' => 'pedro.dalbo.me.png',
-		),
-		array(
 			'nome'    => 'prazer, Willian',
 			'url'     => 'https://prazerwillian.blogspot.com/',
 			'dominio' => 'prazerwillian.blogspot.com',
 			'favicon' => 'prazerwillian.blogspot.com.ico',
-		),
-		array(
-			'nome'    => 'rádio escafandro',
-			'url'     => 'https://radioescafandro.com/',
-			'dominio' => 'radioescafandro.com',
-			'favicon' => 'radioescafandro.com.png',
 		),
 		array(
 			'nome'    => 'Rua da Feira 🥬',
@@ -757,12 +739,6 @@ function vc_blogroll_lista(): array {
 			'url'     => 'https://techdemo.bearblog.dev/',
 			'dominio' => 'techdemo.bearblog.dev',
 			'favicon' => 'techdemo.bearblog.dev.png',
-		),
-		array(
-			'nome'    => 'th.blog.br',
-			'url'     => 'https://th.blog.br/',
-			'dominio' => 'th.blog.br',
-			'favicon' => 'th.blog.br.svg',
 		),
 		array(
 			'nome'    => '🛌 Eu não quero sair da cama.',
@@ -2297,11 +2273,11 @@ add_action( 'wp_dashboard_setup', 'vc_custom_dashboard_clean', 999 );
 
 function vc_render_dashboard_zen() {
 	?>
-	<div style="padding: 12px 6px;">
-		<p style="font-size: 15px; color: #555; margin-bottom: 18px;">
+	<div class="vc-dashboard-zen">
+		<p class="vc-dashboard-zen__desc">
 			um espaço calmo para suas ideias e histórias.
 		</p>
-		<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="button button-primary button-hero" style="background: #2d5a3e; border-color: #2d5a3e; text-shadow: none; box-shadow: none; border-radius: 6px; text-transform: lowercase; font-weight: 500;">
+		<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="button button-primary button-hero vc-dashboard-zen__btn">
 			escrever novo texto
 		</a>
 	</div>
@@ -2817,5 +2793,27 @@ add_action(
 				'permission_callback' => '__return_true',
 			)
 		);
+	}
+);
+
+/* -------------------------------------------------------------------------
+   SITEMAP E ROBOTS: REMOVER POST_FORMAT
+   ------------------------------------------------------------------------- */
+add_filter(
+	'wp_sitemaps_taxonomies',
+	static function ( array $taxonomies ): array {
+		unset( $taxonomies['post_format'] );
+		return $taxonomies;
+	}
+);
+
+add_filter(
+	'wp_robots',
+	static function ( array $robots ): array {
+		if ( is_tax( 'post_format' ) ) {
+			$robots['noindex'] = true;
+			$robots['follow']  = true;
+		}
+		return $robots;
 	}
 );
