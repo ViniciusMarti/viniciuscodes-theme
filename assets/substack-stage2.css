@@ -868,12 +868,6 @@ details.topics-dropdown-details {
 }
 
 /* ==========================================================================
-
-/* ==========================================================================
-
-/* ==========================================================================
-
-/* ==========================================================================
    CABEÇALHO RESPONSIVO UNIFICADO (DESKTOP E MOBILE)
    ========================================================================== */
 .masthead--substack {
@@ -1766,8 +1760,6 @@ ol.children {
   }
 }
 
-/* ============================================================
-   MARCADOR DE TEXTO SUAVE & TRANSLÚCIDO (MINIMALISTA)
 /*
   Two shapes, one grid.
 
@@ -2112,9 +2104,6 @@ ol.children {
 @media (max-width: 480px) {
   .paginacao__lista { gap: 0.2rem; }
   .paginacao__botao { min-width: 36px; padding: 0 0.4rem; }
-}
-
-  margin-bottom: 0;
 }
 
 /* ---------- term header ---------- */
@@ -2912,11 +2901,6 @@ ol.children {
     margin-bottom: 1rem;
   }
 }
-
-﻿
-﻿
-
-﻿
 
 /* Ajuste da barra fixa com a Admin Bar do WordPress ativa */
 body.admin-bar .masthead--substack {
