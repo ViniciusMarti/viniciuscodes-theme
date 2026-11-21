@@ -241,9 +241,7 @@ html, body {
 }
 
 /* Links internos: sublinhado com transição suave */
-.prose a[href^="/"],
-.prose a[href^="#"],
-.prose a[href*="viniciuscodes.com.br"] {
+.prose a:is([href^="/"], [href^="#"], [href^="https://viniciuscodes.com.br"], [href^="http://viniciuscodes.com.br"]):not(.wp-block-button__link) {
   text-decoration: none;
   background-image: linear-gradient(currentColor, currentColor);
   background-position: 0% 100%;
@@ -254,9 +252,7 @@ html, body {
   transition: background-size 0.25s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
-.prose a[href^="/"]:hover,
-.prose a[href^="#"]:hover,
-.prose a[href*="viniciuscodes.com.br"]:hover {
+.prose a:is([href^="/"], [href^="#"], [href^="https://viniciuscodes.com.br"], [href^="http://viniciuscodes.com.br"]):not(.wp-block-button__link):hover {
   background-size: 100% 2.5px;
   opacity: 0.9;
 }
