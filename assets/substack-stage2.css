@@ -84,7 +84,7 @@ html[data-theme="light"] {
   --color-code-inline: rgba(127, 127, 127, 0.12);
 }
 
-@media (max-width: 650px) {
+@media (max-width: 680px) {
   :root {
     --text-base: 1.0625rem;
     --text-xl: 1.45rem;
@@ -541,7 +541,7 @@ nav.toc-container,
   border-radius: 6px;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 680px) {
   .colophon__inner {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -1152,7 +1152,7 @@ ol.children {
 }
 
 /* Responsividade de aninhamento para celular */
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .post-comment .children,
   ol.children {
     margin-left: 0.35rem;
@@ -1428,7 +1428,7 @@ ol.children {
   color: var(--color-meta);
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
   .blogroll-item__link {
     padding-block: 0.8rem;
     gap: 0.65rem;
@@ -2463,7 +2463,7 @@ ol.children {
   color: var(--color-accent);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .travel-timeline {
     padding-left: 1.25rem;
   }
@@ -2526,7 +2526,7 @@ ol.children {
   margin-bottom: 1rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .substack-feed--imagens .substack-feed__item--com-imagem {
     display: flex;
     flex-direction: column;
