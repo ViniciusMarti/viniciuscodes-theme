@@ -8,7 +8,9 @@
   /* Tokens de Cores - Modo Claro */
   --color-bg: #ffffff;
   --color-surface: #f9f9f8;
+  --color-card-bg: #ffffff;
   --color-border: #eeeeee;
+  --color-border-strong: #d8d8d6;
   --color-text: #242424;
   --color-text-strong: #111111;
   --color-highlight-bg: rgba(71, 140, 103, 0.13);
@@ -17,6 +19,10 @@
   --color-accent-text: #356e4f;
   --color-code-bg: rgba(127, 127, 127, 0.08);
   --color-code-inline: rgba(127, 127, 127, 0.12);
+
+  /* Raios e Dimensões Globais */
+  --radius: 8px;
+  --radius-sm: 4px;
 
   /* Escala Harmônica de Tipografia (Desktop) */
   --text-xs: 0.75rem;    /* 12px - Contadores e badges */
@@ -32,7 +38,9 @@
   :root {
     --color-bg: #141715;
     --color-surface: #1c201d;
+    --color-card-bg: #1c201d;
     --color-border: #282e2a;
+    --color-border-strong: #3a423d;
     --color-text: #e6e9e7;
     --color-text-strong: #ffffff;
     --color-highlight-bg: rgba(126, 194, 157, 0.15);
@@ -47,7 +55,9 @@
 html[data-theme="dark"], body.theme-dark {
   --color-bg: #141715;
   --color-surface: #1c201d;
+  --color-card-bg: #1c201d;
   --color-border: #282e2a;
+  --color-border-strong: #3a423d;
   --color-text: #e6e9e7;
   --color-text-strong: #ffffff;
   --color-highlight-bg: rgba(126, 194, 157, 0.15);
@@ -61,7 +71,9 @@ html[data-theme="dark"], body.theme-dark {
 html[data-theme="light"] {
   --color-bg: #ffffff;
   --color-surface: #f9f9f8;
+  --color-card-bg: #ffffff;
   --color-border: #eeeeee;
+  --color-border-strong: #d8d8d6;
   --color-text: #242424;
   --color-text-strong: #111111;
   --color-highlight-bg: rgba(71, 140, 103, 0.13);
@@ -357,19 +369,6 @@ figcaption, .wp-element-caption {
 
 .article__back a:hover {
   color: var(--color-accent);
-}
-/* Aliases retrocompatíveis para o sistema */
-:root {
-  --borda: var(--color-border);
-  --fundo: var(--color-bg);
-  --cor-texto: var(--color-text);
-  --cor-meta: var(--color-meta);
-}
-html[data-theme=dark], body.theme-dark {
-  --borda: var(--color-border);
-  --fundo: var(--color-bg);
-  --cor-texto: var(--color-text);
-  --cor-meta: var(--color-meta);
 }
 
 /* Links & Metas globais */
@@ -933,36 +932,7 @@ details.topics-dropdown-details[open] .topics-arrow {
   height: 0;
   overflow: hidden;
 }
-/* Tokens de retrocompatibilidade com o design system */
-:root {
-  --line: var(--color-border);
-  --line-strong: var(--color-border);
-  --paper: var(--color-bg);
-  --paper-alt: var(--color-surface);
-  --paper-card: var(--color-bg);
-  --ink: var(--color-text);
-  --ink-soft: var(--color-meta);
-  --ink-mute: var(--color-meta);
-  --green: var(--color-accent);
-  --green-deep: var(--color-accent-text);
-  --green-wash: var(--color-surface);
-  --radius: 8px;
-  --radius-sm: 4px;
-  --content-max: 680px;
-}
-[data-theme='dark'], html[data-theme='dark'], body.theme-dark {
-  --line: var(--color-border);
-  --line-strong: var(--color-border);
-  --paper: var(--color-bg);
-  --paper-alt: var(--color-surface);
-  --paper-card: var(--color-surface);
-  --ink: var(--color-text);
-  --ink-soft: var(--color-meta);
-  --ink-mute: var(--color-meta);
-  --green: var(--color-accent);
-  --green-deep: var(--color-accent-text);
-  --green-wash: var(--color-surface);
-}
+
 /* Acessibilidade e leitores de tela */
 .visually-hidden,
 .screen-reader-text,
@@ -1010,13 +980,13 @@ details.topics-dropdown-details[open] .topics-arrow {
   margin: 0 0 0.4rem;
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--color-text);
 }
 
 .post-comments__count {
   font-size: 0.95rem;
   font-weight: 400;
-  color: var(--ink-mute);
+  color: var(--color-meta);
 }
 
 .post-comments__list {
@@ -1038,21 +1008,21 @@ details.topics-dropdown-details[open] .topics-arrow {
 
 .post-comment__body {
   padding: 1.15rem 1.35rem;
-  background: var(--paper-alt);
-  border: 1px solid var(--line);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   position: relative;
 }
 
 .post-comment:hover > .post-comment__body {
-  border-color: var(--line-strong);
+  border-color: var(--color-border-strong);
 }
 
 /* Destaque sutil para respostas do próprio autor do blog */
 .post-comment.bypostauthor > .post-comment__body {
-  border-left: 3px solid var(--green);
-  background: color-mix(in srgb, var(--green) 3%, var(--paper-alt));
+  border-left: 3px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 3%, var(--color-surface));
 }
 
 /* Selo de autor */
@@ -1061,8 +1031,8 @@ details.topics-dropdown-details[open] .topics-arrow {
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: lowercase;
-  color: var(--green);
-  background: color-mix(in srgb, var(--green) 12%, transparent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
   padding: 1px 6px;
   border-radius: 999px;
   margin-left: 0.25rem;
@@ -1080,30 +1050,30 @@ details.topics-dropdown-details[open] .topics-arrow {
 }
 
 .post-comment__author {
-  color: var(--ink);
+  color: var(--color-text);
   font-weight: 600;
   font-size: 0.92rem;
 }
 
 .post-comment__author a {
-  color: var(--ink);
+  color: var(--color-text);
   text-decoration: none;
-  border-bottom: 1px dotted var(--line-strong);
+  border-bottom: 1px dotted var(--color-border-strong);
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .post-comment__author a:hover {
-  color: var(--green);
+  color: var(--color-accent);
   border-bottom-style: solid;
 }
 
 .post-comment__dot {
-  color: var(--ink-mute);
+  color: var(--color-meta);
   font-size: 0.75rem;
 }
 
 .post-comment__date {
-  color: var(--ink-mute);
+  color: var(--color-meta);
   font-size: 0.8rem;
 }
 
@@ -1119,7 +1089,7 @@ details.topics-dropdown-details[open] .topics-arrow {
 .post-comment__moderation {
   margin: 0.4rem 0 0.8rem;
   font-size: 0.82rem;
-  color: var(--green);
+  color: var(--color-accent);
   font-style: italic;
 }
 
@@ -1127,7 +1097,7 @@ details.topics-dropdown-details[open] .topics-arrow {
 .post-comment__content {
   font-size: 0.95rem;
   line-height: 1.65;
-  color: var(--ink);
+  color: var(--color-text);
 }
 
 .post-comment__content p {
@@ -1152,9 +1122,9 @@ details.topics-dropdown-details[open] .topics-arrow {
   gap: 0.3rem;
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--ink-soft);
-  background: color-mix(in srgb, var(--ink) 4%, transparent);
-  border: 1px solid var(--line);
+  color: var(--color-meta);
+  background: color-mix(in srgb, var(--color-text) 4%, transparent);
+  border: 1px solid var(--color-border);
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
   text-decoration: none;
@@ -1163,9 +1133,9 @@ details.topics-dropdown-details[open] .topics-arrow {
 
 .post-comment__reply a:hover,
 .post-comment .comment-reply-link:hover {
-  color: var(--green);
-  border-color: var(--green);
-  background: color-mix(in srgb, var(--green) 8%, transparent);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
 /* Réplicas e Tréplicas (Filhos aninhados com linhas conectoras) */
@@ -1174,7 +1144,7 @@ ol.children {
   list-style: none;
   margin: 0.85rem 0 0 0.75rem;
   padding: 0 0 0 1.25rem;
-  border-left: 2px solid var(--line);
+  border-left: 2px solid var(--color-border);
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -1197,8 +1167,8 @@ ol.children {
 .post-comment .comment-respond {
   margin-top: 1rem;
   padding: 1.25rem;
-  background: var(--paper);
-  border: 1px dashed var(--line-strong);
+  background: var(--color-bg);
+  border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius);
 }
 
@@ -1206,7 +1176,7 @@ ol.children {
 .post-comments__closed {
   margin: 1.5rem 0;
   font-size: 0.92rem;
-  color: var(--ink-soft);
+  color: var(--color-meta);
   font-style: italic;
 }
 
@@ -1388,17 +1358,21 @@ ol.children {
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--color-border);
 }
 
 .term-header + .blogroll-list {
   border-top: 0;
 }
 
+.blogroll-list + .term-header {
+  margin-top: 3.5rem;
+}
+
 .blogroll-item {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .blogroll-item__link {
@@ -1408,14 +1382,14 @@ ol.children {
   padding: 0.85rem 0.6rem;
   margin-inline: -0.6rem;
   border-radius: var(--radius-sm);
-  color: var(--ink);
+  color: var(--color-text);
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .blogroll-item__link:hover {
-  background: var(--paper-alt);
-  color: var(--green-deep);
+  background: var(--color-surface);
+  color: var(--color-accent-text);
 }
 
 .blogroll-item__favicon {
@@ -1440,14 +1414,14 @@ ol.children {
 .blogroll-item__dominio {
   margin-left: auto;
   font-size: 0.85rem;
-  color: var(--ink-mute);
+  color: var(--color-meta);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
   transition: color 0.15s ease;
 }
 
 .blogroll-item__link:hover .blogroll-item__dominio {
-  color: var(--ink-soft);
+  color: var(--color-meta);
 }
 
 @media (max-width: 500px) {
@@ -1496,14 +1470,14 @@ ol.children {
 .card {
   display: block;
   padding: 1.1rem 1.2rem;
-  background: var(--paper-card);
-  border: 1px solid var(--line);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  color: var(--ink);
+  color: var(--color-text);
 }
 
 .card:hover {
-  border-color: var(--green);
+  border-color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -1516,7 +1490,7 @@ ol.children {
 .card__meta {
   margin: 0;
   font-size: 0.78rem;
-  color: var(--ink-mute);
+  color: var(--color-meta);
 }
 
 /*
@@ -1527,7 +1501,7 @@ ol.children {
   that do nothing when you press them.
 */
 .card--static:hover {
-  border-color: var(--line);
+  border-color: var(--color-border);
 }
 
 /*
@@ -1660,8 +1634,8 @@ ol.children {
   gap: 0.5rem;
   min-height: 44px;
   padding: 0.7rem 1.35rem;
-  background: var(--green);
-  border: 1px solid var(--green);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
   border-radius: 999px;
   color: #ffffff;
   font-size: 0.95rem;
@@ -1679,8 +1653,8 @@ ol.children {
 .prose .wp-block-button__link:hover,
 .is-style-fill .wp-block-button__link:hover,
 .prose .is-style-fill .wp-block-button__link:hover {
-  background: var(--green-deep);
-  border-color: var(--green-deep);
+  background: var(--color-accent-text);
+  border-color: var(--color-accent-text);
   color: #ffffff;
   text-decoration: none;
 }
@@ -1694,7 +1668,7 @@ ol.children {
   Both came out as the same filled pill, so the affiliate link shouted as loud
   as the link to the review. Outline for the detour, fill for the destination.
 
-  The border uses --green rather than a faded version of it. A button edge is
+  The border uses --color-accent rather than a faded version of it. A button edge is
   not decoration: it is what tells the reader the thing is clickable, so it
   falls under the 3:1 non-text rule the tokens already document.
 */
@@ -1702,16 +1676,16 @@ ol.children {
 .prose .is-style-outline .wp-block-button__link,
 .prose .is-style-outline--2 .wp-block-button__link {
   background: transparent;
-  border: 1px solid var(--green);
-  color: var(--green-deep);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .is-style-outline .wp-block-button__link:hover,
 .prose .is-style-outline .wp-block-button__link:hover,
 .prose .is-style-outline--2 .wp-block-button__link:hover {
-  background: var(--green-wash);
-  border-color: var(--green);
-  color: var(--green-deep);
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* ---------- back to top ---------- */
@@ -1823,10 +1797,10 @@ ol.children {
 
 .empty {
   padding: 2rem 1.25rem;
-  background: var(--paper-alt);
-  border: 1px dashed var(--line-strong);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius);
-  color: var(--ink-mute);
+  color: var(--color-meta);
   font-size: 0.92rem;
   text-align: center;
 }
@@ -2227,7 +2201,7 @@ ol.children {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-mute);
+  color: var(--color-meta);
 }
 
 .term-header__name,
