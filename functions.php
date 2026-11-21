@@ -63,7 +63,7 @@ add_action(
 		 * foi exatamente o problema que a versão Astro levou tempo para resolver.
 		 */
 		add_theme_support( 'editor-styles' );
-		add_editor_style( 'assets/editor-style.css' );
+		add_editor_style( array( 'assets/fonts.css', 'assets/editor-style.css' ) );
 	}
 );
 
