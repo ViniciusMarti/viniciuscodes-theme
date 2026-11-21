@@ -113,11 +113,18 @@ strong,
 b {
   font-weight: 700;
   color: #111111;
+  background-color: rgba(71, 140, 103, 0.13);
+  padding: 0.08em 0.28em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 a strong,
 a b {
   color: inherit;
+  background-color: transparent;
+  padding: 0;
 }
 
 /* Citação / Blockquote */

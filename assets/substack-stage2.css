@@ -11,6 +11,7 @@
   --color-border: #eeeeee;
   --color-text: #242424;
   --color-text-strong: #111111;
+  --color-highlight-bg: rgba(71, 140, 103, 0.13);
   --color-meta: #737373;
   --color-accent: #478c67;
   --color-accent-text: #356e4f;
@@ -34,6 +35,7 @@
     --color-border: #282e2a;
     --color-text: #e6e9e7;
     --color-text-strong: #ffffff;
+    --color-highlight-bg: rgba(126, 194, 157, 0.15);
     --color-meta: #939a95;
     --color-accent: #7ec29d;
     --color-accent-text: #7ec29d;
@@ -48,6 +50,7 @@ html[data-theme="dark"], body.theme-dark {
   --color-border: #282e2a;
   --color-text: #e6e9e7;
   --color-text-strong: #ffffff;
+  --color-highlight-bg: rgba(126, 194, 157, 0.15);
   --color-meta: #939a95;
   --color-accent: #7ec29d;
   --color-accent-text: #7ec29d;
@@ -61,6 +64,7 @@ html[data-theme="light"] {
   --color-border: #eeeeee;
   --color-text: #242424;
   --color-text-strong: #111111;
+  --color-highlight-bg: rgba(71, 140, 103, 0.13);
   --color-meta: #737373;
   --color-accent: #478c67;
   --color-accent-text: #356e4f;
@@ -243,16 +247,23 @@ html, body {
   opacity: 0.9;
 }
 
-/* Negritos: contraste reforçado e peso tipográfico com nitidez */
+/* Negritos: contraste reforçado e destaque estilo marca-texto suave */
 .prose strong,
 .prose b {
   font-weight: 700;
   color: var(--color-text-strong);
+  background-color: var(--color-highlight-bg);
+  padding: 0.08em 0.28em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .prose a strong,
 .prose a b {
   color: inherit;
+  background-color: transparent;
+  padding: 0;
 }
 
 .prose blockquote {
@@ -500,6 +511,11 @@ figure.wp-block-gallery,
 .term-header__desc strong {
   font-weight: 700;
   color: var(--color-text-strong);
+  background-color: var(--color-highlight-bg);
+  padding: 0.08em 0.28em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* Remover barra de progresso de leitura */
