@@ -84,7 +84,7 @@ add_action(
 		 * componentes Astro, então o CSS que já existia desenha a página.
 		 */
 		wp_enqueue_style( 'vc-fontes', get_theme_file_uri( 'assets/fonts.css' ), array(), vc_asset_ver( 'assets/fonts.css' ) );
-		// vc-global unificado no vc-substack-stage2
+		wp_enqueue_style( 'vc-substack-stage2', get_theme_file_uri( 'assets/substack-stage2.css' ), array( 'vc-fontes' ), vc_asset_ver( 'assets/substack-stage2.css' ) );
 
 		/*
 		 * `true` no último argumento carrega no rodapé. Os dois
@@ -97,8 +97,37 @@ add_action(
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
 		}
+	}
+);
 
+// Preload da fonte principal self-hosted (evita flash de troca de fonte no primeiro acesso).
+add_action(
+	'wp_head',
+	static function () {
+		printf(
+			"<link rel=\"preload\" href=\"%s\" as=\"font\" type=\"font/woff2\" crossorigin>\n",
+			esc_url( get_theme_file_uri( 'assets/fonts/atkinson-hyperlegible-next-normal-latin.woff2' ) )
+		);
+	},
+	1
+);
 
+// Cache-busting dinâmico para folhas do editor (mce_css) baseado em filemtime.
+add_filter(
+	'mce_css',
+	static function ( string $mce_css ): string {
+		if ( '' === $mce_css ) {
+			return $mce_css;
+		}
+		$urls = array_map( 'trim', explode( ',', $mce_css ) );
+		foreach ( $urls as &$url ) {
+			if ( str_contains( $url, 'assets/editor-style.css' ) ) {
+				$url = add_query_arg( 'ver', vc_asset_ver( 'assets/editor-style.css' ), $url );
+			} elseif ( str_contains( $url, 'assets/fonts.css' ) ) {
+				$url = add_query_arg( 'ver', vc_asset_ver( 'assets/fonts.css' ), $url );
+			}
+		}
+		return implode( ',', $urls );
 	}
 );
 
@@ -2707,21 +2736,6 @@ add_action(
 	}
 );
 
-
-
-add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_style('vc-substack-stage2', get_theme_file_uri('assets/substack-stage2.css'), array('vc-fontes'), vc_asset_ver( 'assets/substack-stage2.css' ));
-}, 999);
-// Preload das fontes self-hosted (evita o "flash" de troca de fonte no primeiro acesso).
-add_action( 'wp_head', function () {
-	foreach ( array( 'normal', 'italic' ) as $estilo ) {
-		if ( 'italic' === $estilo ) { continue; }
-		printf(
-			"<link rel=\"preload\" href=\"%s\" as=\"font\" type=\"font/woff2\" crossorigin>\n",
-			esc_url( get_theme_file_uri( 'assets/fonts/atkinson-hyperlegible-next-' . $estilo . '-latin.woff2' ) )
-		);
-	}
-}, 1 );
 /**
  * HTML da imagem de um texto: a de destaque, se houver; senão a primeira <img> do conteúdo.
  *
