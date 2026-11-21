@@ -49,6 +49,16 @@
         "color": {
           "text": "#356e4f"
         }
+      },
+      "caption": {
+        "typography": {
+          "fontSize": "0.875rem",
+          "lineHeight": "1.5",
+          "textAlign": "center"
+        },
+        "color": {
+          "text": "#737373"
+        }
       }
     }
   }
