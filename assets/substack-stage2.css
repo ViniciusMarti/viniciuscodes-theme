@@ -113,7 +113,7 @@ html, body {
 }
 
 /* -------------------------------------------------------------------------
-   FEED DA HOME
+   FEED DA HOME E LISTAGENS (/posts/)
    ------------------------------------------------------------------------- */
 .substack-feed__item {
   padding: 2.2rem 0;
@@ -121,6 +121,7 @@ html, body {
 }
 
 .substack-feed__meta {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
   font-size: var(--text-sm);
   font-weight: 600;
   text-transform: uppercase;
@@ -133,7 +134,18 @@ html, body {
   flex-wrap: wrap;
 }
 
+.substack-feed__tag {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.substack-feed__tag:hover {
+  color: var(--color-accent);
+}
+
 .substack-feed__title {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
   font-size: var(--text-xl);
   font-weight: 700;
   line-height: 1.25;
@@ -144,20 +156,24 @@ html, body {
 .substack-feed__title a {
   color: var(--color-text);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
-.substack-feed__item:hover .substack-feed__title a {
+.substack-feed__item:hover .substack-feed__title a,
+.substack-feed__title a:hover {
   color: var(--color-accent);
 }
 
 .substack-feed__excerpt {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
   font-size: var(--text-base);
-  line-height: 1.75;
+  line-height: 1.65;
   color: var(--color-meta);
   margin: 0 0 0.8rem 0;
 }
 
 .substack-feed__footer {
+  font-family: 'Atkinson Hyperlegible Next', sans-serif;
   font-size: var(--text-sm);
   color: var(--color-meta);
 }
@@ -165,20 +181,6 @@ html, body {
 /* -------------------------------------------------------------------------
    PÁGINA DO ARTIGO (single.php) E PÁGINAS (page.php)
    ------------------------------------------------------------------------- */
-.article__header {
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.article__title {
-  font-size: var(--text-2xl);
-  line-height: 1.22;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  margin: 0 0 1rem 0;
-  color: var(--color-text);
-}
-
 .article__meta {
   font-size: var(--text-sm);
   color: var(--color-meta);
@@ -311,6 +313,12 @@ figure, .wp-block-image {
   text-align: center;
 }
 
+.prose figure,
+.prose .wp-block-image {
+  margin: 1.5rem 0;
+  margin-inline: 0;
+}
+
 figure img, .wp-block-image img {
   border-radius: 6px;
   max-width: 100%;
@@ -331,30 +339,9 @@ figcaption, .wp-element-caption {
 
 /* Rodapé do Artigo */
 .article__footer {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--color-border);
-}
-
-.article__end-themes {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-}
-
-.article__end-theme-link {
-  font-size: var(--text-sm);
-  color: var(--color-meta);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 3px 10px;
-  text-decoration: none;
-}
-
-.article__end-theme-link:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-top: none;
+  margin-top: 1.5rem;
+  padding-top: 0;
 }
 
 .article__back {
@@ -385,43 +372,6 @@ html[data-theme=dark], body.theme-dark {
   --cor-meta: var(--color-meta);
 }
 
-/* Header & Topics Bar styling */
-.masthead--substack {
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-bg);
-}
-.topics-bar {
-  border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-bg);
-}
-.topics-dropdown-btn {
-  border-color: var(--color-border);
-  color: var(--color-meta);
-}
-.topics-dropdown-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-.topics-dropdown-menu {
-  background-color: var(--color-surface);
-  border-color: var(--color-border);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-}
-.topics-dropdown-menu a {
-  color: var(--color-text);
-}
-.topics-dropdown-menu a:hover {
-  background-color: rgba(127, 127, 127, 0.08);
-  color: var(--color-accent);
-}
-.btn-rss-pill {
-  background-color: var(--color-accent);
-  color: #ffffff;
-}
-.btn-rss-pill:hover {
-  opacity: 0.9;
-}
-
 /* Links & Metas globais */
 a {
   color: inherit;
@@ -440,10 +390,6 @@ nav.toc-container,
 }
 
 /* Footer Social Icons & Compact Alignment */
-.colophon {
-  border-top: 1px solid var(--color-border);
-  background-color: var(--color-bg);
-}
 .footer-social-icon {
   display: inline-flex;
   align-items: center;
@@ -465,57 +411,6 @@ nav.toc-container,
 .footer-social-icon svg {
   width: 17px;
   height: 17px;
-}
-
-/* Correção de Espaçamento e Grid de Galerias */
-.wp-block-gallery,
-figure.wp-block-gallery,
-.prose .wp-block-gallery {
-  margin-top: 1.75rem;
-  margin-bottom: 2rem;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* Os itens/figuras INTERNAS da galeria NÃO devem herdar margem vertical de figure isolada */
-.wp-block-gallery figure,
-.wp-block-gallery .wp-block-image,
-.wp-block-gallery figure.wp-block-image {
-  margin: 0;
-  padding: 0;
-  flex: 1 1 calc(50% - 12px);
-  min-width: 200px;
-}
-
-.wp-block-gallery figure img,
-.wp-block-gallery .wp-block-image img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 6px;
-  margin: 0;
-}
-
-/* Paragrafos da Descricao do Tema */
-.term-header__desc p{
-  margin: 0 0 1.25rem 0;
-  line-height: 1.75;
-  font-size: var(--text-base);
-  color: var(--color-text);
-}
-.term-header__desc p:last-child {
-  margin-bottom: 0;
-}
-.term-header__desc strong {
-  font-weight: 700;
-  color: var(--color-text-strong);
-  background-color: var(--color-highlight-bg);
-  padding: 0.08em 0.28em;
-  border-radius: 4px;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
 }
 
 /* Remover barra de progresso de leitura */
@@ -557,127 +452,10 @@ figure.wp-block-gallery,
   background: none;
 }
 .prose .wp-block-separator::after,
-.prose hr::after {
-  display: none;
-}
+.prose hr::after,
 .prose .wp-block-separator::before,
 .prose hr::before {
   display: none;
-}
-
-/* Galeria de Fotos (3 Colunas responsivas) */
-.prose .wp-block-gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 2.5rem 0;
-  padding: 0;
-  width: 100%;
-}
-
-@media (max-width: 650px) {
-  .prose .wp-block-gallery {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-}
-
-.prose .wp-block-gallery figure,
-.prose .wp-block-gallery .wp-block-image {
-  margin: 0;
-  padding: 0;
-  border-radius: 6px;
-  min-width: 0;
-  width: 100%;
-}
-
-.prose .wp-block-gallery img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 6px;
-  margin: 0;
-}
-
-/* Botões Globais (.wp-block-buttons) */
-.prose .wp-block-buttons,
-.wp-block-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 2.5rem;
-  justify-content: flex-start;
-}
-
-.prose .wp-block-button__link,
-.wp-block-button__link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 22px;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  border-radius: 20px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.prose .is-style-fill .wp-block-button__link,
-.is-style-fill .wp-block-button__link {
-  background-color: var(--color-accent);
-  color: #ffffff;
-  border: 1px solid var(--color-accent);
-}
-
-.prose .is-style-fill .wp-block-button__link:hover,
-.is-style-fill .wp-block-button__link:hover {
-  opacity: 0.9;
-}
-
-.prose .is-style-outline .wp-block-button__link,
-.is-style-outline .wp-block-button__link,
-.prose .is-style-outline--2 .wp-block-button__link {
-  background-color: transparent;
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-}
-
-.prose .is-style-outline .wp-block-button__link-hover,
-.is-style-outline .wp-block-button__link-hover,
-.prose .is-style-outline--2 .wp-block-button__link:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-/* Topics Bar - Linha Única e Scroll Horizontal */
-.topics-bar {
-  overflow: visible;
-  position: relative;
-  z-index: 90;
-}
-.topics-bar > div,
-.topics-bar .topics-bar__inner {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  overflow: visible;
-}
-@media (max-width: 680px) {
-  .topics-bar > div,
-  .topics-bar .topics-bar__inner {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-}
-.topics-dropdown-wrap {
-  flex-shrink: 0;
-}
-.topics-bar a {
-  flex-shrink: 0;
 }
 
 /* Rodapê Editorial Minimalista (2 Colunas) */
@@ -831,42 +609,6 @@ figure.wp-block-gallery,
   width: auto;
 }
 
-
-/* Dropdown "Mais" 100% nativo com details */
-details.topics-dropdown-details summary::-webkit-details-marker {
-  display: none;
-}
-details.topics-dropdown-details summary {
-  list-style: none;
-}
-details.topics-dropdown-details[open] .topics-arrow {
-  transform: rotate(180deg);
-}
-details.topics-dropdown-details .topics-arrow {
-  transition: transform 0.2s ease;
-}
-
-/* Regras de Exibição de Temas (Desktop vs Mobile) */
-.topics-bar__item--resto,
-.topics-bar .topics-bar__item--resto {
-  display: none;
-}
-
-details.topics-dropdown-details {
-  display: inline-block;
-}
-
-@media (max-width: 680px) {
-  /* No mobile, oculta o botão "mais" e exibe todos os tópicos direto no carrossel */
-  details.topics-dropdown-details {
-    display: none;
-  }
-  .topics-bar__item--resto,
-.topics-bar .topics-bar__item--resto {
-    display: inline-flex;
-  }
-}
-
 /* ==========================================================================
    CABEÇALHO RESPONSIVO UNIFICADO (DESKTOP E MOBILE)
    ========================================================================== */
@@ -936,26 +678,12 @@ details.topics-dropdown-details {
   font-size: var(--text-xs);
 }
 
-.theme-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-meta);
-  flex-shrink: 0;
-  z-index: 10;
+.masthead__nav .btn-rss-pill:hover {
+  opacity: 0.9;
 }
 
 /* No desktop: o botão fica colado à navegação */
 @media (min-width: 769px) {
-  .masthead__top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
   .masthead__nav {
     margin-left: auto;
     margin-right: 12px;
@@ -1015,17 +743,18 @@ details.topics-dropdown-details {
 }
 
 /* ==========================================================================
-   CLASSES SEMÂNTICAS - FASE 1 (SUBSTITUIÇÃO DE ESTILOS INLINE)
+   CLASSES SEMÂNTICAS - BARRA DE TÓPICOS E DROPDOWN
    ========================================================================== */
 
-/* Barra de Tópicos e Itens */
 .topics-bar {
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-bg);
+  overflow: visible;
   position: relative;
   z-index: 90;
 }
 
+.topics-bar > div,
 .topics-bar__inner {
   max-width: 900px;
   margin: 0 auto;
@@ -1036,6 +765,12 @@ details.topics-dropdown-details {
   justify-content: center;
   font-size: var(--text-sm);
   flex-wrap: wrap;
+  overflow: visible;
+}
+
+.topics-bar a,
+.topics-dropdown-wrap {
+  flex-shrink: 0;
 }
 
 .topics-bar__item {
@@ -1059,10 +794,32 @@ details.topics-dropdown-details {
   opacity: 0.85;
 }
 
-/* Dropdown "Mais" */
+.topics-bar__item--resto,
+.topics-bar .topics-bar__item--resto,
+.topics-bar a.topics-bar__item--resto {
+  display: none;
+}
+
+/* Dropdown "Mais" 100% nativo com details */
 .topics-dropdown-details {
   position: relative;
   display: inline-block;
+}
+
+details.topics-dropdown-details summary::-webkit-details-marker {
+  display: none;
+}
+
+details.topics-dropdown-details summary {
+  list-style: none;
+}
+
+details.topics-dropdown-details .topics-arrow {
+  transition: transform 0.2s ease;
+}
+
+details.topics-dropdown-details[open] .topics-arrow {
+  transform: rotate(180deg);
 }
 
 .topics-dropdown-summary {
@@ -1133,67 +890,24 @@ details.topics-dropdown-details {
   padding: 1px 6px;
 }
 
-/* Feed de Posts (/posts/ e Home) */
-.substack-feed__item {
-  padding: 2.2rem 0;
-  border-bottom: 1px solid var(--color-border);
-}
+@media (max-width: 680px) {
+  .topics-bar > div,
+  .topics-bar .topics-bar__inner {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
 
-.substack-feed__meta {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-meta);
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+  details.topics-dropdown-details {
+    display: none;
+  }
 
-.substack-feed__tag {
-  color: inherit;
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.substack-feed__tag:hover {
-  color: var(--color-accent);
-}
-
-.substack-feed__title {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  font-size: var(--text-xl);
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.6rem 0;
-}
-
-.substack-feed__title a {
-  color: var(--color-text);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.substack-feed__title a:hover {
-  color: var(--color-accent);
-}
-
-.substack-feed__excerpt {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  font-size: var(--text-base);
-  line-height: 1.65;
-  color: var(--color-meta);
-  margin: 0 0 0.8rem 0;
-}
-
-.substack-feed__footer {
-  font-family: 'Atkinson Hyperlegible Next', sans-serif;
-  font-size: var(--text-sm);
-  color: var(--color-meta);
+  .topics-bar__item--resto,
+  .topics-bar .topics-bar__item--resto,
+  .topics-bar a.topics-bar__item--resto {
+    display: inline-flex;
+  }
 }
 
 /* Página Todos os Textos (/posts/) */
@@ -1208,15 +922,6 @@ details.topics-dropdown-details {
   text-transform: uppercase;
   color: var(--color-meta);
   margin-bottom: 0.5rem;
-}
-/* Garante que os itens excedentes fiquem ocultos no desktop e visíveis apenas via dropdown */
-.topics-bar a.topics-bar__item--resto {
-  display: none;
-}
-@media (max-width: 680px) {
-  .topics-bar a.topics-bar__item--resto {
-    display: inline-flex;
-  }
 }
 
 
@@ -1289,9 +994,9 @@ details.topics-dropdown-details {
 /* ---------- comentários zen e minimalistas ---------- */
 
 .post-comments {
-  margin: 3.5rem 0 0;
+  margin: 2.5rem 0 0;
   padding-top: 2rem;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--color-border);
 }
 
 .post-comments__header {
@@ -1835,15 +1540,6 @@ ol.children {
   font-size: 0.9rem;
 }
 
-.prose figure {
-  margin: 1.5rem 0;
-  margin-inline: 0;
-}
-
-.prose .wp-block-image {
-  margin: 1.5rem 0;
-}
-
 /*
   Gallery block. The WordPress stylesheet is dropped here, so the gallery
   arrives as markup with no layout: the figures stacked one per line at a
@@ -1945,13 +1641,19 @@ ol.children {
   bare 21px text links. They are buttons, not prose links, and need a real
   touch target.
 */
-.wp-block-buttons {
+.wp-block-buttons,
+.prose .wp-block-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  margin-top: 2.5rem;
+  justify-content: flex-start;
 }
 
-.prose .wp-block-button__link {
+.wp-block-button__link,
+.prose .wp-block-button__link,
+.is-style-fill .wp-block-button__link,
+.prose .is-style-fill .wp-block-button__link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1959,21 +1661,27 @@ ol.children {
   min-height: 44px;
   padding: 0.7rem 1.35rem;
   background: var(--green);
+  border: 1px solid var(--green);
   border-radius: 999px;
-  color: var(--on-accent);
+  color: #ffffff;
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .prose .wp-block-button__link .meta-icon {
   color: currentColor;
 }
 
-.prose .wp-block-button__link:hover {
+.wp-block-button__link:hover,
+.prose .wp-block-button__link:hover,
+.is-style-fill .wp-block-button__link:hover,
+.prose .is-style-fill .wp-block-button__link:hover {
   background: var(--green-deep);
-  color: var(--on-accent);
+  border-color: var(--green-deep);
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -1990,14 +1698,19 @@ ol.children {
   not decoration: it is what tells the reader the thing is clickable, so it
   falls under the 3:1 non-text rule the tokens already document.
 */
-.prose .is-style-outline .wp-block-button__link {
+.is-style-outline .wp-block-button__link,
+.prose .is-style-outline .wp-block-button__link,
+.prose .is-style-outline--2 .wp-block-button__link {
   background: transparent;
   border: 1px solid var(--green);
   color: var(--green-deep);
 }
 
-.prose .is-style-outline .wp-block-button__link:hover {
+.is-style-outline .wp-block-button__link:hover,
+.prose .is-style-outline .wp-block-button__link:hover,
+.prose .is-style-outline--2 .wp-block-button__link:hover {
   background: var(--green-wash);
+  border-color: var(--green);
   color: var(--green-deep);
 }
 
@@ -2106,37 +1819,6 @@ ol.children {
   .paginacao__botao { min-width: 36px; padding: 0 0.4rem; }
 }
 
-/* ---------- term header ---------- */
-
-.term-header {
-  margin-bottom: 2.25rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.term-header__kind {
-  margin: 0 0 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-}
-
-.term-header__name {
-  margin: 0;
-  font-size: clamp(1.8rem, 3.6vw, 2.4rem);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-}
-
-.term-header__desc {
-  margin: 0.6rem 0 0;
-  color: var(--ink-soft);
-}
-
 /* ---------- empty ---------- */
 
 .empty {
@@ -2223,11 +1905,11 @@ ol.children {
 
 /* ---------- bloco de compartilhar (fim do post) ---------- */
 .post-share {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   margin-bottom: 2rem;
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0 0;
   border-top: 1px solid var(--color-border);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: none;
 }
 
 .post-share__label {
@@ -2393,7 +2075,7 @@ ol.children {
 
 /* ---------- navegação de posts relacionados e conexões editoriais ---------- */
 .related {
-  margin-top: 3rem;
+  margin-top: 2.5rem;
   padding-top: 2rem;
   border-top: 1px solid var(--color-border);
 }
@@ -2467,7 +2149,9 @@ ol.children {
 
 /* Conexões de artigos (citados e backlinks) */
 .post-connections {
-  margin-top: 2.5rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 2rem;
+  padding-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -2521,45 +2205,6 @@ ol.children {
   text-decoration-color: var(--color-accent);
 }
 
-/* ---------- Unificação dos divisores do rodapé do post (Fim das Linhas Empilhadas) ---------- */
-.article__footer {
-  border-top: none;
-  margin-top: 1.5rem;
-  padding-top: 0;
-}
-
-.article__end-themes {
-  border-top: 1px solid var(--color-border);
-  margin-top: 2.5rem;
-  padding-top: 1.25rem;
-}
-
-.post-share {
-  border-top: 1px solid var(--color-border);
-  border-bottom: none;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  padding: 1.5rem 0 0 0;
-}
-
-.post-comments {
-  border-top: 1px solid var(--color-border);
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-}
-
-.related {
-  border-top: 1px solid var(--color-border);
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-}
-
-.post-connections {
-  border-top: 1px solid var(--color-border);
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-}
-
 /* ---------- Padronização Harmônica de Cabeçalhos e H1 de Páginas e Temas ---------- */
 .term-header,
 [data-page] .article__header {
@@ -2574,6 +2219,15 @@ ol.children {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--color-border);
+}
+
+.term-header__kind {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
 }
 
 .term-header__name,
@@ -2615,6 +2269,16 @@ ol.children {
 
 .term-header__desc p:last-child {
   margin-bottom: 0;
+}
+
+.term-header__desc strong {
+  font-weight: 700;
+  color: var(--color-text-strong);
+  background-color: var(--color-highlight-bg);
+  padding: 0.08em 0.28em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 
@@ -2721,6 +2385,9 @@ ol.children {
 }
 
 .travel-timeline__place {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: var(--text-base);
   font-weight: 700;
   color: var(--color-text);
@@ -2828,12 +2495,6 @@ ol.children {
   .travel-timeline__content {
     gap: 0.35rem 0.65rem;
   }
-}
-
-.travel-timeline__place {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
 }
 
 .travel-flag {
