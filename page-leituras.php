@@ -20,6 +20,7 @@ $vc_livros_raw  = is_array( $vc_livros_raw ) ? $vc_livros_raw : array();
 $vc_resenhas_fallback = array(
 	'a cabeca do santo' => home_url( '/a-cabeca-do-santo-resenha/' ),
 	'como eu me encaixo' => home_url( '/o-que-achei-de-como-eu-me-encaixo-livro-sobre-tdah-e-autismo/' ),
+	'ele esta de volta' => home_url( '/o-que-achei-de-ele-esta-de-volta/' ),
 );
 
 $vc_normalizar_chave = static function ( string $texto ): string {
