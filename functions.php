@@ -41,7 +41,7 @@ add_action(
 	'after_setup_theme',
 	static function () {
 		add_theme_support( 'title-tag' );
-		remove_post_type_support( 'post', 'thumbnail' );
+		add_theme_support( 'post-thumbnails' );
 
 		/*
 		 * `automatic-feed-links` NÃO entra, de propósito. Ele faz o núcleo anunciar
@@ -342,20 +342,19 @@ function vc_midia( string $nome ): string {
 /**
  * A imagem que representa a página numa prévia de link.
  *
- * A regra é a mesma do site: a primeira imagem do próprio texto; se não houver,
- * a imagem padrão do site. Sem a primeira, todo texto compartilhado sairia com a
- * mesma cara.
+ * Prioriza a imagem destacada do post; se não houver, usa a primeira imagem do
+ * próprio texto; por fim, cai para a imagem padrão do site.
  */
 function vc_imagem_social( int $post_id = 0 ): string {
 	if ( $post_id ) {
+		if ( has_post_thumbnail( $post_id ) ) {
+			return (string) get_the_post_thumbnail_url( $post_id, 'full' );
+		}
+
 		$conteudo = (string) get_post_field( 'post_content', $post_id );
 
 		if ( preg_match( '/<img[^>]+src="([^"]+)"/', $conteudo, $achado ) ) {
 			return $achado[1];
-		}
-
-		if ( has_post_thumbnail( $post_id ) ) {
-			return (string) get_the_post_thumbnail_url( $post_id, 'full' );
 		}
 	}
 
@@ -1002,6 +1001,7 @@ function vc_icone_da_url( string $url ): string {
 		'/microblog/' => 'square-pen',
 		'/videos/'    => 'play',
 		'/sobre/'     => 'user-round',
+		'/leituras/'  => 'book',
 		'/livros/'    => 'book',
 		'/filmes/'    => 'film',
 		'/acervo/'    => 'library-big',
@@ -1060,6 +1060,7 @@ function vc_contexto_da_url( string $url ): string {
 		'/microblog/' => 'os textos curtos, sem título, na ordem em que saem',
 		'/videos/'    => 'os vídeos do canal, cada um com transcrição e notas',
 		'/sobre/'     => 'quem escreve este site',
+		'/leituras/'  => 'o que estou lendo, o que já li e a minha estante',
 		'/livros/'    => 'o que estou lendo, o que já li e a minha estante',
 		'/filmes/'    => 'o que eu assisti no cinema e em casa, com as datas de cada sessão',
 		'/acervo/'    => 'o que eu li e assisti: livros e filmes',
@@ -2021,6 +2022,8 @@ function vc_descricao(): string {
 			$total = (int) wp_count_posts( 'post' )->publish;
 			/* translators: %d: número de textos publicados. */
 			$texto = sprintf( 'Os %d textos do blog pessoal de Vinicius Oliveira, do mais recente para o mais antigo.', $total );
+		} elseif ( is_page( 'leituras' ) || is_page_template( 'page-leituras.php' ) ) {
+			$texto = 'O que estou lendo agora, os livros que já concluí, os que abandonei pelo caminho e a minha estante completa sincronizada com o Notion.';
 		} else {
 			$texto = (string) get_the_excerpt( $id );
 
@@ -2613,6 +2616,7 @@ add_action(
    ------------------------------------------------------------------------- */
 require_once get_theme_file_path( 'inc/post-connections.php' );
 require_once get_theme_file_path( 'inc/admin-comments.php' );
+require_once get_theme_file_path( 'inc/feed-substack.php' );
 
 /* -------------------------------------------------------------------------
    PRESERVAR ANIMAÇÃO DE ARQUIVOS GIF
@@ -2716,8 +2720,14 @@ add_action(
 			exit;
 		}
 
+		// Redireciona /livros/ para /leituras/
+		if ( preg_match( '#^/livros(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/leituras/' ), 301 );
+			exit;
+		}
+
 		// Redireciona páginas de catálogo/acervo/changelog/manifesto extintas para a home
-		if ( preg_match( '#^/(livros|filmes|acervo|changelog|manifesto)(/.*)?$#i', $uri ) ) {
+		if ( preg_match( '#^/(filmes|acervo|changelog|manifesto)(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/' ), 301 );
 			exit;
 		}
@@ -2731,6 +2741,18 @@ add_action(
 		// Redireciona /musica/ para /
 		if ( preg_match( '#^/musica(/.*)?$#i', $uri ) ) {
 			wp_safe_redirect( home_url( '/' ), 301 );
+			exit;
+		}
+
+		// Redireciona /colofao/ para /sobre/#colofao
+		if ( preg_match( '#^/colofao(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/sobre/#colofao' ), 301 );
+			exit;
+		}
+
+		// Redireciona /feed-rss/ para /assinar/
+		if ( preg_match( '#^/feed-rss(/.*)?$#i', $uri ) ) {
+			wp_safe_redirect( home_url( '/assinar/' ), 301 );
 			exit;
 		}
 	}
@@ -2830,4 +2852,30 @@ add_filter(
 		}
 		return $robots;
 	}
+);
+
+/**
+ * Google Analytics 4 (GA4) — G-YNWV5PYP90
+ * Carrega apenas para visitantes (não administradores logados).
+ */
+add_action(
+	'wp_head',
+	function () {
+		if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		?>
+		<!-- Google tag (gtag.js) via First-Party Proxy -->
+		<script async src="https://viniciuscodes.com.br/m/gtag.js?id=G-YNWV5PYP90"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-YNWV5PYP90', {
+				transport_url: 'https://viniciuscodes.com.br/m'
+			});
+		</script>
+		<?php
+	},
+	1
 );

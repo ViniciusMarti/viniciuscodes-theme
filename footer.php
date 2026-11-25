@@ -18,6 +18,8 @@
 			<nav class="colophon__nav" aria-label="Navegação secundária do rodapé">
 				<a class="colophon__link" href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
 				<span class="colophon__sep" aria-hidden="true">·</span>
+				<a class="colophon__link" href="<?php echo esc_url( home_url( '/leituras/' ) ); ?>">leituras</a>
+				<span class="colophon__sep" aria-hidden="true">·</span>
 				<a class="colophon__link" href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogs que leio</a>
 				<span class="colophon__sep" aria-hidden="true">·</span>
 				<a class="colophon__link" href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">contato</a>

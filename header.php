@@ -155,7 +155,8 @@ $vc_img_info = vc_detalhes_imagem_social( $vc_imagem );
 	?>
 	<script>
 		try {
-			var vcTema = localStorage.getItem('vco-theme');
+			localStorage.removeItem('vco-theme');
+			var vcTema = localStorage.getItem('vco-theme-override');
 
 			if (vcTema !== 'dark' && vcTema !== 'light') {
 				vcTema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -187,27 +188,74 @@ $vc_img_info = vc_detalhes_imagem_social( $vc_imagem );
  * porque ela está acima da dobra em todas as páginas.
  */
 ?>
-<header class="masthead masthead--substack">
+<?php
+$vc_nav_itens = array(
+	array(
+		'slug'  => 'sobre',
+		'url'   => home_url( '/sobre/' ),
+		'label' => 'sobre',
+	),
+	array(
+		'slug'  => 'leituras',
+		'url'   => home_url( '/leituras/' ),
+		'label' => 'leituras',
+	),
+	array(
+		'slug'  => 'viagens',
+		'url'   => home_url( '/viagens/' ),
+		'label' => 'viagens',
+	),
+	array(
+		'slug'  => 'blogroll',
+		'url'   => home_url( '/blogroll/' ),
+		'label' => 'blogs que leio',
+	),
+	array(
+		'slug'  => 'contato',
+		'url'   => home_url( '/contato/' ),
+		'label' => 'contato',
+	),
+);
+$vc_eh_assinar = is_page( 'assinar' );
+?>
+<header class="masthead masthead--substack" data-masthead>
 	<div class="masthead__top">
 		<a class="masthead__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/icons/favicon.svg' ) ); ?>" alt="" width="36" height="36" />
 			<span>Vinicius Oliveira</span>
 		</a>
 
-		<nav class="masthead__nav">
-			<a href="<?php echo esc_url( home_url( '/sobre/' ) ); ?>">sobre</a>
-			<a href="<?php echo esc_url( home_url( '/viagens/' ) ); ?>">viagens</a>
-			<a href="<?php echo esc_url( home_url( '/blogroll/' ) ); ?>">blogs que leio</a>
-			<a href="<?php echo esc_url( home_url( '/contato/' ) ); ?>">contato</a>
-			<a href="<?php echo esc_url( home_url( '/assinar/' ) ); ?>" class="btn-rss-pill" title="Assinar por RSS (alimentador de textos para acompanhar novas publicações sem depender de algoritmos)">assinar (rss)</a>
+		<nav id="mobile-nav-drawer" class="masthead__nav" aria-label="navegação principal" data-mobile-nav>
+			<?php foreach ( $vc_nav_itens as $vc_item ) :
+				$vc_ativo = is_page( $vc_item['slug'] );
+			?>
+				<a href="<?php echo esc_url( $vc_item['url'] ); ?>"<?php echo $vc_ativo ? ' aria-current="page" class="is-active"' : ''; ?>><?php echo esc_html( $vc_item['label'] ); ?></a>
+			<?php endforeach; ?>
+			<a href="<?php echo esc_url( home_url( '/assinar/' ) ); ?>" class="btn-rss-pill<?php echo $vc_eh_assinar ? ' is-active' : ''; ?>"<?php echo $vc_eh_assinar ? ' aria-current="page"' : ''; ?> title="Assinar por RSS (alimentador de textos para acompanhar novas publicações sem depender de algoritmos)">assinar (rss)</a>
 		</nav>
 
-		<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro">
-			<span class="theme-toggle__icon theme-toggle__icon--light"><?php echo vc_icone( 'sun', 16 ); ?></span>
-			<span class="theme-toggle__icon theme-toggle__icon--dark"><?php echo vc_icone( 'moon', 16 ); ?></span>
-		</button>
+		<div class="masthead__actions">
+			<a href="<?php echo esc_url( home_url( '/assinar/' ) ); ?>" class="btn-rss-pill masthead__cta-mobile<?php echo $vc_eh_assinar ? ' is-active' : ''; ?>"<?php echo $vc_eh_assinar ? ' aria-current="page"' : ''; ?> title="Assinar por RSS">assinar</a>
+
+			<button class="theme-toggle" type="button" data-theme-toggle role="switch" aria-checked="false" aria-label="tema escuro">
+				<span class="theme-toggle__icon theme-toggle__icon--light"><?php echo vc_icone( 'sun', 17 ); ?></span>
+				<span class="theme-toggle__icon theme-toggle__icon--dark"><?php echo vc_icone( 'moon', 17 ); ?></span>
+			</button>
+
+			<button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="abrir menu">
+				<span class="menu-toggle__icon menu-toggle__icon--open"><?php echo vc_icone( 'menu', 20 ); ?></span>
+				<span class="menu-toggle__icon menu-toggle__icon--close"><?php echo vc_icone( 'x', 20 ); ?></span>
+			</button>
+		</div>
 	</div>
+
+	<?php if ( is_singular( 'post' ) ) : ?>
+		<div class="reading-progress" aria-hidden="true">
+			<div class="reading-progress__bar" data-reading-progress></div>
+		</div>
+	<?php endif; ?>
 </header>
+<div class="mobile-nav-backdrop" data-menu-backdrop aria-hidden="true"></div>
 
 <div class="topics-bar">
 	<div class="topics-bar__inner">
