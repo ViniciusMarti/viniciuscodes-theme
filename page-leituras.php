@@ -11,7 +11,9 @@
 get_header();
 
 $vc_json_path   = get_theme_file_path( 'data/leituras_notion.json' );
-$vc_livros_raw  = file_exists( $vc_json_path ) ? json_decode( (string) file_get_contents( $vc_json_path ), true ) : array();
+$vc_json_str    = file_exists( $vc_json_path ) ? (string) file_get_contents( $vc_json_path ) : '';
+$vc_json_str    = (string) preg_replace( '/^\xEF\xBB\xBF/', '', $vc_json_str );
+$vc_livros_raw  = '' !== $vc_json_str ? json_decode( $vc_json_str, true ) : array();
 $vc_livros_raw  = is_array( $vc_livros_raw ) ? $vc_livros_raw : array();
 
 // Mapa de fallback automático para resenhas publicadas no blog
