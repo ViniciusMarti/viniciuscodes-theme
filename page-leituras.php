@@ -23,10 +23,34 @@ $vc_resenhas_fallback = array(
 	'ele esta de volta' => home_url( '/o-que-achei-de-ele-esta-de-volta/' ),
 );
 
+// Mapa de links diretos de afiliado da Amazon Brasil (tag=viniciusvmo-20)
+$vc_amazon_fallback = array(
+	'ele esta de volta' => 'https://www.amazon.com.br/dp/858057529X?lv=shuf&channelId=425&plpRedirect=mhFallback&linkCode=ll2&tag=viniciusvmo-20&linkId=f28fcbafecbbb52451e116e34ce27c69&ref_=as_li_ss_tl',
+	'amor  gelato'      => 'https://www.amazon.com.br/dp/855100199X?tag=viniciusvmo-20&linkCode=ll1&language=pt_BR&ref_=as_li_ss_tl',
+);
+
 $vc_normalizar_chave = static function ( string $texto ): string {
 	$texto = mb_strtolower( trim( $texto ), 'UTF-8' );
 	$texto = remove_accents( $texto );
 	return (string) preg_replace( '/[^a-z0-9\s]/', '', $texto );
+};
+
+$vc_obter_url_amazon = static function ( array $livro ) use ( $vc_amazon_fallback, $vc_normalizar_chave ): string {
+	if ( ! empty( $livro['link_amazon'] ) ) {
+		return (string) $livro['link_amazon'];
+	}
+	$titulo       = trim( (string) ( $livro['titulo'] ?? '' ) );
+	$autor        = trim( (string) ( $livro['autor'] ?? '' ) );
+	$titulo_chave = $vc_normalizar_chave( $titulo );
+
+	foreach ( $vc_amazon_fallback as $trecho => $url_direta ) {
+		if ( false !== strpos( $titulo_chave, $trecho ) ) {
+			return $url_direta;
+		}
+	}
+
+	$termo_busca = trim( $titulo . ' ' . $autor );
+	return 'https://www.amazon.com.br/s?k=' . rawurlencode( $termo_busca ) . '&tag=viniciusvmo-20&linkCode=ll2';
 };
 
 $vc_formatar_data_curta = static function ( ?string $iso ): string {
@@ -184,6 +208,7 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 					$inicio_fmt = $vc_formatar_data_curta( $livro['inicio'] ?? null );
 					$sinopse    = trim( (string) ( $livro['sinopse'] ?? '' ) );
 					$resenha    = (string) ( $livro['link_resenha'] ?? '' );
+					$amazon_url = $vc_obter_url_amazon( $livro );
 					$busca_attr = mb_strtolower( $titulo . ' ' . $autor, 'UTF-8' );
 				?>
 					<article class="reading-card reading-card--featured" data-reading-item data-reading-query="<?php echo esc_attr( $busca_attr ); ?>">
@@ -203,7 +228,9 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 								<?php endif; ?>
 							</div>
 
-							<h3 class="reading-card__title"><?php echo esc_html( $titulo ); ?></h3>
+							<h3 class="reading-card__title">
+								<a href="<?php echo esc_url( $amazon_url ); ?>" class="reading-card__title-link" target="_blank" rel="noopener noreferrer sponsored"><?php echo esc_html( $titulo ); ?></a>
+							</h3>
 							<?php if ( '' !== $autor ) : ?>
 								<p class="reading-card__author"><?php echo esc_html( $autor ); ?></p>
 							<?php endif; ?>
@@ -252,6 +279,7 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 					$conclusao_fmt = $vc_formatar_data_curta( $livro['conclusao'] ?? null );
 					$sinopse       = trim( (string) ( $livro['sinopse'] ?? '' ) );
 					$resenha       = (string) ( $livro['link_resenha'] ?? '' );
+					$amazon_url    = $vc_obter_url_amazon( $livro );
 					$busca_attr    = mb_strtolower( $titulo . ' ' . $autor, 'UTF-8' );
 
 					$periodo_label = '';
@@ -280,7 +308,9 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 								<?php endif; ?>
 							</div>
 
-							<h3 class="reading-card__title"><?php echo esc_html( $titulo ); ?></h3>
+							<h3 class="reading-card__title">
+								<a href="<?php echo esc_url( $amazon_url ); ?>" class="reading-card__title-link" target="_blank" rel="noopener noreferrer sponsored"><?php echo esc_html( $titulo ); ?></a>
+							</h3>
 							<?php if ( '' !== $autor ) : ?>
 								<p class="reading-card__author"><?php echo esc_html( $autor ); ?></p>
 							<?php endif; ?>
@@ -321,6 +351,7 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 					$inicio_fmt = $vc_formatar_data_curta( $livro['inicio'] ?? null );
 					$sinopse    = trim( (string) ( $livro['sinopse'] ?? '' ) );
 					$resenha    = (string) ( $livro['link_resenha'] ?? '' );
+					$amazon_url = $vc_obter_url_amazon( $livro );
 					$busca_attr = mb_strtolower( $titulo . ' ' . $autor, 'UTF-8' );
 				?>
 					<article class="reading-card reading-card--abandoned" data-reading-item data-reading-query="<?php echo esc_attr( $busca_attr ); ?>">
@@ -343,7 +374,9 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 								<?php endif; ?>
 							</div>
 
-							<h3 class="reading-card__title"><?php echo esc_html( $titulo ); ?></h3>
+							<h3 class="reading-card__title">
+								<a href="<?php echo esc_url( $amazon_url ); ?>" class="reading-card__title-link" target="_blank" rel="noopener noreferrer sponsored"><?php echo esc_html( $titulo ); ?></a>
+							</h3>
 							<?php if ( '' !== $autor ) : ?>
 								<p class="reading-card__author"><?php echo esc_html( $autor ); ?></p>
 							<?php endif; ?>
@@ -379,6 +412,7 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 					$titulo     = (string) $livro['titulo'];
 					$autor      = (string) ( $livro['autor'] ?? '' );
 					$capa       = (string) ( $livro['capa'] ?? '' );
+					$amazon_url = $vc_obter_url_amazon( $livro );
 					$busca_attr = mb_strtolower( $titulo . ' ' . $autor, 'UTF-8' );
 				?>
 					<article class="reading-shelf-item" data-reading-item data-reading-query="<?php echo esc_attr( $busca_attr ); ?>">
@@ -390,7 +424,9 @@ $vc_total_estante     = count( $vc_nao_iniciado );
 							<?php endif; ?>
 						</div>
 						<div class="reading-shelf-item__info">
-							<h3 class="reading-shelf-item__title"><?php echo esc_html( $titulo ); ?></h3>
+							<h3 class="reading-shelf-item__title">
+								<a href="<?php echo esc_url( $amazon_url ); ?>" class="reading-shelf-item__title-link" target="_blank" rel="noopener noreferrer sponsored"><?php echo esc_html( $titulo ); ?></a>
+							</h3>
 							<?php if ( '' !== $autor ) : ?>
 								<p class="reading-shelf-item__author"><?php echo esc_html( $autor ); ?></p>
 							<?php endif; ?>

@@ -3001,6 +3001,20 @@ body.admin-bar .masthead--substack {
   color: var(--color-text-strong);
 }
 
+.reading-card__title-link {
+  color: var(--color-text-strong);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.reading-card__title-link:hover,
+.reading-card__title-link:focus-visible {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+}
+
 .reading-card__author {
   margin: 0;
   font-size: var(--text-sm);
@@ -3137,6 +3151,20 @@ body.admin-bar .masthead--substack {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.reading-shelf-item__title-link {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.reading-shelf-item__title-link:hover,
+.reading-shelf-item__title-link:focus-visible {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.16em;
 }
 
 .reading-shelf-item__author {
