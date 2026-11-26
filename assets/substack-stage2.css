@@ -240,6 +240,27 @@ html, body {
   text-underline-offset: 3px;
 }
 
+/* Links externos com ícone: sublinhado restrito ao texto, sem traço sob ou após o ícone */
+.prose a.link-externo,
+a.link-externo {
+  text-decoration: none;
+}
+
+.prose a.link-externo .link-externo__texto,
+a.link-externo .link-externo__texto {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-externo__icone {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.25em;
+  vertical-align: -0.08em;
+  text-decoration: none;
+}
+
 /* Links internos: sublinhado com transição suave */
 .prose a:is([href^="/"], [href^="#"], [href^="https://viniciuscodes.com.br"], [href^="http://viniciuscodes.com.br"]):not(.wp-block-button__link) {
   text-decoration: none;
